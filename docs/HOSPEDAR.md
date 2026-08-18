@@ -26,16 +26,16 @@ Na jurisdição de quem hospeda, o operador do recinto costuma ser tratado como 
 
 O Ágora não tem API nossa, não tem banco na nuvem e não tira isso da sua mão. “Sem empresa no meio” quer dizer que **você** é o recinto.
 
-## CSAM e exploração
+## Conteúdo ilegal e responsabilidade
 
-Princípio 8: o Ágora não é esconderijo. O cliente **não** implementa PhotoDNA / hash matching. Quem hospeda precisa da própria política e das próprias ferramentas:
+Princípio 8: o Ágora não é esconderijo. O cliente **não** implementa filtro automático de conteúdo. Quem hospeda precisa da própria política e das próprias ferramentas:
 
 - Política pública do recinto (o que é expulso)
 - Fluxo de denúncia (pelo menos: copiar id do evento + relay e avisar o admin)
-- No Blossom/relay: recusar upload conhecido, logs de denúncia, cooperação com a lei local
-- Lista de hashes da sua escolha — o Ágora não escolhe fornecedor
+- No Blossom/relay: recusar o que a lei local e as regras do recinto proíbem
+- Cooperação com a autoridade da jurisdição em que o servidor está
 
-Sem isso, “não é plataforma pra CSAM” é só um cartaz.
+Sem isso, “não é plataforma para crime” é só um cartaz.
 
 ## Escala do Go Live
 

@@ -1,20 +1,28 @@
 # Código de conduta
 
-O Ágora é um cliente. Cada praça e cada relay definem as próprias regras de conversa. Este texto vale para o **repositório**: issues, pull requests, discussões e qualquer espaço que o projeto mantenha.
+O Ágora é um cliente. Cada praça e cada relay publicam as próprias regras. Este texto vale para o **repositório**: issues, pull requests, discussões e qualquer espaço oficial do projeto.
 
-## Não aceitamos aqui
+## Espaços do projeto
 
-- Exploração sexual de menores, CSAM, ou qualquer conteúdo que envolva criança em contexto sexual.
-- Assédio, doxxing e ameaça a quem contribui.
-- Spam e qualquer tentativa de roubar chave, cadeado ou as 12 palavras.
+Não entram aqui:
 
-Liberdade de expressão não é esconderijo para crime contra criança. Quem hospeda um relay ou um Blossom tem de expulsar isso. Quem contribui neste repo, também.
+- Conteúdo ou atividade ilegal segundo a lei do sítio onde o espaço está hospedado. Isso inclui, sem se limitar a: tráfico, extorsão, fraude, malware feito para atacar terceiros, exploração sexual, ameaça e o que a jurisdição tratar como crime.
+- Assédio, ódio organizado, doxxing e ameaça a quem contribui ou a quem usa o software.
+- Spam, phishing e qualquer tentativa de roubar chave, cadeado ou as 12 palavras.
+
+O Ágora não é esconderijo. Liberdade de protocolo não autoriza usar este repositório — nem um recinto que alguém suba — para cometer ou encobrir crime.
+
+## Recinto
+
+Quem hospeda relay, Blossom ou mídia aplica a lei da própria jurisdição e as regras que publicar. Moderação de canal, kick e ban ficam no grupo e no relay, não neste repositório. Mute e block no cliente são só da pessoa.
 
 ## Como tratar as pessoas
 
-Seja direto. Critique o código, não a pessoa. Não peça `nsec`, cadeado nem frase-semente em issue ou chat público.
+Seja direto. Critique o código, não a pessoa. Não peça `nsec`, cadeado nem frase-semente em issue ou conversa pública.
 
 ## Denúncia
 
 Falha de segurança: [`SECURITY.md`](./SECURITY.md).  
-Conduta neste repositório: abra um issue sem detalhes que exponham alguém, ou fale com quem mantém o fork que você estiver usando.
+Conduta neste repositório: issue sem dados que exponham alguém, ou contacto com quem mantém o fork em uso.
+
+Quem violar isto é removido dos espaços do projeto. Crime segue a lei do sítio, não este texto.

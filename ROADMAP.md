@@ -115,7 +115,7 @@ Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + Me
 
 - Clone pixel a pixel do Discord
 - Mesh P2P que inventa protocolo novo
-- Plataforma para CSAM ou exploração de menores
+- Plataforma para atividade ilegal; o cliente não esconde crime
 - Promessa de “vídeo anônimo pelo Tor”
 
 ---
@@ -283,7 +283,7 @@ Cada item vira passo próprio, não um saco.
 - [ ] Notificações do SO
 - [ ] NIP-46 (bunker, chave fora do app)
 - [ ] Companion: `docker compose` com relay NIP-29 + LiveKit + MediaMTX (“subir meu servidor”)
-- [ ] Denúncia no cliente (id do evento + relay) e guia de hash matching para quem hospeda Blossom/relay
+- [ ] Denúncia no cliente (id do evento + relay) e guia de moderação para quem hospeda Blossom/relay
 - [ ] Guia legal do self-hoster (rascunho em `docs/HOSPEDAR.md` — não é conselho jurídico)
 - [ ] Mobile (bem depois)
 
@@ -301,7 +301,7 @@ Cada item vira passo próprio, não um saco.
 | WHEP ainda é draft IETF | WHIP é RFC 9725. Não tratar o wire WHEP como congelado |
 | Brasil bloqueia relays conhecidos | Usuário cola qualquer URL; `.onion`; convite `naddr` fora da banda |
 | `nsec` vaza = conta perdida | Cifra + aviso + NIP-07 / NIP-46 |
-| Quem hospeda Blossom/relay é o recinto (CSAM, lei local) | Princípio 8 + `docs/HOSPEDAR.md`. Mecanismo de denúncia/hash na Fase 9 |
+| Quem hospeda Blossom/relay é o recinto (lei local) | Princípio 8 + `docs/HOSPEDAR.md`. Denúncia e política do recinto na Fase 9 |
 | Escopo “Discord completo” mata o projeto | MVP é texto. Voz, live e Tor são fases seguintes, isoladas |
 
 ---

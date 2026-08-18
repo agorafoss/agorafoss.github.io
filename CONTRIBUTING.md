@@ -34,4 +34,4 @@ Chave só no cofre (PBKDF2 + AES-GCM) ou na extensão NIP-07. Detalhe: [`SECURIT
 
 ## O que não entra num PR “de passagem”
 
-Tor no WebSocket (Fase 7), keystore nativo, catálogo OpenMoji inteiro no repo, PhotoDNA. Cada um tem o próprio passo no roadmap.
+Tor no WebSocket (Fase 7), keystore nativo, catálogo OpenMoji inteiro no repo, filtro automático de conteúdo. Cada um tem o próprio passo no roadmap.

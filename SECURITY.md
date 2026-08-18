@@ -60,4 +60,4 @@ A tela de circuito grava host/porta e `.onion`. O WebSocket do NDK **ainda não*
 
 ## Quem hospeda
 
-Rodar relay + LiveKit + MediaMTX + Blossom é recinto. Quem sobe assume exposição legal da própria jurisdição, moderação de conteúdo (incluindo CSAM) e o gargalo de um MediaMTX de nó único. Guia curto: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md).
+Rodar relay + LiveKit + MediaMTX + Blossom é recinto. Quem sobe assume a exposição legal da própria jurisdição, a moderação do que passa nas peças e o gargalo de um MediaMTX de nó único. Guia curto: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md).
