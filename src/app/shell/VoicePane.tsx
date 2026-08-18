@@ -62,6 +62,7 @@ export function VoicePane({ channel, onToggleMembers, onToggleChannels, channels
       <div className={voice.stage}>
         <p className={voice.status}>{t(`voice.status.${status}`)}</p>
         {error ? <p className={styles.error}>{t(`voice.errors.${error}`)}</p> : null}
+        <p className={voice.warn}>{t("voice.ipWarn")}</p>
         {circuit ? <p className={voice.warn}>{t("voice.noTor")}</p> : null}
         {onStage.length > 0 ? (
           <ul className={voice.people}>

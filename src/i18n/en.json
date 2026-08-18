@@ -259,7 +259,7 @@
     "go": "Go live",
     "on": "Broadcast on air",
     "watch": "Watch",
-    "ipWarn": "Going live reveals your IP to the media server (MediaMTX), even if chat is on Tor. Media never enters the circuit. Continue?"
+    "ipWarn": "Going live reveals your IP to the media server, even if chat is on Tor. Media never enters the circuit. To hide your IP from the host, use a one-hop VPN or WireGuard on the system before you stream. Continue?"
   },
   "voice": {
     "hint": "LiveKit stage. Off Tor.",
@@ -267,7 +267,8 @@
     "unmute": "Talk",
     "camOn": "Camera",
     "camOff": "No camera",
-    "noTor": "The stage reveals your IP to the LiveKit server. Tor does not carry voice — and does not hide this IP.",
+    "ipWarn": "The stage reveals your IP to the media server. Tor does not carry voice. To hide your IP from the host, use a one-hop VPN or WireGuard on the system.",
+    "noTor": "Chat Tor does not apply to this stage.",
     "status": {
       "idle": "Off stage",
       "connecting": "Entering the stage",

@@ -259,7 +259,7 @@
     "go": "Ao vivo",
     "on": "Transmissão no ar",
     "watch": "Assistir",
-    "ipWarn": "Ao vivo revela o seu IP ao servidor de mídia (MediaMTX), mesmo que o chat esteja no Tor. A mídia nunca entra no circuito. Continuar?"
+    "ipWarn": "Ao vivo revela o seu IP ao servidor de mídia, mesmo que o chat esteja no Tor. A mídia nunca entra no circuito. Para esconder o IP do host, use uma VPN ou WireGuard de hop único no sistema antes de transmitir. Continuar?"
   },
   "voice": {
     "hint": "Palco LiveKit. Fora do Tor.",
@@ -267,7 +267,8 @@
     "unmute": "Falar",
     "camOn": "Câmera",
     "camOff": "Sem câmera",
-    "noTor": "O palco revela o seu IP ao servidor LiveKit. Tor não carrega voz — e não esconde este IP.",
+    "ipWarn": "O palco revela o seu IP ao servidor de mídia. Tor não carrega voz. Para esconder o IP do host, use uma VPN ou WireGuard de hop único no sistema.",
+    "noTor": "O Tor do chat não se aplica a este palco.",
     "status": {
       "idle": "Fora do palco",
       "connecting": "Entrando no palco",
