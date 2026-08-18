@@ -167,10 +167,11 @@ function RecoverForm({ error, onCancel }: { error: string | null; onCancel: () =
   const { t } = useTranslation();
   const recoverMnemonic = useAuthStore((state) => state.recoverMnemonic);
   const [words, setWords] = useState("");
+  const [cadeado, setCadeado] = useState("");
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    void recoverMnemonic(words);
+    void recoverMnemonic(words, cadeado);
   }
 
   return (
@@ -179,6 +180,16 @@ function RecoverForm({ error, onCancel }: { error: string | null; onCancel: () =
       <label>
         {t("auth.words")}
         <textarea value={words} onChange={(event) => setWords(event.target.value)} spellCheck={false} />
+      </label>
+      <label>
+        {t("auth.sameLock")}
+        <input
+          value={cadeado}
+          onChange={(event) => setCadeado(maskCadeadoInput(event.target.value))}
+          autoComplete="off"
+          spellCheck={false}
+          placeholder="K7M4-2NPQ"
+        />
       </label>
       {error ? <p className={styles.error}>{t(`auth.errors.${error}`)}</p> : null}
       <button type="submit" className={styles.primary}>
@@ -195,10 +206,11 @@ function PairForm({ error, onCancel }: { error: string | null; onCancel: () => v
   const { t } = useTranslation();
   const claimPair = useAuthStore((state) => state.claimPair);
   const [code, setCode] = useState("");
+  const [cadeado, setCadeado] = useState("");
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    void claimPair(code);
+    void claimPair(code, cadeado);
   }
 
   return (
@@ -208,7 +220,16 @@ function PairForm({ error, onCancel }: { error: string | null; onCancel: () => v
         {t("auth.pairCode")}
         <input
           value={code}
-          onChange={(event) => setCode(maskCadeadoInput(event.target.value))}
+          onChange={(event) => setCode(event.target.value.trim())}
+          spellCheck={false}
+          placeholder="código de 5 min"
+        />
+      </label>
+      <label>
+        {t("auth.sameLock")}
+        <input
+          value={cadeado}
+          onChange={(event) => setCadeado(maskCadeadoInput(event.target.value))}
           spellCheck={false}
           placeholder="K7M4-2NPQ"
         />
@@ -228,10 +249,11 @@ function AdvancedForm({ error, onCancel }: { error: string | null; onCancel: () 
   const { t } = useTranslation();
   const importAdvanced = useAuthStore((state) => state.importAdvanced);
   const [secret, setSecret] = useState("");
+  const [cadeado, setCadeado] = useState("");
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    void importAdvanced(secret);
+    void importAdvanced(secret, cadeado);
   }
 
   return (
@@ -240,6 +262,15 @@ function AdvancedForm({ error, onCancel }: { error: string | null; onCancel: () 
       <label>
         {t("auth.secret")}
         <textarea value={secret} onChange={(event) => setSecret(event.target.value)} spellCheck={false} />
+      </label>
+      <label>
+        {t("auth.sameLock")}
+        <input
+          value={cadeado}
+          onChange={(event) => setCadeado(maskCadeadoInput(event.target.value))}
+          spellCheck={false}
+          placeholder="K7M4-2NPQ"
+        />
       </label>
       {error ? <p className={styles.error}>{t(`auth.errors.${error}`)}</p> : null}
       <button type="submit" className={styles.primary}>

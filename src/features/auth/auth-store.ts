@@ -40,12 +40,12 @@ type AuthState = {
   pairingExpiresAt: number | null;
   hydrate: () => Promise<void>;
   createIndicativo: (name: string, picture: string) => Promise<void>;
-  recoverMnemonic: (words: string) => Promise<void>;
-  claimPair: (code: string) => Promise<void>;
+  recoverMnemonic: (words: string, cadeado: string) => Promise<void>;
+  claimPair: (code: string, cadeado: string) => Promise<void>;
   confirmReveal: () => Promise<void>;
   unlock: (cadeado: string) => Promise<void>;
   loginNip07: () => Promise<void>;
-  importAdvanced: (secret: string) => Promise<void>;
+  importAdvanced: (secret: string, cadeado: string) => Promise<void>;
   startPairing: () => Promise<void>;
   stopPairing: () => void;
   lock: () => Promise<void>;
@@ -181,21 +181,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  recoverMnemonic: async (words) => {
+  recoverMnemonic: async (words, cadeado) => {
     set({ error: null });
     try {
       const identity = identityFromMnemonic(words);
-      const cadeado = generateCadeado();
-      pendingDraft = { name: "", picture: "" };
       await persistLocal(identity, cadeado);
       await openSession("local", identity);
+      pendingDraft = { name: "", picture: "" };
       set({
-        status: "reveal",
+        status: "ready",
         method: "local",
         pubkey: identity.pubkey,
         npub: identity.npub,
         callsign: publicCallsign(identity.pubkey),
-        reveal: { cadeado, mnemonic: null },
+        reveal: null,
         error: null,
       });
     } catch (error) {
@@ -203,21 +202,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  claimPair: async (code) => {
+  claimPair: async (code, cadeado) => {
     set({ error: null });
     try {
       const { identity, draft } = await claimPairing(code, await useRelayStore.getState().loadSaved());
-      const cadeado = generateCadeado();
       pendingDraft = draft;
       await persistLocal(identity, cadeado);
       await openSession("local", identity);
+      if (draft.name || draft.picture) {
+        await useProfileStore.getState().saveOwn({
+          name: draft.name,
+          displayName: draft.name,
+          about: "",
+          picture: draft.picture,
+        });
+      }
+      pendingDraft = { name: "", picture: "" };
       set({
-        status: "reveal",
+        status: "ready",
         method: "local",
         pubkey: identity.pubkey,
         npub: identity.npub,
         callsign: publicCallsign(identity.pubkey),
-        reveal: { cadeado, mnemonic: null },
+        reveal: null,
         error: null,
       });
     } catch (error) {
@@ -292,21 +299,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  importAdvanced: async (secret) => {
+  importAdvanced: async (secret, cadeado) => {
     set({ error: null });
     try {
       const identity = identityFromSecret(secret);
-      const cadeado = generateCadeado();
       pendingDraft = { name: "", picture: "" };
       await persistLocal(identity, cadeado);
       await openSession("local", identity);
       set({
-        status: "reveal",
+        status: "ready",
         method: "local",
         pubkey: identity.pubkey,
         npub: identity.npub,
         callsign: publicCallsign(identity.pubkey),
-        reveal: { cadeado, mnemonic: null },
+        reveal: null,
         error: null,
       });
     } catch (error) {
