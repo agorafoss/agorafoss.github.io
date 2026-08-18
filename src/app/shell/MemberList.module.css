@@ -1,0 +1,155 @@
+.pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: rgb(24 21 17 / 0.82);
+  backdrop-filter: blur(14px);
+  border-left: 1px solid var(--line);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  height: var(--title);
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.count {
+  color: var(--signal);
+}
+
+.hint {
+  margin: 0;
+  padding: 8px 14px 0;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--dim);
+}
+
+.list {
+  overflow: auto;
+  padding: 10px 8px 16px;
+}
+
+.group + .group {
+  margin-top: 16px;
+}
+
+.label {
+  padding: 0 8px 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  color: var(--paper-soft);
+}
+
+.row:hover {
+  background: var(--hover);
+}
+
+.row[data-rank="owner"] .role {
+  color: var(--signal);
+}
+
+.meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.face {
+  display: grid;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.name:hover {
+  color: var(--signal);
+}
+
+.role {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.signal {
+  width: 2px;
+  height: 14px;
+  border-radius: 1px;
+  background: var(--line);
+}
+
+.row[data-rank="you"] .signal,
+.row[data-rank="owner"] .signal {
+  background: var(--ok);
+}
+
+.row[data-stage="true"] .signal,
+.row[data-stage="true"] .role {
+  color: var(--signal);
+}
+
+.row[data-stage="true"] .signal {
+  background: var(--signal);
+}
+
+.ops {
+  display: none;
+  gap: 2px;
+}
+
+.row:hover .ops {
+  display: flex;
+}
+
+.ops button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-xs);
+  color: var(--dim);
+}
+
+.ops button:hover,
+.ops button[data-on="true"] {
+  color: var(--signal);
+}

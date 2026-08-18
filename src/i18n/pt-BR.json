@@ -1,0 +1,289 @@
+{
+  "app": {
+    "name": "Ágora",
+    "title": "Ágora"
+  },
+  "rail": {
+    "home": "Início",
+    "dms": "Conversas",
+    "add": "Nova praça",
+    "label": "Praças"
+  },
+  "channels": {
+    "search": "Buscar",
+    "text": "Texto",
+    "voice": "Palco",
+    "addChannel": "Novo canal",
+    "addLead": "Canal é um subgrupo NIP-29 desta praça. Palco pede LiveKit no relay.",
+    "name": "Nome do canal",
+    "relay": "relay"
+  },
+  "chat": {
+    "placeholder": "Falar em {{channel}}",
+    "send": "Enviar",
+    "today": "hoje",
+    "pins": "Fixadas",
+    "delete": "Apagar",
+    "attach": "Imagem, vídeo ou áudio",
+    "emoji": "Emoji",
+    "emptyTitle": "Nenhuma mensagem ainda",
+    "emptyBody": "Este canal está no ar. Escreva a primeira.",
+    "reply": "Responder",
+    "replyTo": "resposta a",
+    "replying": "Respondendo",
+    "cancelReply": "Cancelar",
+    "errors": {
+      "chat-send-failed": "A mensagem não saiu. Veja se o relay da praça está no ar.",
+      "chat-react-failed": "A reação não saiu.",
+      "chat-upload-failed": "O arquivo não subiu no Blossom.",
+      "chat-delete-failed": "O relay recusou apagar. Sem cargo, não apaga."
+    }
+  },
+  "members": {
+    "title": "No recinto",
+    "listed": "na lista",
+    "online": "no ar",
+    "offline": "fora",
+    "owner": "dono",
+    "mod": "moderação",
+    "member": "no recinto",
+    "kick": "Tirar da praça",
+    "stage": "no palco",
+    "you": "você",
+    "privacy": "Sem último visto. Palco é o único sinal ao vivo. Bots ficam para depois."
+  },
+  "user": {
+    "settings": "Ajustes",
+    "locale": "Idioma",
+    "localePt": "Português",
+    "localeEn": "English",
+    "relays": "{{count}} relays",
+    "copyNpub": "Copiar npub"
+  },
+  "layout": {
+    "hideChannels": "Ocultar canais",
+    "showChannels": "Mostrar canais",
+    "hideMembers": "Ocultar recinto",
+    "showMembers": "Mostrar recinto"
+  },
+  "status": {
+    "circuitOpen": "circuito aberto",
+    "clearnet": "clearnet",
+    "live": "no ar"
+  },
+  "empty": {
+    "serverTitle": "Nenhuma praça ainda",
+    "serverBody": "Crie uma praça ou entre com o id e o relay. O mais no trilho esquerdo abre isso."
+  },
+  "groups": {
+    "create": "Criar",
+    "join": "Entrar",
+    "createTitle": "Nova praça",
+    "joinTitle": "Entrar numa praça",
+    "createLead": "Nasce num relay NIP-29 que aceita criar grupo. O groups.fiatjaf.com só cria no site dele.",
+    "fiatjafWeb": "Esse relay recusa kind 9007. Crie em https://groups.fiatjaf.com e entre com o id, ou use wss://groups.0xchat.com.",
+    "joinLead": "Cole o naddr do convite, ou o id e o relay. Código só se ela for fechada.",
+    "invitePaste": "naddr1… ou id @ relay",
+    "name": "Nome da praça",
+    "id": "Id da praça",
+    "relay": "Relay",
+    "code": "Código de convite (opcional)",
+    "copyInvite": "Copiar convite",
+    "copied": "Convite copiado",
+    "leave": "Sair da praça",
+    "working": "Falando com o relay",
+    "errors": {
+      "group-load-failed": "Não deu para ler suas praças.",
+      "group-create-failed": "O relay recusou criar a praça.",
+      "group-join-failed": "Não deu para entrar. Confira o id e o relay.",
+      "bad-invite": "Esse convite não é um naddr de praça nem um id @ relay.",
+      "channel-create-failed": "O relay recusou o canal. Ele precisa aceitar subgrupo NIP-29.",
+      "group-kick-failed": "Não deu para tirar essa pessoa.",
+      "group-pin-failed": "Não deu para mudar as fixadas.",
+      "group-leave-failed": "Não deu para sair da praça.",
+      "group-edit-failed": "O relay recusou editar a praça.",
+      "group-role-failed": "O relay recusou mudar o cargo."
+    }
+  },
+  "square": {
+    "title": "Ajustes da praça",
+    "save": "Publicar nome",
+    "memberOnly": "Só quem tem cargo no 39001 edita a praça.",
+    "promote": "Tornar mod",
+    "demote": "Tirar cargo",
+    "defaultsLead": "Membro já pode isto. O relay é quem manda.",
+    "modLead": "Só cargo 39001:",
+    "tabs": {
+      "overview": "Visão",
+      "channels": "Canais",
+      "people": "Pessoas",
+      "roles": "Cargos"
+    },
+    "defaults": {
+      "view": "Ver canal e histórico",
+      "speak": "Falar (kind 9)",
+      "react": "Reagir",
+      "attach": "Anexar imagem ou vídeo",
+      "history": "Ler o que já foi dito",
+      "invite": "Copiar convite naddr",
+      "voice": "Entrar no palco se o canal tiver LiveKit"
+    },
+    "mods": {
+      "kick": "Tirar gente",
+      "delete": "Apagar mensagem",
+      "pin": "Fixar",
+      "channel": "Criar canal",
+      "edit": "Editar nome da praça",
+      "roles": "Promover e rebaixar"
+    }
+  },
+  "auth": {
+    "meshHint": "Arraste a nuvem · Nostr e Tor no mesmo recinto",
+    "setupTitle": "A praça está aberta",
+    "setupLead": "Sem e-mail, sem nome de cartório. Um apelido, um cadeado neste PC e 12 palavras no papel.",
+    "unlockTitle": "Destrancar o cadeado",
+    "unlockLead": "O cadeado só abre este computador. A conta vive nas 12 palavras.",
+    "create": "Criar indicativo",
+    "recover": "Tenho as 12 palavras",
+    "pair": "Código de emparelhamento",
+    "advanced": "Já tenho carteira Nostr",
+    "extension": "Usar extensão",
+    "noExtension": "Nenhuma extensão NIP-07",
+    "importNsec": "Entrar com nsec",
+    "unlock": "Abrir",
+    "lock": "Trancar",
+    "forget": "Apagar desta máquina",
+    "back": "Voltar",
+    "nickname": "Apelido no ar",
+    "pictureOptional": "Foto (opcional, qualquer URL)",
+    "createHint": "O apelido é máscara. A identidade é a chave, gerada em silêncio.",
+    "cadeado": "Cadeado deste PC",
+    "cadeadoHint": "Cadeado de 8 caracteres. Abre só este aparelho. Seis dígitos seriam fracos demais.",
+    "words": "As 12 palavras",
+    "wordsHint": "Isto é a conta. Perdeu, perdeu a praça. Padrão NIP-06, serve em outras carteiras Nostr.",
+    "newDeviceLock": "Novo cadeado gerado para este aparelho. As 12 palavras continuam as mesmas.",
+    "copyCadeado": "Copiar cadeado",
+    "copyWords": "Copiar as 12 palavras",
+    "copied": "Copiado",
+    "keptWords": "Anotei as 12 palavras fora deste computador",
+    "keptCadeado": "Guardei o cadeado deste aparelho",
+    "enter": "Entrar na praça",
+    "revealTitle": "Anote antes de entrar",
+    "revealLead": "O cadeado fica neste PC. As palavras reconstroem a conta em qualquer outro.",
+    "recoverHint": "Cole as 12 palavras. Vamos gerar um cadeado novo para este aparelho.",
+    "pairHint": "Digite o código que está na tela do aparelho já aberto. Vale 5 minutos.",
+    "pairCode": "Código de emparelhamento",
+    "pairHostHint": "Gera um código curto. No outro aparelho, escolha emparelhar e digite só isso. Some em 5 minutos.",
+    "pairStart": "Gerar código de 5 minutos",
+    "pairCancel": "Encerrar código",
+    "pairCountdown": "Some em {{seconds}}s",
+    "advancedHint": "Caminho técnico. A maioria não precisa disto.",
+    "secret": "nsec ou hex",
+    "errors": {
+      "bad-password": "Cadeado errado.",
+      "bad-cadeado": "O cadeado tem 8 caracteres, tipo K7M4-2NPQ.",
+      "bad-mnemonic": "Essa frase não é válida. Confira as 12 palavras.",
+      "no-local-vault": "Não há conta guardada neste computador.",
+      "no-nip07": "Nenhuma extensão Nostr neste navegador.",
+      "auth-failed": "Não deu para entrar. Tente de novo.",
+      "pair-not-found": "Não achei esse código. Ele pode ter expirado.",
+      "pair-expired": "Esse código já caiu. Peça outro no aparelho aberto.",
+      "name-required": "Escolha um apelido com pelo menos 2 letras.",
+      "locked-out": "Muitas tentativas. Espere um pouco e tente de novo.",
+      "insecure-context": "Este endereço HTTP não cifra o cadeado. No notebook use o HTTPS do Tailscale (*.ts.net), não o IP 100.x. Neste PC, abra http://localhost:5173."
+    }
+  },
+  "settings": {
+    "profile": "Perfil",
+    "relays": "Relays",
+    "pair": "Emparelhar",
+    "mute": "Silêncio",
+    "tor": "Circuito",
+    "close": "Fechar"
+  },
+  "profile": {
+    "name": "Nome",
+    "displayName": "Nome de exibição",
+    "about": "Sobre",
+    "picture": "Foto (URL)",
+    "save": "Publicar perfil",
+    "saving": "Publicando",
+    "emptyAbout": "Sem descrição no kind 0.",
+    "hint": "Isso vai para os relays como kind 0. Qualquer cliente Nostr pode ler.",
+    "lookup": "Olhar outro npub",
+    "look": "Buscar",
+    "errors": {
+      "profile-publish-failed": "O perfil não saiu. Veja se algum relay está no ar.",
+      "profile-lookup-failed": "Não achei esse perfil nos relays."
+    }
+  },
+  "relays": {
+    "add": "Somar",
+    "remove": "Tirar",
+    "hint": "Tor entra depois, só no caminho destas conexões. Não no vídeo.",
+    "errors": {
+      "invalid-relay-url": "Use um endereço ws:// ou wss://.",
+      "relay-exists": "Esse relay já está na lista."
+    }
+  },
+  "mute": {
+    "hint": "Some só na sua tela. O relay continua com o evento.",
+    "pubkey": "Silenciar",
+    "word": "Palavra",
+    "add": "Somar",
+    "unmute": "Ouvir",
+    "errors": {
+      "mute-load-failed": "Não li sua lista de silêncio.",
+      "mute-save-failed": "Não publiquei a lista de silêncio."
+    }
+  },
+  "dms": {
+    "title": "Conversas",
+    "lead": "NIP-17. Terceiro no relay não lê.",
+    "lookup": "npub ou chave pública",
+    "placeholder": "Escrever em privado",
+    "emptyTitle": "Nenhuma conversa",
+    "emptyBody": "Clique num membro ou cole um npub. Precisa da chave neste aparelho.",
+    "threadEmpty": "Ninguém falou ainda. A primeira mensagem sai cifrada.",
+    "errors": {
+      "dm-needs-local-key": "DM precisa do cadeado local. Extensão NIP-07 ainda não cifra aqui.",
+      "dm-send-failed": "A conversa não saiu."
+    }
+  },
+  "live": {
+    "go": "Ao vivo",
+    "on": "Transmissão no ar",
+    "watch": "Assistir",
+    "ipWarn": "Ao vivo revela o seu IP ao servidor de mídia (MediaMTX), mesmo que o chat esteja no Tor. A mídia nunca entra no circuito. Continuar?"
+  },
+  "voice": {
+    "hint": "Palco LiveKit. Fora do Tor.",
+    "mute": "Mudo",
+    "unmute": "Falar",
+    "camOn": "Câmera",
+    "camOff": "Sem câmera",
+    "noTor": "O palco revela o seu IP ao servidor LiveKit. Tor não carrega voz — e não esconde este IP.",
+    "status": {
+      "idle": "Fora do palco",
+      "connecting": "Entrando no palco",
+      "live": "No ar",
+      "error": "Palco fechado"
+    },
+    "errors": {
+      "voice-no-stage": "Este canal não tem LiveKit no metadata.",
+      "voice-connect-failed": "O JWT do palco não veio. O relay precisa servir /.well-known/nip29/livekit.",
+      "voice-camera-failed": "A câmera não abriu."
+    }
+  },
+  "tor": {
+    "hint": "SOCKS5 só no caminho dos eventos Nostr, e ainda não está ligado ao WebSocket. Esta tela grava o endereço. Voz e live nunca entram no circuito — publicar um Ao vivo revela o IP ao MediaMTX.",
+    "enable": "Usar circuito Tor quando o app de PC estiver no ar (Fase 7 aplica o SOCKS)",
+    "clearnetHint": "Relays de texto continuam na lista normal, tipo",
+    "health": {
+      "off": "Circuito desligado.",
+      "browser": "Navegador não fala SOCKS. Abra o app de PC com o Tor na 9050.",
+      "ready": "Circuito pronto para o app de PC.",
+      "fail": "Ligado, mas falta um relay .onion."
+    }
+  }
+}

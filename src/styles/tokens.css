@@ -1,0 +1,62 @@
+:root {
+  --void: #100e0c;
+  --panel: #181511;
+  --raised: #211d18;
+  --hover: #2b241d;
+  --line: #322c25;
+  --inset: #0c0b09;
+
+  --paper: #ede4d4;
+  --paper-soft: #cfc4b0;
+  --mute: #9a8f80;
+  --dim: #6b6358;
+
+  --signal: #e6a23c;
+  --signal-dim: #8a641f;
+  --signal-glow: rgb(230 162 60 / 0.18);
+
+  --live: #c45c4a;
+  --ok: #6f8f72;
+  --ok-dim: #3d5340;
+
+  --font-ui: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Consolas", monospace;
+
+  --fs-2xs: 0.625rem;
+  --fs-xs: 0.6875rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.0625rem;
+  --fs-xl: 1.25rem;
+
+  --lh-tight: 1.2;
+  --lh-body: 1.45;
+
+  --r-xs: 3px;
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+
+  --rail: 68px;
+  --channels: 248px;
+  --members: 228px;
+  --title: 48px;
+  --user: 54px;
+  --composer: 72px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 220ms;
+
+  --z-shell: 1;
+  --z-drawer: 20;
+  --z-overlay: 30;
+  --z-toast: 40;
+
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur: 1ms;
+  }
+}

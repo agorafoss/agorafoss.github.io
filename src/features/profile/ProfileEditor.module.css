@@ -1,0 +1,76 @@
+.form {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--paper-soft);
+}
+
+input,
+textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--inset);
+  outline: none;
+}
+
+textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.npub {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--dim);
+  word-break: break-all;
+}
+
+.save {
+  min-height: 38px;
+  border-radius: var(--r-sm);
+  background: var(--signal);
+  color: var(--void);
+  font-weight: 600;
+}
+
+.save:disabled {
+  opacity: 0.5;
+}
+
+.lookup {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+}
+
+.peek {
+  padding: 10px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.peekName {
+  font-weight: 600;
+}
+
+.error,
+.hint {
+  font-size: var(--fs-xs);
+}
+
+.error {
+  color: var(--live);
+}
+
+.hint {
+  color: var(--dim);
+}

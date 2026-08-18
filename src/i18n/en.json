@@ -1,0 +1,289 @@
+{
+  "app": {
+    "name": "Ágora",
+    "title": "Ágora"
+  },
+  "rail": {
+    "home": "Home",
+    "dms": "Messages",
+    "add": "New square",
+    "label": "Squares"
+  },
+  "channels": {
+    "search": "Search",
+    "text": "Text",
+    "voice": "Stage",
+    "addChannel": "New channel",
+    "addLead": "A channel is a NIP-29 subgroup of this square. Stage needs LiveKit on the relay.",
+    "name": "Channel name",
+    "relay": "relay"
+  },
+  "chat": {
+    "placeholder": "Message {{channel}}",
+    "send": "Send",
+    "today": "today",
+    "pins": "Pinned",
+    "delete": "Delete",
+    "attach": "Image, video or audio",
+    "emoji": "Emoji",
+    "emptyTitle": "No messages yet",
+    "emptyBody": "This channel is live. Write the first one.",
+    "reply": "Reply",
+    "replyTo": "reply to",
+    "replying": "Replying to",
+    "cancelReply": "Cancel",
+    "errors": {
+      "chat-send-failed": "The message did not go out. Check the square's relay.",
+      "chat-react-failed": "The reaction did not go out.",
+      "chat-upload-failed": "The file did not upload to Blossom.",
+      "chat-delete-failed": "The relay refused to delete. No role, no delete."
+    }
+  },
+  "members": {
+    "title": "In the room",
+    "listed": "listed",
+    "online": "on air",
+    "offline": "away",
+    "owner": "owner",
+    "mod": "mod",
+    "member": "in the room",
+    "kick": "Remove from the square",
+    "stage": "on stage",
+    "you": "you",
+    "privacy": "No last-seen. Stage is the only live signal. Bots come much later."
+  },
+  "user": {
+    "settings": "Settings",
+    "locale": "Language",
+    "localePt": "Português",
+    "localeEn": "English",
+    "relays": "{{count}} relays",
+    "copyNpub": "Copy npub"
+  },
+  "layout": {
+    "hideChannels": "Hide channels",
+    "showChannels": "Show channels",
+    "hideMembers": "Hide members",
+    "showMembers": "Show members"
+  },
+  "status": {
+    "circuitOpen": "circuit open",
+    "clearnet": "clearnet",
+    "live": "on air"
+  },
+  "empty": {
+    "serverTitle": "No square yet",
+    "serverBody": "Create a square or join with an id and relay. The plus on the left rail opens that."
+  },
+  "groups": {
+    "create": "Create",
+    "join": "Join",
+    "createTitle": "New square",
+    "joinTitle": "Join a square",
+    "createLead": "It is born on a NIP-29 relay that accepts group create. groups.fiatjaf.com only creates on its website.",
+    "fiatjafWeb": "That relay refuses kind 9007. Create it at https://groups.fiatjaf.com and join with the id, or use wss://groups.0xchat.com.",
+    "joinLead": "Paste the invite naddr, or the id and relay. A code is only needed if it is closed.",
+    "invitePaste": "naddr1… or id @ relay",
+    "name": "Square name",
+    "id": "Square id",
+    "relay": "Relay",
+    "code": "Invite code (optional)",
+    "copyInvite": "Copy invite",
+    "copied": "Invite copied",
+    "leave": "Leave the square",
+    "working": "Talking to the relay",
+    "errors": {
+      "group-load-failed": "Could not read your squares.",
+      "group-create-failed": "The relay refused to create the square.",
+      "group-join-failed": "Could not join. Check the id and the relay.",
+      "bad-invite": "That invite is not a square naddr or an id @ relay.",
+      "channel-create-failed": "The relay refused the channel. It needs to accept NIP-29 subgroups.",
+      "group-kick-failed": "Could not remove that person.",
+      "group-pin-failed": "Could not change the pins.",
+      "group-leave-failed": "Could not leave the square.",
+      "group-edit-failed": "The relay refused to edit the square.",
+      "group-role-failed": "The relay refused to change the role."
+    }
+  },
+  "square": {
+    "title": "Square settings",
+    "save": "Publish name",
+    "memberOnly": "Only a 39001 role can edit the square.",
+    "promote": "Make mod",
+    "demote": "Remove role",
+    "defaultsLead": "A member can already do this. The relay is the authority.",
+    "modLead": "39001 role only:",
+    "tabs": {
+      "overview": "Overview",
+      "channels": "Channels",
+      "people": "People",
+      "roles": "Roles"
+    },
+    "defaults": {
+      "view": "See the channel and history",
+      "speak": "Speak (kind 9)",
+      "react": "React",
+      "attach": "Attach image or video",
+      "history": "Read what was already said",
+      "invite": "Copy the naddr invite",
+      "voice": "Join the stage if the channel has LiveKit"
+    },
+    "mods": {
+      "kick": "Remove people",
+      "delete": "Delete a message",
+      "pin": "Pin",
+      "channel": "Create a channel",
+      "edit": "Edit the square name",
+      "roles": "Promote and demote"
+    }
+  },
+  "auth": {
+    "meshHint": "Drag the cloud · Nostr and Tor in the same square",
+    "setupTitle": "The square is open",
+    "setupLead": "No email, no legal name. A callsign, a lock for this PC, and 12 words on paper.",
+    "unlockTitle": "Open the lock",
+    "unlockLead": "The lock only opens this computer. The account lives in the 12 words.",
+    "create": "Create callsign",
+    "recover": "I have the 12 words",
+    "pair": "Pairing code",
+    "advanced": "I already have a Nostr wallet",
+    "extension": "Use extension",
+    "noExtension": "No NIP-07 extension",
+    "importNsec": "Sign in with nsec",
+    "unlock": "Open",
+    "lock": "Lock",
+    "forget": "Remove from this machine",
+    "back": "Back",
+    "nickname": "On-air name",
+    "pictureOptional": "Picture (optional, any URL)",
+    "createHint": "The name is a mask. The identity is the key, generated in silence.",
+    "cadeado": "Lock for this PC",
+    "cadeadoHint": "An 8-character lock. It only opens this device. Six digits would be too weak.",
+    "words": "The 12 words",
+    "wordsHint": "This is the account. Lose it, lose the square. NIP-06, works in other Nostr wallets.",
+    "newDeviceLock": "A new lock was generated for this device. The 12 words stay the same.",
+    "copyCadeado": "Copy lock",
+    "copyWords": "Copy the 12 words",
+    "copied": "Copied",
+    "keptWords": "I wrote the 12 words down off this computer",
+    "keptCadeado": "I saved this device lock",
+    "enter": "Enter the square",
+    "revealTitle": "Write this down first",
+    "revealLead": "The lock stays on this PC. The words rebuild the account anywhere else.",
+    "recoverHint": "Paste the 12 words. We will generate a new lock for this device.",
+    "pairHint": "Type the code shown on the device that is already open. It lasts 5 minutes.",
+    "pairCode": "Pairing code",
+    "pairHostHint": "Makes a short code. On the other device, pick pairing and type only that. It dies in 5 minutes.",
+    "pairStart": "Make a 5-minute code",
+    "pairCancel": "End code",
+    "pairCountdown": "Gone in {{seconds}}s",
+    "advancedHint": "Technical path. Most people do not need this.",
+    "secret": "nsec or hex",
+    "errors": {
+      "bad-password": "Wrong lock.",
+      "bad-cadeado": "The lock is 8 characters, like K7M4-2NPQ.",
+      "bad-mnemonic": "That phrase is not valid. Check the 12 words.",
+      "no-local-vault": "No account stored on this computer.",
+      "no-nip07": "No Nostr extension in this browser.",
+      "auth-failed": "Could not sign in. Try again.",
+      "pair-not-found": "Could not find that code. It may have expired.",
+      "pair-expired": "That code already dropped. Ask for a new one on the open device.",
+      "name-required": "Pick a name with at least 2 letters.",
+      "locked-out": "Too many tries. Wait a bit and try again.",
+      "insecure-context": "This HTTP address cannot seal the lock. On the other machine use the Tailscale HTTPS URL (*.ts.net), not the 100.x IP. On this PC, open http://localhost:5173."
+    }
+  },
+  "settings": {
+    "profile": "Profile",
+    "relays": "Relays",
+    "pair": "Pair",
+    "mute": "Mute",
+    "tor": "Circuit",
+    "close": "Close"
+  },
+  "profile": {
+    "name": "Name",
+    "displayName": "Display name",
+    "about": "About",
+    "picture": "Picture (URL)",
+    "save": "Publish profile",
+    "saving": "Publishing",
+    "emptyAbout": "No kind 0 description.",
+    "hint": "This goes to the relays as kind 0. Any Nostr client can read it.",
+    "lookup": "Look up another npub",
+    "look": "Search",
+    "errors": {
+      "profile-publish-failed": "The profile did not go out. Check that a relay is up.",
+      "profile-lookup-failed": "Could not find that profile on the relays."
+    }
+  },
+  "relays": {
+    "add": "Add",
+    "remove": "Remove",
+    "hint": "Tor comes later, only on the path of these connections. Not on video.",
+    "errors": {
+      "invalid-relay-url": "Use a ws:// or wss:// address.",
+      "relay-exists": "That relay is already in the list."
+    }
+  },
+  "mute": {
+    "hint": "This only hides it on your screen. The relay still has the event.",
+    "pubkey": "Mute",
+    "word": "Word",
+    "add": "Add",
+    "unmute": "Unmute",
+    "errors": {
+      "mute-load-failed": "Could not read your mute list.",
+      "mute-save-failed": "Could not publish the mute list."
+    }
+  },
+  "dms": {
+    "title": "Messages",
+    "lead": "NIP-17. A third party on the relay cannot read this.",
+    "lookup": "npub or public key",
+    "placeholder": "Write in private",
+    "emptyTitle": "No conversations",
+    "emptyBody": "Click a member or paste an npub. You need the key on this device.",
+    "threadEmpty": "Nobody spoke yet. The first message goes out encrypted.",
+    "errors": {
+      "dm-needs-local-key": "DMs need the local lock. A NIP-07 extension cannot encrypt here yet.",
+      "dm-send-failed": "The conversation did not go out."
+    }
+  },
+  "live": {
+    "go": "Go live",
+    "on": "Broadcast on air",
+    "watch": "Watch",
+    "ipWarn": "Going live reveals your IP to the media server (MediaMTX), even if chat is on Tor. Media never enters the circuit. Continue?"
+  },
+  "voice": {
+    "hint": "LiveKit stage. Off Tor.",
+    "mute": "Mute",
+    "unmute": "Talk",
+    "camOn": "Camera",
+    "camOff": "No camera",
+    "noTor": "The stage reveals your IP to the LiveKit server. Tor does not carry voice — and does not hide this IP.",
+    "status": {
+      "idle": "Off stage",
+      "connecting": "Entering the stage",
+      "live": "On air",
+      "error": "Stage closed"
+    },
+    "errors": {
+      "voice-no-stage": "This channel has no LiveKit tag in metadata.",
+      "voice-connect-failed": "The stage JWT did not come. The relay must serve /.well-known/nip29/livekit.",
+      "voice-camera-failed": "The camera did not open."
+    }
+  },
+  "tor": {
+    "hint": "SOCKS5 only on the path of Nostr events, and it is not wired to the WebSocket yet. This screen stores the address. Voice and live never enter the circuit — going live reveals your IP to MediaMTX.",
+    "enable": "Use the Tor circuit when the PC app is running (Phase 7 applies SOCKS)",
+    "clearnetHint": "Text relays stay on the normal list, like",
+    "health": {
+      "off": "Circuit off.",
+      "browser": "The browser cannot speak SOCKS. Open the PC app with Tor on 9050.",
+      "ready": "Circuit ready for the PC app.",
+      "fail": "On, but a .onion relay is missing."
+    }
+  }
+}

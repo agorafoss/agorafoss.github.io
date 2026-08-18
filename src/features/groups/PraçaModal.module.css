@@ -1,0 +1,27 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 0.5);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  flex: 1;
+  min-height: 34px;
+  border-radius: var(--r-sm);
+  color: var(--mute);
+}
+
+.tab[data-on="true"] {
+  background: var(--raised);
+  color: var(--paper);
+}

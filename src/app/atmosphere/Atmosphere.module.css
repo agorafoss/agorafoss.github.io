@@ -1,0 +1,100 @@
+.canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.canvas[data-live="true"] {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.canvas[data-live="true"]:active {
+  cursor: grabbing;
+}
+
+.canvas[data-intensity="room"] {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.tag {
+  position: fixed;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  padding: 4px 10px;
+  border: 1px solid rgb(230 162 60 / 0.35);
+  border-radius: 999px;
+  background: rgb(16 14 12 / 0.78);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tag:hover {
+  background: rgb(230 162 60 / 0.16);
+}
+
+.tag[data-id="tor"] {
+  color: var(--paper-soft);
+  border-color: rgb(237 228 212 / 0.25);
+}
+
+.tag[data-id="you"] {
+  background: rgb(230 162 60 / 0.14);
+  pointer-events: none;
+}
+
+.sheet {
+  position: fixed;
+  z-index: 4;
+  width: min(280px, 70vw);
+  max-height: 42vh;
+  overflow: auto;
+  transform: translate(-10%, 0);
+  padding: 10px 12px 12px;
+  border: 1px solid rgb(230 162 60 / 0.22);
+  border-radius: var(--r-md);
+  background: rgb(16 14 12 / 0.88);
+  backdrop-filter: blur(16px);
+  pointer-events: auto;
+  animation: sheet-in 220ms var(--ease);
+}
+
+.sheet header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.sheet li {
+  padding: 4px 0;
+  border-top: 1px solid rgb(255 255 255 / 0.04);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--paper-soft);
+  word-break: break-all;
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translate(-10%, 6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-10%, 0);
+  }
+}

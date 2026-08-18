@@ -1,0 +1,38 @@
+.meter {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: var(--h, 12px);
+}
+
+.bar {
+  width: 2px;
+  border-radius: 1px;
+  background: var(--line);
+  transform-origin: bottom;
+}
+
+.bar[data-on="true"] {
+  background: var(--signal);
+}
+
+.bar[data-live="true"][data-on="true"] {
+  animation: pulse var(--dur-bar, 900ms) var(--ease) infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar[data-live="true"][data-on="true"] {
+    animation: none;
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scaleY(0.45);
+    opacity: 0.55;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

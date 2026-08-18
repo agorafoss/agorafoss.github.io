@@ -1,0 +1,91 @@
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 12px;
+  background: var(--inset);
+  border-right: 1px solid var(--line);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  width: 100%;
+  overflow: auto;
+}
+
+.home,
+.server,
+.add {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  color: var(--paper);
+  transition:
+    background var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.home {
+  background: var(--raised);
+  color: var(--signal);
+}
+
+.home[data-active="true"] {
+  box-shadow: inset 0 0 0 1px rgb(230 162 60 / 0.45);
+}
+
+.server {
+  background: hsl(var(--hue) 22% 24%);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.add {
+  color: var(--mute);
+  border: 1px dashed var(--line);
+}
+
+.home:hover,
+.server:hover,
+.add:hover {
+  transform: translateY(-1px);
+  background: var(--hover);
+}
+
+.server[data-active="true"] {
+  box-shadow: inset 0 0 0 1px rgb(230 162 60 / 0.45);
+}
+
+.needle {
+  position: absolute;
+  left: -10px;
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  background: var(--signal);
+  opacity: 0;
+  transform: scaleY(0.4);
+  transition:
+    opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.server[data-active="true"] .needle {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.rule {
+  width: 22px;
+  height: 1px;
+  background: var(--line);
+}

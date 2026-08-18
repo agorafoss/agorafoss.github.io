@@ -1,0 +1,76 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) var(--channels) minmax(0, 1fr) var(--members);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: rgb(16 14 12 / 0.72);
+  pointer-events: auto;
+}
+
+.shell > * {
+  min-height: 0;
+  min-width: 0;
+}
+
+.channels,
+.members {
+  height: 100%;
+  overflow: hidden;
+}
+
+.shell[data-channels="false"] .channels {
+  display: none;
+}
+
+.shell[data-members="false"] .members,
+.members[hidden] {
+  display: none;
+}
+
+.shell[data-channels="true"][data-members="true"] {
+  grid-template-columns: var(--rail) var(--channels) minmax(0, 1fr) var(--members);
+}
+
+.shell[data-channels="true"][data-members="false"] {
+  grid-template-columns: var(--rail) var(--channels) minmax(0, 1fr);
+}
+
+.shell[data-channels="false"][data-members="true"] {
+  grid-template-columns: var(--rail) minmax(0, 1fr) var(--members);
+}
+
+.shell[data-channels="false"][data-members="false"] {
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+}
+
+.shell[data-dms="true"] {
+  grid-template-columns: var(--rail) var(--channels) minmax(0, 1fr);
+}
+
+.shell[data-dms="true"][data-channels="false"] {
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+}
+
+.drawerBtn {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .shell[data-members="true"][data-channels="true"] {
+    grid-template-columns: var(--rail) minmax(180px, 28vw) minmax(0, 1fr) minmax(160px, 24vw);
+  }
+}
+
+@media (max-width: 900px) {
+  .shell[data-channels="true"] .channels {
+    position: fixed;
+    z-index: var(--z-drawer);
+    top: 0;
+    bottom: 0;
+    left: var(--rail);
+    width: min(248px, calc(100vw - var(--rail)));
+    box-shadow: 16px 0 40px rgb(0 0 0 / 0.4);
+  }
+}

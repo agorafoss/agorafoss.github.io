@@ -1,0 +1,14 @@
+.face {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: var(--size, 32px);
+  height: var(--size, 32px);
+  border-radius: var(--r-sm);
+  background: hsl(var(--hue) 28% 28%);
+  color: var(--paper);
+  font-size: calc(var(--size, 32px) * 0.36);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+}

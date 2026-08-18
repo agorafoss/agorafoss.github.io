@@ -1,0 +1,26 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, 28px);
+  gap: 4px;
+  padding: 8px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.cell {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+}
+
+.cell:hover {
+  background: var(--hover);
+}
+
+.cell img {
+  width: 20px;
+  height: 20px;
+}

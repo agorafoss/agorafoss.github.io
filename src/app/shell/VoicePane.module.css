@@ -1,0 +1,56 @@
+.stage {
+  display: grid;
+  place-items: center;
+  gap: 16px;
+  min-height: 40vh;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.status {
+  font-size: var(--fs-xl);
+  color: var(--paper);
+}
+
+.warn {
+  max-width: 42ch;
+  color: var(--live);
+  font-size: var(--fs-sm);
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.controls button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--r-md);
+  background: var(--raised);
+  border: 1px solid var(--line);
+}
+
+.controls button[data-off="true"] {
+  color: var(--live);
+}
+
+.people {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 40ch;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+}
+
+.people li {
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+  background: var(--raised);
+  color: var(--signal);
+}
