@@ -164,7 +164,7 @@ Cada fase é entregável sozinha. Não misturar voz com Tor. Não misturar Go Li
 
 ### Fase 0 — Fundação
 
-- [x] Repositório, AGPL, README, princípios, `SECURITY.md`
+- [x] Repositório, AGPL, README, princípios, `docs/SECURITY.md`
 - [x] Scaffold Vite + React + tokens de UI + i18n `pt-BR`
 - [x] Shell de 4 colunas (rail / canais / chat / membros)
 
@@ -284,7 +284,7 @@ Cada item vira passo próprio, não um saco.
 - [ ] NIP-46 (bunker, chave fora do app)
 - [ ] Companion: `docker compose` com relay NIP-29 + LiveKit + MediaMTX (“subir meu servidor”)
 - [ ] Denúncia no cliente (id do evento + relay) e guia de moderação para quem hospeda Blossom/relay
-- [ ] Guia legal do self-hoster (rascunho em `docs/HOSPEDAR.md` — não é conselho jurídico)
+- [ ] Guia legal do self-hoster (rascunho em `HOSPEDAR.md` — não é conselho jurídico)
 - [ ] Mobile (bem depois)
 
 ---
@@ -301,7 +301,7 @@ Cada item vira passo próprio, não um saco.
 | WHEP ainda é draft IETF | WHIP é RFC 9725. Não tratar o wire WHEP como congelado |
 | Brasil bloqueia relays conhecidos | Usuário cola qualquer URL; `.onion`; convite `naddr` fora da banda |
 | `nsec` vaza = conta perdida | Cifra + aviso + NIP-07 / NIP-46 |
-| Quem hospeda Blossom/relay é o recinto (lei local) | Princípio 8 + `docs/HOSPEDAR.md`. Denúncia e política do recinto na Fase 9 |
+| Quem hospeda Blossom/relay é o recinto (lei local) | Princípio 8 + `HOSPEDAR.md`. Denúncia e política do recinto na Fase 9 |
 | Escopo de “cliente completo” mata o projeto | MVP é texto. Voz, live e Tor são fases seguintes, isoladas |
 
 ---

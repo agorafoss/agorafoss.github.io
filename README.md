@@ -14,7 +14,7 @@ Site público: [agorafoss.github.io](https://agorafoss.github.io/).
 
 **Não é** um clone de outro app de comunidades, nem uma promessa de “vídeo anônimo pelo Tor”, nem esconderijo para atividade ilegal.
 
-Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança: [`SECURITY.md`](./SECURITY.md). Quem sobe relay ou mídia: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Fases: [`ROADMAP.md`](./ROADMAP.md).
+Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança: [`docs/SECURITY.md`](./docs/SECURITY.md). Quem sobe relay ou mídia: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Fases: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ## Três planos (não misturar)
 
@@ -51,7 +51,7 @@ O mesmo cliente, empacotado com Tauri 2 (`pnpm tauri:dev` / `pnpm tauri:build`).
 
 ## Emoji
 
-A grade do chat mostra um conjunto pequeno de [OpenMoji](https://openmoji.org/), buscado no CDN. O teclado do sistema já envia qualquer emoji como texto. O catálogo inteiro não entra no repositório — são milhares de arquivos. Como fazer isso depois, sem inchar o projeto, está no [`ROADMAP.md`](./ROADMAP.md) (Fase 9).
+A grade do chat mostra um conjunto pequeno de [OpenMoji](https://openmoji.org/), buscado no CDN. O teclado do sistema já envia qualquer emoji como texto. O catálogo inteiro não entra no repositório — são milhares de arquivos. Como fazer isso depois, sem inchar o projeto, está no [`docs/ROADMAP.md`](./docs/ROADMAP.md) (Fase 9).
 
 ## Licença
 
@@ -75,7 +75,7 @@ Public site: [agorafoss.github.io](https://agorafoss.github.io/).
 
 **It is not** a pixel-perfect clone of another community app, a promise of “anonymous video over Tor”, or a hideout for illegal activity.
 
-Principles: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Security: [`SECURITY.md`](./SECURITY.md). If you run a relay or media stack: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Phases: [`ROADMAP.md`](./ROADMAP.md).
+Principles: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Security: [`docs/SECURITY.md`](./docs/SECURITY.md). If you run a relay or media stack: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Phases: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ## Three planes (do not mix them)
 
@@ -112,7 +112,7 @@ The same client, packaged with Tauri 2 (`pnpm tauri:dev` / `pnpm tauri:build`). 
 
 ## Emoji
 
-The chat grid shows a small [OpenMoji](https://openmoji.org/) set from a CDN. The system keyboard already sends any emoji as text. The full catalog is not in this repo. How to add it later without bloating the tree is in [`ROADMAP.md`](./ROADMAP.md) (phase 9).
+The chat grid shows a small [OpenMoji](https://openmoji.org/) set from a CDN. The system keyboard already sends any emoji as text. The full catalog is not in this repo. How to add it later without bloating the tree is in [`docs/ROADMAP.md`](./docs/ROADMAP.md) (phase 9).
 
 ## License
 
