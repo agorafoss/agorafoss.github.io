@@ -1,13 +1,20 @@
 # Código de conduta
 
-Ágora é um recinto de fala. O código é livre. O que cada comunidade aceita dentro do próprio grupo é decisão dos admins e do relay que eles escolhem.
+O Ágora é um cliente. Cada praça e cada relay definem as próprias regras de conversa. Este texto vale para o **repositório**: issues, pull requests, discussões e qualquer espaço que o projeto mantenha.
 
-O que este projeto **não** aceita no desenvolvimento, nos issues e nos espaços oficiais do repositório:
+## Não aceitamos aqui
 
-- Exploração sexual de menores, CSAM, ou qualquer conteúdo que envolva crianças em contexto sexual
-- Assédio, doxxing e ameaça dirigida a pessoas que contribuem
-- Spam e engenharia social para roubar chaves
+- Exploração sexual de menores, CSAM, ou qualquer conteúdo que envolva criança em contexto sexual.
+- Assédio, doxxing e ameaça a quem contribui.
+- Spam e qualquer tentativa de roubar chave, cadeado ou as 12 palavras.
 
-Liberdade de expressão não é um esconderijo para crime contra criança. Relays e admins podem (e devem poder) expulsar.
+Liberdade de expressão não é esconderijo para crime contra criança. Quem hospeda um relay ou um Blossom tem de expulsar isso. Quem contribui neste repo, também.
 
-Denúncias de segurança: veja `SECURITY.md`.
+## Como tratar as pessoas
+
+Seja direto. Critique o código, não a pessoa. Não peça `nsec`, cadeado nem frase-semente em issue ou chat público.
+
+## Denúncia
+
+Falha de segurança: [`SECURITY.md`](./SECURITY.md).  
+Conduta neste repositório: abra um issue sem detalhes que exponham alguém, ou fale com quem mantém o fork que você estiver usando.

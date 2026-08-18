@@ -1,18 +1,37 @@
 # Como contribuir
 
-1. Leia [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md) e o [`ROADMAP.md`](./ROADMAP.md).
-2. Abra uma issue ou descreva a mudança antes de um PR grande.
-3. Um passo do roadmap por PR, sempre que der.
-4. `pnpm test` e `pnpm lint` passam.
-5. UI em `pt-BR` primeiro. Toda string visível sai do dicionário em `src/i18n/`.
-6. Não misture os três planos: dados (Nostr/Tor), sala (LiveKit), Go Live (MediaMTX).
+Obrigado por querer ajudar. O Ágora é um cliente, não uma plataforma. Leia isto antes de um PR grande.
 
-## Estilo
+## Antes de escrever código
 
-- TypeScript strict.
-- CSS modules + tokens em `src/styles/tokens.css`. Sem Tailwind.
-- Sem blurple do Discord. A cara é rádio de madrugada: carvão, âmbar, papel.
+1. [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md) — o que o projeto é e o que recusa.
+2. [`ROADMAP.md`](./ROADMAP.md) — o que já existe e o que vem depois. Um passo do mapa por PR, sempre que der.
+3. Abra uma issue e descreva a mudança se ela cruzar mais de um ficheiro ou um plano de transporte.
 
-## Segurança
+Não misture os planos: eventos Nostr (e Tor), sala LiveKit, Go Live MediaMTX. Tor nunca carrega voz nem vídeo.
 
-Chave (`nsec`) nunca vai para `localStorage` em texto puro, nunca vai para analytics, nunca vai para o relay sem cifra de DM. Veja `SECURITY.md`.
+## Ambiente
+
+Node 22+ e [pnpm](https://pnpm.io/).
+
+```bash
+pnpm install
+pnpm dev
+pnpm test
+pnpm lint
+```
+
+A interface visível sai de `src/i18n/pt-BR.json` (e do `en.json` em paralelo). Toda string nova entra nos dois.
+
+## O que um PR precisa
+
+- Testes e lint a passar.
+- TypeScript strict, sem `any` novo.
+- CSS modules e tokens em `src/styles/tokens.css`. Sem Tailwind. Sem o roxo do Discord: a cara é carvão, âmbar e papel.
+- Sem `nsec`, cadeado ou frase-semente no código, no `localStorage` em claro, ou em log.
+
+Chave só no cofre (PBKDF2 + AES-GCM) ou na extensão NIP-07. Detalhe: [`SECURITY.md`](./SECURITY.md).
+
+## O que não entra num PR “de passagem”
+
+Tor no WebSocket (Fase 7), keystore nativo, catálogo OpenMoji inteiro no repo, PhotoDNA. Cada um tem o próprio passo no roadmap.

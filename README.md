@@ -1,73 +1,119 @@
 # Ágora
 
-Cliente de comunidades no modelo Discord, sem empresa no meio.
+Cliente livre de comunidades no espírito de uma praça: servidores, canais, conversa, voz e transmissão. Sem empresa no meio, sem e-mail, sem telefone.
 
-Identidade é uma chave Nostr. Servidores são grupos [NIP-29](https://nips.nostr.com/29). Voz e webcam passam por LiveKit. Go Live usa MediaMTX (WHIP/WHEP) anunciado em [NIP-53](https://nips.nostr.com/53). Tor entra só no caminho das mensagens, nunca no vídeo.
+A identidade é uma chave [Nostr](https://nostr.com/). Uma praça é um grupo [NIP-29](https://nips.nostr.com/29). Quem tem as **12 palavras** entra em qualquer aparelho; o **cadeado** é o mesmo em todos. A interface nasce em português.
 
-Livre. AGPL-3.0-or-later. Qualquer um usa, lê, forka e sobe o próprio recinto.
+Licença [AGPL-3.0-or-later](./LICENSE). Qualquer um usa, lê, forka e, se hospedar uma versão modificada, abre o código.
+
+Site público: [agorafoss.github.io](https://agorafoss.github.io/).
+
+## O que é e o que não é
+
+**É** um cliente. Fala com relays e servidores de mídia que você escolhe. Não temos API, não temos banco na nuvem, não desligamos a praça de ninguém.
+
+**Não é** um clone pixel a pixel do Discord, nem uma promessa de “vídeo anônimo pelo Tor”, nem esconderijo para exploração de menores.
+
+Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança: [`SECURITY.md`](./SECURITY.md). Quem sobe relay ou mídia: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Fases: [`ROADMAP.md`](./ROADMAP.md).
 
 ## Três planos (não misturar)
 
 | Plano | Peça | Função |
 |---|---|---|
-| Dados | Nostr + Tor opcional | Chat, perfil, cargos, anúncio de live |
-| Segredo de DM | NIP-44 / NIP-17 | Só remetente e destinatário lêem |
-| Sala de voz / webcam | LiveKit + WebRTC | Todo mundo fala. Fora do Tor |
-| Go Live | MediaMTX + WHIP/WHEP + NIP-53 | Um transmite, N assistem. Fora do Tor |
+| Dados | Nostr, Tor opcional | Chat, perfil, cargos, convite, anúncio de live |
+| Segredo | NIP-44 / NIP-17 | Só remetente e destinatário lêem a DM |
+| Sala | LiveKit + WebRTC | Voz e webcam. Fora do Tor |
+| Transmissão | MediaMTX + WHIP/WHEP + NIP-53 | Um transmite, N assistem. Fora do Tor |
 
-Detalhe e fases: [`ROADMAP.md`](./ROADMAP.md). Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança e riscos aceitos: [`SECURITY.md`](./SECURITY.md). Quem hospeda: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md).
+Tor esconde o *caminho* dos eventos. Não cifra o canal público e **não** carrega microfone, câmera nem live. Publicar um Go Live revela o IP ao servidor de mídia.
 
-## Rodar
+## Rodar o cliente
 
-Precisa de [Node 22+](https://nodejs.org/) e [pnpm](https://pnpm.io/).
+Node 22 ou mais novo e [pnpm](https://pnpm.io/).
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Abre em `http://localhost:5173`. Crie o indicativo, uma praça, e fale no `#geral`.
+Abre `http://localhost:5173`. Crie o indicativo, anote as 12 palavras e o cadeado, entre numa praça, fale no `#geral`.
 
 ```bash
 pnpm test
 pnpm build
 ```
 
-## App de PC (Tauri 2)
+Para transmitir: [`docs/GOLIVE.md`](./docs/GOLIVE.md) (`docker compose up`).
 
-Precisa do Rust em `C:\Users\User\ghost-tools` no PATH. Se a pasta do projeto tiver espaço (`Nova pasta`), o `windres` do MinGW quebra; os scripts mandam o target para `%USERPROFILE%\agora-target`.
+## App de PC
 
-```bash
-pnpm tauri:dev
-```
+O mesmo cliente, empacotado com Tauri 2 (`pnpm tauri:dev` / `pnpm tauri:build`). Precisa de Rust no PATH. Deep links `agora:` e `nostr:` ficam registrados. O cadeado ainda é o cofre da web.
 
-Instalador Windows (NSIS):
+## Emoji
 
-```bash
-pnpm tauri:build
-```
-
-O `.exe` abre o mesmo cliente. Deep links `agora:` e `nostr:` ficam registrados. O cadeado ainda é o cofre da web; keystore nativo entra no restante da Fase 8.
-
-Go Live self-host: [`docs/GOLIVE.md`](./docs/GOLIVE.md) (`docker compose up`).
-
-## Ferramentas neste PC
-
-Rust e MinGW já estão em `C:\Users\User\ghost-tools` (rustc 1.97, target `x86_64-pc-windows-gnu`). O desktop Tauri usa isso. O app web não precisa de Rust.
-
-## Emoji (hoje e depois)
-
-A grade do chat usa um **subset** de ~24 [OpenMoji](https://openmoji.org/) desenhados sob demanda no CDN (`jsdelivr` + unicode). O pacote completo **não** vai no `node_modules` — são milhares de SVG e inchariam o repo.
-
-O teclado nativo já manda qualquer emoji como texto (unicode no relay).
-
-**No futuro, para ter o catálogo inteiro sem o projeto ficar gigante:**
-
-1. Continuar no CDN (não commitar os SVGs).
-2. Grade com **busca + categorias**, pedindo só o SVG do código visível.
-3. O evento no Nostr continua sendo o caractere unicode, não um `<img>`.
-4. Emoji *custom do servidor* é outro passo: NIP-30, na Fase 9 do [`ROADMAP.md`](./ROADMAP.md).
+A grade do chat mostra um conjunto pequeno de [OpenMoji](https://openmoji.org/), buscado no CDN. O teclado do sistema já envia qualquer emoji como texto. O catálogo inteiro não entra no repositório — são milhares de arquivos. Como fazer isso depois, sem inchar o projeto, está no [`ROADMAP.md`](./ROADMAP.md) (Fase 9).
 
 ## Licença
 
-[AGPL-3.0-or-later](./LICENSE). Se você hospedar uma versão modificada na rede, o código fonte dessa versão tem que ficar público.
+[AGPL-3.0-or-later](./LICENSE).
+
+---
+
+# Ágora (English)
+
+A free community client in the spirit of a public square: servers, channels, chat, voice and broadcast. No company in the middle, no email, no phone number.
+
+Identity is a [Nostr](https://nostr.com/) key. A square is a [NIP-29](https://nips.nostr.com/29) group. The **12-word phrase** is the account on any device; the **lock** is the same everywhere. The interface is born in Portuguese.
+
+Licensed [AGPL-3.0-or-later](./LICENSE). Anyone may use, read, fork — and if you host a modified version, you publish the source.
+
+Public site: [agorafoss.github.io](https://agorafoss.github.io/).
+
+## What it is and is not
+
+**It is** a client. It talks to relays and media servers you choose. We have no API, no cloud database, and we cannot switch off anyone’s square.
+
+**It is not** a pixel-perfect Discord clone, a promise of “anonymous video over Tor”, or a hideout for the sexual exploitation of children.
+
+Principles: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Security: [`SECURITY.md`](./SECURITY.md). If you run a relay or media stack: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Phases: [`ROADMAP.md`](./ROADMAP.md).
+
+## Three planes (do not mix them)
+
+| Plane | Stack | Role |
+|---|---|---|
+| Data | Nostr, optional Tor | Chat, profile, roles, invites, live announcements |
+| Secrecy | NIP-44 / NIP-17 | Only sender and recipient read a DM |
+| Room | LiveKit + WebRTC | Voice and webcam. Off Tor |
+| Broadcast | MediaMTX + WHIP/WHEP + NIP-53 | One streams, many watch. Off Tor |
+
+Tor hides the *path* of events. It does not encrypt a public channel and it **never** carries microphone, camera or a live. Going live reveals your IP to the media server.
+
+## Run the client
+
+Node 22+ and [pnpm](https://pnpm.io/).
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173`. Create a callsign, write down the 12 words and the lock, join a square, speak in `#geral`.
+
+```bash
+pnpm test
+pnpm build
+```
+
+To broadcast: [`docs/GOLIVE.md`](./docs/GOLIVE.md) (`docker compose up`).
+
+## Desktop app
+
+The same client, packaged with Tauri 2 (`pnpm tauri:dev` / `pnpm tauri:build`). Rust must be on your PATH. Deep links `agora:` and `nostr:` are registered. The lock is still the web vault.
+
+## Emoji
+
+The chat grid shows a small [OpenMoji](https://openmoji.org/) set from a CDN. The system keyboard already sends any emoji as text. The full catalog is not in this repo. How to add it later without bloating the tree is in [`ROADMAP.md`](./ROADMAP.md) (phase 9).
+
+## License
+
+[AGPL-3.0-or-later](./LICENSE).
