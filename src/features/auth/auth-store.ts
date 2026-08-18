@@ -3,7 +3,7 @@ import { generateCadeado, looksLikeCadeado, normalizeCadeado } from "../../lib/n
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { createSigner, getNdk, startNdk, stopNdk } from "../../lib/nostr/ndk.ts";
 import { createMnemonicIdentity, identityFromMnemonic } from "../../lib/nostr/mnemonic.ts";
-import { encodeNpub } from "../../lib/nostr/nip19.ts";
+import { encodeNpub, encodeNsec } from "../../lib/nostr/nip19.ts";
 import { hasNip07 } from "../../lib/nostr/nip07.ts";
 import { claimPairing, startPairingSession } from "../../lib/nostr/pairing.ts";
 import { identityFromSecret } from "../../lib/nostr/keys.ts";
@@ -24,6 +24,7 @@ export type AuthStatus = "loading" | "setup" | "locked" | "reveal" | "ready";
 type Reveal = {
   cadeado: string;
   mnemonic: string | null;
+  nsec: string | null;
 };
 
 type AuthState = {
@@ -173,7 +174,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         pubkey: identity.pubkey,
         npub: identity.npub,
         callsign: publicCallsign(identity.pubkey),
-        reveal: { cadeado, mnemonic },
+        reveal: { cadeado, mnemonic, nsec: encodeNsec(identity.secretKey) },
         error: null,
       });
     } catch (error) {

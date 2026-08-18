@@ -1,4 +1,4 @@
-import { Copy, GearSix, Hash, Plus, SignOut, SpeakerHigh, Translate } from "@phosphor-icons/react";
+import { Copy, GearSix, Hash, Lock, Plus, SignOut, SpeakerHigh, Translate } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../features/auth/auth-store.ts";
@@ -28,6 +28,7 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
   const npub = useAuthStore((state) => state.npub);
   const pubkey = useAuthStore((state) => state.pubkey);
   const callsign = useAuthStore((state) => state.callsign);
+  const lock = useAuthStore((state) => state.lock);
   const profile = useProfileStore((state) => state.own);
   const liveRelays = useRelayStore((state) => state.live);
   const channels = useGroupStore((state) => state.channels);
@@ -151,6 +152,14 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
           </button>
           <button type="button" className={styles.iconBtn} title={t("user.settings")} onClick={onOpenSettings}>
             <GearSix size={16} />
+          </button>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            title={t("auth.lock")}
+            onClick={() => void lock()}
+          >
+            <Lock size={16} />
           </button>
         </div>
       </footer>

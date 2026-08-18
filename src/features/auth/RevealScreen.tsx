@@ -13,11 +13,13 @@ export function RevealScreen() {
   const [kept, setKept] = useState(false);
   const [copiedLock, setCopiedLock] = useState(false);
   const [copiedWords, setCopiedWords] = useState(false);
+  const [copiedNsec, setCopiedNsec] = useState(false);
   const words = reveal?.mnemonic ? splitMnemonic(reveal.mnemonic) : [];
 
-  async function copy(value: string, kind: "lock" | "words") {
+  async function copy(value: string, kind: "lock" | "words" | "nsec") {
     await navigator.clipboard.writeText(value);
     if (kind === "lock") setCopiedLock(true);
+    else if (kind === "nsec") setCopiedNsec(true);
     else setCopiedWords(true);
   }
 
@@ -66,9 +68,23 @@ export function RevealScreen() {
           <p className={styles.hint}>{t("auth.newDeviceLock")}</p>
         )}
 
+        {reveal.nsec ? (
+          <>
+            <p className={styles.hint}>{t("auth.nsecHint")}</p>
+            <p className={styles.nsec}>{reveal.nsec}</p>
+            <button
+              type="button"
+              className={styles.secondary}
+              onClick={() => void copy(reveal.nsec ?? "", "nsec")}
+            >
+              {copiedNsec ? t("auth.copied") : t("auth.copyNsec")}
+            </button>
+          </>
+        ) : null}
+
         <label className={styles.check}>
           <input type="checkbox" checked={kept} onChange={(event) => setKept(event.target.checked)} />
-          <span>{words.length === 12 ? t("auth.keptWords") : t("auth.keptCadeado")}</span>
+          <span>{words.length === 12 ? t("auth.keptSecrets") : t("auth.keptCadeado")}</span>
         </label>
         <button
           type="button"

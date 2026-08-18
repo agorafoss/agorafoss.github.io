@@ -281,6 +281,18 @@ textarea {
   border-radius: var(--r-sm);
 }
 
+.nsec {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  word-break: break-all;
+  color: var(--paper);
+  padding: 12px;
+  background: var(--inset);
+  border: 1px solid var(--live);
+  border-radius: var(--r-sm);
+}
+
 .words {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
