@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { loadNetworkMap } from "../../lib/nostr/network.ts";

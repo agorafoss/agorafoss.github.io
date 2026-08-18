@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Copy, Hash, List, SpeakerHigh, Users } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import styles from "./TitleBar.module.css";

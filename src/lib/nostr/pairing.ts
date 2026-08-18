@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
 import { bytesToHex, hexToBytes } from "./keys.ts";
 import { KIND_APP_DATA } from "./kinds.ts";

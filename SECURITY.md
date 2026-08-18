@@ -19,7 +19,7 @@ Abra um issue **sem** a prova de conceito se o buraco ainda não estiver fechado
 
 ## Chaves
 
-Quem tem o `nsec` é dono da conta. Perdeu a chave, perdeu a conta. O app avisa isso na criação. Não existe "esqueci minha senha" no sentido Discord.
+Quem tem o `nsec` é dono da conta. Perdeu a chave, perdeu a conta. O app avisa isso na criação. Não existe "esqueci a senha".
 
 ## Riscos aceitos (anonimato)
 

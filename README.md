@@ -12,7 +12,7 @@ Site público: [agorafoss.github.io](https://agorafoss.github.io/).
 
 **É** um cliente. Fala com relays e servidores de mídia que você escolhe. Não temos API, não temos banco na nuvem, não desligamos a praça de ninguém.
 
-**Não é** um clone pixel a pixel do Discord, nem uma promessa de “vídeo anônimo pelo Tor”, nem esconderijo para atividade ilegal.
+**Não é** um clone de outro app de comunidades, nem uma promessa de “vídeo anônimo pelo Tor”, nem esconderijo para atividade ilegal.
 
 Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança: [`SECURITY.md`](./SECURITY.md). Quem sobe relay ou mídia: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Fases: [`ROADMAP.md`](./ROADMAP.md).
 
@@ -73,7 +73,7 @@ Public site: [agorafoss.github.io](https://agorafoss.github.io/).
 
 **It is** a client. It talks to relays and media servers you choose. We have no API, no cloud database, and we cannot switch off anyone’s square.
 
-**It is not** a pixel-perfect Discord clone, a promise of “anonymous video over Tor”, or a hideout for illegal activity.
+**It is not** a pixel-perfect clone of another community app, a promise of “anonymous video over Tor”, or a hideout for illegal activity.
 
 Principles: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Security: [`SECURITY.md`](./SECURITY.md). If you run a relay or media stack: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Phases: [`ROADMAP.md`](./ROADMAP.md).
 

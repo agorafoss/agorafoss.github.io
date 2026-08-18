@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../auth/auth-store.ts";

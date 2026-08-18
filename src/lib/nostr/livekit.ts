@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { signNip98 } from "./nip98.ts";
 
 export type LivekitCreds = {

@@ -2,7 +2,7 @@
 
 Nome de trabalho. Troca quando quiser.
 
-App de comunidades no modelo Discord, 100% código aberto (AGPL-3.0), sem empresa no meio. Identidade = chave Nostr. Qualquer um usa, lê, forka e sobe o próprio recinto.
+App de comunidades, 100% código aberto (AGPL-3.0), sem empresa no meio. Identidade = chave Nostr. Qualquer um usa, lê, forka e sobe o próprio recinto.
 
 ---
 
@@ -16,8 +16,8 @@ Três planos separados. Não misturar.
 │                                                                 │
 │  1. PLANO DE DADOS          2. SALA INTERATIVA     3. GO LIVE   │
 │     chat, perfil, cargos       voz / webcam          1 → N      │
-│     DMs, convites,             canal estilo          transmissão│
-│     anúncio de live            Discord               estilo     │
+│     DMs, convites,             sala de voz           transmissão│
+│     anúncio de live            e vídeo               estilo     │
 │                                                      “Go Live”  │
 │         │                        │                      │       │
 │         ▼                        ▼                      ▼       │
@@ -113,7 +113,7 @@ Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + Me
 
 **Não é**
 
-- Clone pixel a pixel do Discord
+- Clone pixel a pixel de outro cliente
 - Mesh P2P que inventa protocolo novo
 - Plataforma para atividade ilegal; o cliente não esconde crime
 - Promessa de “vídeo anônimo pelo Tor”
@@ -133,16 +133,16 @@ Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + Me
 | Voz / webcam | LiveKit JS + WebRTC |
 | Go Live | NIP-53 + MediaMTX (WHIP / WHEP / LL-HLS) |
 | Anonimato de rede | Tor SOCKS5 + relays `.onion` |
-| UI | tokens próprios (carvão / âmbar / papel) — não blurple |
+| UI | tokens próprios (carvão / âmbar / papel) |
 | i18n | `pt-BR` primeiro |
 | Licença | AGPL-3.0-or-later |
 | Teste | Vitest + Playwright |
 
 ---
 
-## Mapa Discord → Ágora
+## Vocabulário
 
-| Discord | Ágora |
+| Conceito | Ágora |
 |---|---|
 | Conta | keypair Nostr |
 | Perfil | `kind 0` |
@@ -191,7 +191,7 @@ Cada fase é entregável sozinha. Não misturar voz com Tor. Não misturar Go Li
 
 **Pronto quando:** duas janelas conversam num grupo; recarregar recupera histórico.
 
-### Fase 3 — Servidor estilo Discord
+### Fase 3 — Servidor, canais e cargos
 
 - [x] Subgrupos = canais e categorias
 - [x] Cargos, membros, kick, apagar mensagem, pins
@@ -241,7 +241,7 @@ O núcleo de texto/voz/live já está. Esta fatia é o casco da praça (o “ser
 - [x] Renderer de mídia: imagem/vídeo/link de verdade (hoje o 2º replace come o `<img>` e vaza `png" alt="" />`)
 - [x] Casco mais rápido e responsivo (chat usa a largura; compositor e user dock fixos; sem scrollbar feia)
 - [x] Ajustes **da praça** (não os do usuário): visão, canais, pessoas, sair; editar meta só se mod (9002)
-- [x] Permissões honestas NIP-29, defaults estilo `@everyone` do Discord (falar, reagir, anexo, convite, voz se tiver LiveKit). Kick/apagar/pin/canal/editar praça = 39001. Sem 40 checkboxes que o relay ignora
+- [x] Permissões honestas NIP-29, defaults de membro (falar, reagir, anexo, convite, voz se tiver LiveKit). Kick/apagar/pin/canal/editar praça = 39001. Sem 40 checkboxes que o relay ignora
 - [x] Lista do recinto: todos os membros; separar por cargo; dono em evidência; espaço marcado para bots (bem depois). Online/offline **só com o que o protocolo já dá** — sem inventar presença que vaze IP ou “último visto”
 - [x] Cartão de perfil ao clicar (kind 0 + `AG-XXXX` + about). Cara Ágora (papel/âmbar), não o popout roxo
 - [x] OpenMoji no chat (composer + reações). Phosphor fica no chrome
@@ -302,7 +302,7 @@ Cada item vira passo próprio, não um saco.
 | Brasil bloqueia relays conhecidos | Usuário cola qualquer URL; `.onion`; convite `naddr` fora da banda |
 | `nsec` vaza = conta perdida | Cifra + aviso + NIP-07 / NIP-46 |
 | Quem hospeda Blossom/relay é o recinto (lei local) | Princípio 8 + `docs/HOSPEDAR.md`. Denúncia e política do recinto na Fase 9 |
-| Escopo “Discord completo” mata o projeto | MVP é texto. Voz, live e Tor são fases seguintes, isoladas |
+| Escopo de “cliente completo” mata o projeto | MVP é texto. Voz, live e Tor são fases seguintes, isoladas |
 
 ---
 

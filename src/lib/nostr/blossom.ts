@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { bytesToHex } from "./keys.ts";
 import { stripImageMetadata } from "./media-meta.ts";
 import { signBlossomAuth } from "./nip98.ts";

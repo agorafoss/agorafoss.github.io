@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { ArrowBendUpLeft, Broadcast, Paperclip, PaperPlaneTilt, PushPin, Smiley, Trash } from "@phosphor-icons/react";
 import { memo, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";

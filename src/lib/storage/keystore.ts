@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { publicCallsign } from "../nostr/callsign.ts";
 import type { AuthMethod, Identity } from "../nostr/types.ts";
 import { openSecret, sealSecret } from "./crypto.ts";

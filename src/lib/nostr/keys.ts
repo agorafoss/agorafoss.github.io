@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { generateSecretKey, getPublicKey } from "nostr-tools";
 import { decodeNsec, encodeNpub, encodeNsec } from "./nip19.ts";
 import type { Identity } from "./types.ts";

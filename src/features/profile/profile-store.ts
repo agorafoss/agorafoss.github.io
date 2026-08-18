@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { create } from "zustand";
 import { getNdk } from "../../lib/nostr/ndk.ts";
 import { decodeNpub } from "../../lib/nostr/nip19.ts";

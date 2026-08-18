@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { useEffect } from "react";
 import { AuthScreen } from "../features/auth/AuthScreen.tsx";
 import { useAuthStore } from "../features/auth/auth-store.ts";

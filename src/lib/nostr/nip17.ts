@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { wrapManyEvents, unwrapEvent } from "nostr-tools/nip17";
 import type { Event as NostrEvent } from "nostr-tools";

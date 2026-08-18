@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { describe, expect, it } from "vitest";
 import { createIdentity, exportNsec, identityFromSecret } from "./keys.ts";
 import { decodeNpub, decodeNsec, encodeNpub, shortenNpub } from "./nip19.ts";

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { KIND_BLOSSOM_AUTH, KIND_NIP98 } from "./kinds.ts";
 import { getNdk } from "./ndk.ts";

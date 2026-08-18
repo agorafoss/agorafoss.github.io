@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { ChatCircle, SpeakerSlash, UserMinus } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

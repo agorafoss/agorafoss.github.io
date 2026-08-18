@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { nip19 } from "nostr-tools";
 import { KIND_GROUP_META } from "./kinds.ts";
 import { fetchRelayPubkey } from "./nip11.ts";

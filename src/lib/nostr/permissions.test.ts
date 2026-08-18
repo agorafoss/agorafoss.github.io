@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { describe, expect, it } from "vitest";
 import { canModerate, MEMBER_DEFAULTS, MOD_ONLY, roleLabel, rolesOf } from "./permissions.ts";
 
@@ -21,7 +24,7 @@ describe("permissions", () => {
     expect(canModerate(admins, null)).toBe(false);
   });
 
-  it("lists honest member defaults without inventing discord bits", () => {
+  it("lists honest member defaults without inventing extra bits", () => {
     expect(MEMBER_DEFAULTS).toContain("speak");
     expect(MOD_ONLY).toContain("kick");
     expect(MOD_ONLY).not.toContain("speak");

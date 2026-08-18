@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { mediaPeerConfig } from "./ice.ts";
 
 export const DEFAULT_WHIP = "http://localhost:8889/live/agora/whip";

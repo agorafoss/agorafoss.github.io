@@ -27,7 +27,7 @@ A interface visível sai de `src/i18n/pt-BR.json` (e do `en.json` em paralelo). 
 
 - Testes e lint a passar.
 - TypeScript strict, sem `any` novo.
-- CSS modules e tokens em `src/styles/tokens.css`. Sem Tailwind. Sem o roxo do Discord: a cara é carvão, âmbar e papel.
+- CSS modules e tokens em `src/styles/tokens.css`. Sem Tailwind. A cara é carvão, âmbar e papel.
 - Sem `nsec`, cadeado ou frase-semente no código, no `localStorage` em claro, ou em log.
 
 Chave só no cofre (PBKDF2 + AES-GCM) ou na extensão NIP-07. Detalhe: [`SECURITY.md`](./SECURITY.md).

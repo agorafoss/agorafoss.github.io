@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { create } from "zustand";
 import { DEFAULT_TOR, isOnionRelay, torAvailableInBrowser, type TorSettings } from "../../lib/nostr/tor.ts";
 import { readKv, writeKv } from "../../lib/storage/keystore.ts";

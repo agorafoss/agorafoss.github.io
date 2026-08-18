@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { useTranslation } from "react-i18next";
 import { DEFAULT_RELAYS } from "../../lib/nostr/relays.ts";
 import { isOnionRelay } from "../../lib/nostr/tor.ts";

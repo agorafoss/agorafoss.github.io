@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 import { liveFilter, parseLive, publishLive, type LiveAnnouncement } from "../../lib/nostr/live.ts";

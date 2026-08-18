@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { NDKKind } from "@nostr-dev-kit/ndk";
 
 export const KIND_METADATA = 0;

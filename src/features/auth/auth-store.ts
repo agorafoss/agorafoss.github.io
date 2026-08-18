@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { create } from "zustand";
 import { generateCadeado, looksLikeCadeado, normalizeCadeado } from "../../lib/nostr/cadeado.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";

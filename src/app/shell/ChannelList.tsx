@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Copy, GearSix, Hash, Lock, Plus, SignOut, SpeakerHigh, Translate } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

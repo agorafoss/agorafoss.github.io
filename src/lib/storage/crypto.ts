@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 const ITERATIONS = 400_000;
 
 export type SealedSecret = {

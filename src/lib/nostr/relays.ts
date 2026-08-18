@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 export const GROUP_RELAY = "wss://groups.fiatjaf.com";
 
 export const CREATE_RELAY = "wss://groups.0xchat.com";

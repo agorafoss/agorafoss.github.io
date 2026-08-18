@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 const ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
 export function publicCallsign(pubkey: string): string {

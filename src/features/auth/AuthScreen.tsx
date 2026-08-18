@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Key, Plugs, Radio, Translate, Waveform } from "@phosphor-icons/react";
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";

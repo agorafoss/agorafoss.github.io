@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { generateSeedWords, privateKeyFromSeedWords, validateWords } from "nostr-tools/nip06";
 import { getPublicKey } from "nostr-tools";
 import { encodeNpub } from "./nip19.ts";

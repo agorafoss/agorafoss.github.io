@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { generateSecretKey, getPublicKey } from "nostr-tools";
 import { wrapEvent, wrapManyEvents } from "nostr-tools/nip17";
 import { describe, expect, it } from "vitest";

@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 const cache = new Map<string, string | null>();
 
 function relayToHttp(relay: string): string {

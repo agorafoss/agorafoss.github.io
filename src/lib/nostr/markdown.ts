@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 const TOKEN = "\u0000MD";
 
 const IMAGE_EXT = "png|jpe?g|gif|webp|avif";

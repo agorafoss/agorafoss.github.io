@@ -1,3 +1,6 @@
+// Copyright (C) 2026 Ágora
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { nip19 } from "nostr-tools";
 
 export function encodeNpub(pubkey: string): string {
