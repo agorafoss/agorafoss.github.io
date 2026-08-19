@@ -1,6 +1,6 @@
 # Ágora
 
-> **Versão 0.1. Inicial.** Tem bugs. Tela pode travar, mensagem sair errada, palco não abrir. **Não use para nada que não possa perder.** Relatos: [Issues](https://github.com/agorafoss/agorafoss.github.io/issues).
+> **Versão 0.2 (branch `0.2`).** Palco mesh, stream, salas privadas, DeepFilterNet 3. Tem bugs. **Não use para nada que não possa perder.** Relatos: [Issues](https://github.com/agorafoss/agorafoss.github.io/issues). O site público em `main` continua 0.1.
 
 Cliente livre de comunidades no espírito de uma praça: servidores, canais, conversa, voz e transmissão. Sem empresa no meio, sem e-mail, sem telefone.
 
@@ -76,7 +76,7 @@ A grade do chat mostra um conjunto pequeno de [OpenMoji](https://openmoji.org/),
 
 # Ágora (English)
 
-> **Version 0.1. Early.** There are bugs. The UI can freeze, a message can land wrong, the stage can stay closed. **Do not use it for anything you cannot lose.** Reports: [Issues](https://github.com/agorafoss/agorafoss.github.io/issues).
+> **Version 0.2 (`0.2` branch).** Mesh stage, stream, private rooms, DeepFilterNet 3. There are bugs. **Do not use it for anything you cannot lose.** Reports: [Issues](https://github.com/agorafoss/agorafoss.github.io/issues). The public site on `main` stays 0.1.
 
 A free community client in the spirit of a public square: servers, channels, chat, voice and broadcast. No company in the middle, no email, no phone number.
 

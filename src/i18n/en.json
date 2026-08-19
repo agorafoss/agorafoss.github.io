@@ -7,7 +7,7 @@
     "enter": "Enter",
     "desktop": "PC app",
     "back": "Back",
-    "noticeTitle": "Version 0.1. Early.",
+    "noticeTitle": "Version 0.2. Stage and stream.",
     "notice": "There are bugs. The UI can freeze, a message can land wrong, the stage can stay closed. Do not use it for anything you cannot lose.",
     "heroTitle": "A square with no owner.",
     "heroLead": "Chat on a Nostr key. Voice and live on the PC app. No company in the middle.",
