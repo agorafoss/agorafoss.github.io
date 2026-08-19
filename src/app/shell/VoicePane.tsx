@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import {
-  Broadcast,
   CornersIn,
   CornersOut,
   Microphone,
@@ -126,7 +125,6 @@ export function VoicePane({
   const muted = useVoiceStore((state) => state.muted);
   const camera = useVoiceStore((state) => state.camera);
   const screen = useVoiceStore((state) => state.screen);
-  const broadcasting = useVoiceStore((state) => state.broadcasting);
   const error = useVoiceStore((state) => state.error);
   const peers = useVoiceStore((state) => state.peers);
   const localVideo = useVoiceStore((state) => state.localVideo);
@@ -136,8 +134,6 @@ export function VoicePane({
   const toggleMute = useVoiceStore((state) => state.toggleMute);
   const toggleCamera = useVoiceStore((state) => state.toggleCamera);
   const toggleScreen = useVoiceStore((state) => state.toggleScreen);
-  const startBroadcast = useVoiceStore((state) => state.startBroadcast);
-  const stopBroadcast = useVoiceStore((state) => state.stopBroadcast);
   const circuit = useTorStore((state) => state.enabled);
   const names = useChatStore((state) => state.names);
   const pubkey = useAuthStore((state) => state.pubkey);
@@ -239,23 +235,6 @@ export function VoicePane({
           <button type="button" onClick={() => void toggleScreen()} data-off={!screen} disabled={status !== "live"}>
             <Monitor size={18} />
             {t(screen ? "voice.screenOff" : "voice.screenOn")}
-          </button>
-          <button
-            type="button"
-            className={voice.stream}
-            onClick={() => {
-              if (broadcasting) {
-                void stopBroadcast();
-                return;
-              }
-              if (!window.confirm(`${t("voice.ipWarn")}\n\n${t("voice.qualityWarn")}`)) return;
-              void startBroadcast(channel);
-            }}
-            data-on={broadcasting}
-            disabled={status !== "live"}
-          >
-            <Broadcast size={18} />
-            {t(broadcasting ? "live.stop" : "live.go")}
           </button>
         </div>
       </div>

@@ -26,7 +26,14 @@
 }
 
 .grid[data-count="1"] {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+}
+
+.grid[data-count="1"] .tile {
+  width: min(100%, 1100px);
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
 }
 
 .grid[data-count="2"] {
@@ -70,20 +77,34 @@
 .face {
   display: block;
   width: 100%;
-  min-height: 140px;
+  min-height: 0;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   background: #111;
 }
 
+.face {
+  min-height: 140px;
+}
+
 .tile:fullscreen {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
   border-radius: 0;
   border: 0;
+  background: #000;
 }
 
 .tile:fullscreen video,
 .tile:fullscreen .face {
-  min-height: 100%;
+  min-height: 0;
+  height: 100%;
+  object-fit: contain;
 }
 
 .face {
@@ -179,17 +200,4 @@
 
 .controls button[data-off="true"] {
   color: var(--live);
-}
-
-.stream {
-  color: var(--void);
-  background: var(--signal) !important;
-  border-color: var(--signal) !important;
-  font-weight: 600;
-}
-
-.stream[data-on="true"] {
-  color: var(--paper);
-  background: var(--live) !important;
-  border-color: var(--live) !important;
 }
