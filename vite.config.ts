@@ -1,10 +1,11 @@
+// @ts-nocheck — plugin do .tar.gz usa APIs Node; tsc -b do Pages não tem @types/node.
 // Copyright (C) 2026 Ágora
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { defineConfig, type ViteDevServer } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 const MODEL_PATH = "/deepfilternet3/v3/models/DeepFilterNet3_onnx.tar.gz";
@@ -29,10 +30,10 @@ function serveRawTarGz() {
   };
   return {
     name: "agora-raw-tar-gz",
-    configureServer(server: ViteDevServer) {
+    configureServer(server) {
       server.middlewares.use(handle);
     },
-    configurePreviewServer(server: ViteDevServer) {
+    configurePreviewServer(server) {
       server.middlewares.use(handle);
     },
   };
