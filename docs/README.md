@@ -1,5 +1,8 @@
 # Documentação
 
+Leitura seguida, no site (branch `0.2`): `#docs`. No GitHub, comece pelo guia.
+
+- [Como a praça funciona](./GUIA.md) — identidade, 12 palavras, chave de sala, palco, relays
 - [Princípios](./PRINCIPIOS.md)
 - [Roadmap](./ROADMAP.md)
 - [Segurança](./SECURITY.md)

@@ -1,0 +1,251 @@
+/* Copyright (C) 2026 Ágora
+ * SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.page {
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  pointer-events: auto;
+  color: var(--paper);
+  background: rgb(16 14 12 / 0.55);
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 56px;
+  padding: 0 28px;
+  background: rgb(16 14 12 / 0.88);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--signal);
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.enter,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.enter {
+  background: var(--signal);
+  color: var(--inset);
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: rgb(16 14 12 / 0.45);
+  color: var(--paper);
+}
+
+.ghost:hover,
+.brand:hover {
+  color: var(--paper);
+  background: var(--hover);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  width: min(1080px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 36px 0 96px;
+}
+
+.toc {
+  position: sticky;
+  top: 72px;
+  align-self: start;
+  display: grid;
+  gap: 8px;
+}
+
+.tocKicker {
+  margin: 0 0 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.toc a {
+  color: var(--mute);
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+}
+
+.toc a:hover {
+  color: var(--signal);
+}
+
+.body {
+  min-width: 0;
+}
+
+.kicker {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.body h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+.lead {
+  margin: 16px 0 0;
+  max-width: 58ch;
+  color: var(--paper-soft);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+}
+
+.repo {
+  margin: 10px 0 0;
+  color: var(--dim);
+  font-size: var(--fs-sm);
+}
+
+.section {
+  margin-top: 40px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.section h2 {
+  margin: 20px 0 12px;
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.section p,
+.section li {
+  max-width: 62ch;
+  color: var(--paper-soft);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+}
+
+.section ul {
+  margin: 10px 0 0;
+  padding-left: 1.2em;
+}
+
+.section li + li {
+  margin-top: 6px;
+}
+
+.note {
+  margin-top: 14px !important;
+  padding: 12px 14px;
+  border-left: 2px solid var(--signal);
+  background: var(--signal-glow);
+  color: var(--paper) !important;
+}
+
+.tableWrap {
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: rgb(16 14 12 / 0.65);
+}
+
+.section table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.section th,
+.section td {
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.section th {
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.section td {
+  color: var(--paper-soft);
+}
+
+.section tr:last-child td {
+  border-bottom: 0;
+}
+
+.section td:first-child {
+  color: var(--paper);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 820px) {
+  .nav {
+    padding: 0 16px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    width: calc(100% - 32px);
+    gap: 20px;
+    padding-top: 24px;
+  }
+
+  .toc {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+
+  .section td:first-child {
+    white-space: normal;
+  }
+}

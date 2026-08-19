@@ -61,6 +61,9 @@ export function Landing({ onEnter }: Props) {
           <button type="button" className={styles.ghost} onClick={() => void changeLocale(nextLocale)}>
             {nextLocale === "en" ? "EN" : "PT"}
           </button>
+          <a className={styles.ghost} href="#docs">
+            {t("landing.docs")}
+          </a>
           <a className={styles.ghost} href="https://github.com/agorafoss/agora-desktop">
             {t("landing.desktop")}
           </a>
@@ -82,6 +85,9 @@ export function Landing({ onEnter }: Props) {
             <button type="button" className={styles.enter} onClick={onEnter}>
               {t("landing.enter")}
             </button>
+            <a className={styles.ghost} href="#docs">
+              {t("landing.docs")}
+            </a>
             <a className={styles.ghost} href="https://github.com/agorafoss/agora-desktop">
               {t("landing.desktop")}
             </a>

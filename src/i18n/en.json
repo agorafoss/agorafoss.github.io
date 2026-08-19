@@ -5,6 +5,7 @@
   },
   "landing": {
     "enter": "Enter",
+    "docs": "Docs",
     "desktop": "PC app",
     "back": "Back",
     "noticeTitle": "Version 0.2. Stage and stream.",
