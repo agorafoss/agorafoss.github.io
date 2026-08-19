@@ -15,7 +15,11 @@ import styles from "./AuthScreen.module.css";
 
 type Mode = "choose" | "create" | "recover" | "pair" | "advanced";
 
-export function AuthScreen() {
+type Props = {
+  onBack?: () => void;
+};
+
+export function AuthScreen({ onBack }: Props) {
   const { t, i18n } = useTranslation();
   const status = useAuthStore((state) => state.status);
   const callsign = useAuthStore((state) => state.callsign);
@@ -37,6 +41,11 @@ export function AuthScreen() {
         <p className={styles.lead}>
           {status === "locked" ? t("auth.unlockLead") : t("auth.setupLead")}
         </p>
+        {onBack && mode === "choose" ? (
+          <button type="button" className={styles.ghost} onClick={onBack}>
+            {t("landing.back")}
+          </button>
+        ) : null}
         {!hasSecureCrypto() ? <p className={styles.error}>{t("auth.errors.insecure-context")}</p> : null}
 
         {status === "locked" ? (

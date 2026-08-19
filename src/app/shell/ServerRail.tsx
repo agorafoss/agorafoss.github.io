@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Ágora
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Plus, Waveform } from "@phosphor-icons/react";
+import { Lock, Plus, Waveform } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { hueFromPubkey } from "../../lib/nostr/nip19.ts";
 import { groupKey, type GroupRef } from "../../lib/nostr/nip29.ts";
@@ -14,6 +14,7 @@ type Props = {
   onHome: () => void;
   onSelect: (group: GroupRef) => void;
   onAdd: () => void;
+  onLock: () => void;
 };
 
 function shortName(name: string): string {
@@ -22,7 +23,7 @@ function shortName(name: string): string {
   return name.slice(0, 2).toUpperCase() || "AG";
 }
 
-export function ServerRail({ groups, activeKey, homeActive, onHome, onSelect, onAdd }: Props) {
+export function ServerRail({ groups, activeKey, homeActive, onHome, onSelect, onAdd, onLock }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -47,6 +48,9 @@ export function ServerRail({ groups, activeKey, homeActive, onHome, onSelect, on
           </button>
         ))}
       </div>
+      <button className={styles.lock} type="button" title={t("auth.lock")} onClick={onLock}>
+        <Lock size={18} weight="bold" />
+      </button>
       <button className={styles.add} type="button" title={t("rail.add")} onClick={onAdd}>
         <Plus size={18} weight="bold" />
       </button>

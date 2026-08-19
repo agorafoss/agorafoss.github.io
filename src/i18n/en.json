@@ -3,6 +3,63 @@
     "name": "Ágora",
     "title": "Ágora"
   },
+  "landing": {
+    "enter": "Enter",
+    "desktop": "PC app",
+    "back": "Back",
+    "noticeTitle": "Version 0.1. Early.",
+    "notice": "There are bugs. The UI can freeze, a message can land wrong, the stage can stay closed. Do not use it for anything you cannot lose.",
+    "heroTitle": "A square with no owner.",
+    "heroLead": "Chat on a Nostr key. Voice and live on the PC app. No company in the middle.",
+    "origin": {
+      "greek": "ἀγορά",
+      "lang": "Ancient Greek. From the verb ἀγείρω: to gather, to bring together.",
+      "title": "The name",
+      "word": "Ágora comes from ἀγορά, the square of the Greek polis. It was not only a market. It was the ground where the city saw itself.",
+      "place": "Bread was sold there and cases were judged there. Decrees were heard there and the sky was argued there. The word names the meeting place, not the palace.",
+      "people": "Philosophers, mathematicians, merchants, artisans, whoever wanted to speak. Socrates walked the agora of Athens. The Stoa Poikile gave the Stoics their name. It was not a closed school. It was the street.",
+      "why": "We chose this name because for us ágora is a synonym of freedom. No owner of the square. No company in the middle. Who holds the key comes in. Who hosts the hall answers for it. Debate does not ask permission."
+    },
+    "license": "AGPL-3.0. Free software.",
+    "gitTitle": "Source",
+    "gitUs": "Ágora on GitHub",
+    "gitUsHint": "Site, issues and the PC app.",
+    "gitNostr": "Nostr on GitHub",
+    "gitNostrHint": "The protocol. NIPs, relays, the spec.",
+    "flowTitle": "How it connects",
+    "flowHint": "Click a block.",
+    "flowClose": "Close",
+    "forks": {
+      "text": "text",
+      "media": "voice / live",
+      "events": "events",
+      "exe": "media in the .exe",
+      "file": "file",
+      "ip": "host IP",
+      "peer": "reaches the other"
+    },
+    "stack": {
+      "identity": "No email",
+      "identityBody": "Twelve words and a lock. The account is the key.",
+      "web": "The site is chat",
+      "webBody": "Stage and broadcast live in the PC app. No Docker.",
+      "wip": "Still in progress",
+      "wipBody": "Errors will show up. Open an issue. This is not a finished product."
+    },
+    "flow": {
+      "you": { "label": "You", "body": "Browser or the .exe. The key signs. Nothing sits on an Ágora server." },
+      "split": { "label": "Text or voice?", "body": "Two wires. Chat and the poster on the relay. Stage and live on the PC app." },
+      "site": { "label": "Site", "body": "agorafoss.github.io. Text only: square, DMs, invite. No JWT. No broadcast." },
+      "desktop": { "label": "PC app", "body": "The same UI in a Tauri window. Later it hosts LiveKit and MediaMTX. No Docker." },
+      "relay": { "label": "Nostr relay", "body": "Signed events. Today groups.0xchat.com. Chat, roles, live poster. No audio." },
+      "blossom": { "label": "Blossom", "body": "Files (photo, video, audio). Chat only carries the URL. The Blossom host sees the uploader IP." },
+      "livekit": { "label": "LiveKit", "body": "Stage: mic and camera. Runs in the host .exe. The JWT does not come from 0xchat." },
+      "mediamtx": { "label": "MediaMTX", "body": "Go Live, one to many. WHIP in, WHEP out. Also in the host .exe." },
+      "lan": { "label": "LAN / Tailscale", "body": "The friend reaches the host IP. Never localhost on the poster: that is their own PC." },
+      "peer": { "label": "Someone else", "body": "Reads chat on the relay. Stage and live only with the PC app and a path to the host." },
+      "tor": { "label": "Tor", "body": "Nostr events only, and the WebSocket is not wired yet. Never voice or live." }
+    }
+  },
   "rail": {
     "home": "Home",
     "dms": "Messages",

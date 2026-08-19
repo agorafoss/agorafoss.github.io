@@ -3,6 +3,63 @@
     "name": "Ágora",
     "title": "Ágora"
   },
+  "landing": {
+    "enter": "Entrar",
+    "desktop": "App de PC",
+    "back": "Voltar",
+    "noticeTitle": "Versão 0.1. Inicial.",
+    "notice": "Tem bugs. Tela pode travar, mensagem sair errada, palco não abrir. Não use para nada que não possa perder.",
+    "heroTitle": "Uma praça sem dono.",
+    "heroLead": "Chat numa chave Nostr. Voz e live no app de PC. Sem empresa no meio.",
+    "origin": {
+      "greek": "ἀγορά",
+      "lang": "Grego antigo. Do verbo ἀγείρω: reunir, ajuntar.",
+      "title": "O nome",
+      "word": "Ágora vem de ἀγορά, a praça da pólis grega. Não era só o mercado. Era o chão onde a cidade se via.",
+      "place": "Ali se vendia pão e se julgava causa. Ali se ouvia decreto e se discutia o céu. A palavra nomeia o lugar do encontro, não o palácio.",
+      "people": "Filósofos, matemáticos, comerciantes, artesãos, quem quisesse falar. Sócrates andava na ágora de Atenas. A Stoa Poikile deu nome aos estóicos. Não era uma escola fechada. Era rua.",
+      "why": "Escolhemos esse nome porque para nós ágora é sinônimo de liberdade. Sem dono da praça. Sem empresa no meio. Quem tem a chave entra. Quem hospeda o recinto responde por ele. O debate não pede licença."
+    },
+    "license": "AGPL-3.0. Código aberto.",
+    "gitTitle": "Código",
+    "gitUs": "Ágora no GitHub",
+    "gitUsHint": "Site, issues e o app de PC.",
+    "gitNostr": "Nostr no GitHub",
+    "gitNostrHint": "O protocolo. NIPs, relays, a spec.",
+    "flowTitle": "Como se liga",
+    "flowHint": "Clique num bloco.",
+    "flowClose": "Fechar",
+    "forks": {
+      "text": "texto",
+      "media": "voz / live",
+      "events": "eventos",
+      "exe": "mídia no .exe",
+      "file": "arquivo",
+      "ip": "IP do host",
+      "peer": "chega no outro"
+    },
+    "stack": {
+      "identity": "Sem e-mail",
+      "identityBody": "Doze palavras e um cadeado. A conta é a chave.",
+      "web": "O site é chat",
+      "webBody": "Palco e transmissão ficam no aplicativo de PC. Sem Docker.",
+      "wip": "Ainda em obra",
+      "wipBody": "Erros vão aparecer. Abra uma issue. Não é produto pronto."
+    },
+    "flow": {
+      "you": { "label": "Você", "body": "Browser ou o .exe. A chave assina. Nada fica num servidor da Ágora." },
+      "split": { "label": "Texto ou voz?", "body": "Dois cabos. Chat e cartaz no relay. Palco e live no app de PC." },
+      "site": { "label": "Site", "body": "agorafoss.github.io. Só texto: praça, DM, convite. Não pede JWT. Não transmite." },
+      "desktop": { "label": "App de PC", "body": "Mesma UI numa janela Tauri. Depois hospeda LiveKit e MediaMTX. Sem Docker." },
+      "relay": { "label": "Relay Nostr", "body": "Eventos assinados. Hoje groups.0xchat.com. Chat, cargos, cartaz de live. Não carrega áudio." },
+      "blossom": { "label": "Blossom", "body": "Arquivos (foto, vídeo, áudio). O chat só leva a URL. O host do Blossom vê o IP de quem sobe." },
+      "livekit": { "label": "LiveKit", "body": "Palco: mic e câmera. Roda no .exe do host. O JWT não vem do 0xchat." },
+      "mediamtx": { "label": "MediaMTX", "body": "Ao vivo 1 para N. WHIP entra, WHEP sai. Também no .exe do host." },
+      "lan": { "label": "LAN / Tailscale", "body": "O amigo alcança o IP do host. Nunca localhost no cartaz: isso é o PC dele." },
+      "peer": { "label": "Outra pessoa", "body": "Lê o chat no relay. Palco e live só se tiver o app de PC e alcançar o host." },
+      "tor": { "label": "Tor", "body": "Só eventos Nostr, e ainda não está no WebSocket. Nunca voz nem live." }
+    }
+  },
   "rail": {
     "home": "Início",
     "dms": "Conversas",

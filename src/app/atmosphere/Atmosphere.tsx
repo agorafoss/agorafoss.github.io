@@ -7,7 +7,7 @@ import { loadNetworkMap } from "../../lib/nostr/network.ts";
 import styles from "./Atmosphere.module.css";
 
 type Props = {
-  intensity?: "stage" | "room";
+  intensity?: "stage" | "room" | "plaza";
 };
 
 type Tag = { id: "you" | "nostr" | "tor"; text: string; x: number; y: number };
@@ -89,6 +89,7 @@ export function Atmosphere({ intensity = "stage" }: Props) {
   const [open, setOpen] = useState<null | "nostr" | "tor">(null);
   const [mesh, setMesh] = useState<Mesh>({ nostr: [], onion: [] });
   const interactive = intensity === "stage";
+  const bright = intensity !== "room";
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -110,7 +111,7 @@ export function Atmosphere({ intensity = "stage" }: Props) {
     const focus = new THREE.Vector3(0, 0.15, 0);
     const placeCamera = () => {
       const width = Math.max(canvas.clientWidth, 1);
-      const card = interactive ? Math.min(420, width * 0.34) : 0;
+      const card = intensity === "stage" ? Math.min(420, width * 0.34) : 0;
       const mid = (width - card) / 2 / width;
       camera.position.set(0, 2.15, interactive ? 8.2 : 9.2);
       focus.set((0.5 - mid) * 6.4, 0.25, 0);
@@ -142,8 +143,8 @@ export function Atmosphere({ intensity = "stage" }: Props) {
     fillBulge(bulge, 520);
     root.add(core, coreGlow, bulge);
 
-    const nostrArm = makeCloud(AMBER, 0.038, intensity === "stage" ? 0.88 : 0.4);
-    const torArm = makeCloud(PAPER, 0.032, intensity === "stage" ? 0.62 : 0.26);
+    const nostrArm = makeCloud(AMBER, 0.038, bright ? 0.88 : 0.4);
+    const torArm = makeCloud(PAPER, 0.032, bright ? 0.62 : 0.26);
     root.add(nostrArm, torArm);
 
     const anchors = {

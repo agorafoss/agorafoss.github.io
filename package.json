@@ -20,6 +20,7 @@
     "@phosphor-icons/react": "^2.1.10",
     "@tauri-apps/api": "^2.11.1",
     "dexie": "^4.4.5",
+    "gsap": "^3.15.0",
     "i18next": "^25.3.2",
     "livekit-client": "^2.22.0",
     "nostr-tools": "^2.24.2",

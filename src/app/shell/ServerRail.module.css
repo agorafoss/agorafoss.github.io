@@ -23,7 +23,8 @@
 
 .home,
 .server,
-.add {
+.add,
+.lock {
   position: relative;
   display: grid;
   place-items: center;
@@ -57,9 +58,16 @@
   border: 1px dashed var(--line);
 }
 
+.lock {
+  color: var(--signal);
+  background: var(--raised);
+  border: 1px solid var(--line);
+}
+
 .home:hover,
 .server:hover,
-.add:hover {
+.add:hover,
+.lock:hover {
   transform: translateY(-1px);
   background: var(--hover);
 }

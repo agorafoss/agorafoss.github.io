@@ -1,0 +1,288 @@
+/* Copyright (C) 2026 Ágora
+ * SPDX-License-Identifier: AGPL-3.0-or-later */
+
+.page {
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  pointer-events: auto;
+  color: var(--paper);
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 56px;
+  padding: 0 28px;
+  background: rgb(16 14 12 / 0.88);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.banner {
+  margin: 0;
+  padding: 10px 28px;
+  background: rgb(196 92 74 / 0.16);
+  border-bottom: 1px solid rgb(196 92 74 / 0.35);
+  color: var(--paper-soft);
+  font-size: var(--fs-sm);
+}
+
+.banner strong {
+  color: var(--live);
+  margin-right: 8px;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  min-height: calc(100dvh - 56px - 44px);
+  padding: 48px 8vw;
+}
+
+.heroPanel {
+  width: min(36rem, 100%);
+  padding: 32px 36px 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: rgb(16 14 12 / 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+.lead {
+  margin: 14px 0 0;
+  max-width: 36ch;
+  color: var(--paper-soft);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.enter,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.enter {
+  background: var(--signal);
+  color: var(--inset);
+}
+
+.enter:hover {
+  filter: brightness(1.06);
+}
+
+.enter:active {
+  transform: translateY(1px);
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: rgb(16 14 12 / 0.45);
+  color: var(--paper);
+}
+
+.ghost:hover {
+  background: var(--hover);
+}
+
+.origin {
+  padding: 56px 8vw 64px;
+  background: rgb(16 14 12 / 0.9);
+  border-top: 1px solid var(--line);
+}
+
+.greek {
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  color: var(--signal);
+}
+
+.greekHint {
+  margin: 8px 0 28px;
+  max-width: 46ch;
+  color: var(--dim);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+}
+
+.originTitle {
+  margin: 0 0 16px;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  letter-spacing: -0.03em;
+}
+
+.originProse {
+  max-width: 58ch;
+}
+
+.originProse p {
+  margin: 0 0 14px;
+  color: var(--paper-soft);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+}
+
+.originProse p:last-child {
+  margin-bottom: 0;
+  color: var(--paper);
+}
+
+.facts {
+  padding: 8px 8vw 8px;
+  background: rgb(16 14 12 / 0.92);
+  border-top: 1px solid var(--line);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: minmax(10rem, 16rem) minmax(0, 36rem);
+  gap: 16px 32px;
+  align-items: baseline;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.fact h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+  letter-spacing: -0.02em;
+}
+
+.fact p {
+  margin: 0;
+  color: var(--mute);
+  font-size: var(--fs-md);
+  max-width: 48ch;
+}
+
+.foot {
+  padding: 48px 8vw 40px;
+  background: rgb(12 11 9 / 0.94);
+  border-top: 1px solid var(--line);
+}
+
+.foot h2 {
+  margin: 0 0 18px;
+  font-size: var(--fs-xl);
+  letter-spacing: -0.03em;
+}
+
+.git {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 44rem;
+}
+
+.gitCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 88px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--raised);
+  color: var(--paper);
+}
+
+.gitCard:hover {
+  border-color: var(--signal);
+  color: var(--paper);
+}
+
+.gitCard strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--signal);
+  font-size: var(--fs-md);
+}
+
+.gitCard span {
+  color: var(--mute);
+  font-size: var(--fs-sm);
+}
+
+.license {
+  margin: 22px 0 0;
+  color: var(--dim);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 767px) {
+  .nav,
+  .banner,
+  .hero,
+  .origin,
+  .facts,
+  .foot {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .heroPanel {
+    padding: 24px 20px;
+  }
+
+  .fact {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .git {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: clamp(2rem, 11vw, 2.6rem);
+  }
+}

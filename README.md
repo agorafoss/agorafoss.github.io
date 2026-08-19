@@ -1,5 +1,7 @@
 # Ágora
 
+> **Versão 0.1. Inicial.** Tem bugs. Tela pode travar, mensagem sair errada, palco não abrir. **Não use para nada que não possa perder.** Relatos: [Issues](https://github.com/agorafoss/agorafoss.github.io/issues).
+
 Cliente livre de comunidades no espírito de uma praça: servidores, canais, conversa, voz e transmissão. Sem empresa no meio, sem e-mail, sem telefone.
 
 A identidade é uma chave [Nostr](https://nostr.com/). Uma praça é um grupo [NIP-29](https://nips.nostr.com/29). Quem tem as **12 palavras** entra em qualquer aparelho; o **cadeado** é o mesmo em todos. A interface nasce em português.
@@ -60,6 +62,8 @@ A grade do chat mostra um conjunto pequeno de [OpenMoji](https://openmoji.org/),
 ---
 
 # Ágora (English)
+
+> **Version 0.1. Early.** There are bugs. The UI can freeze, a message can land wrong, the stage can stay closed. **Do not use it for anything you cannot lose.** Reports: [Issues](https://github.com/agorafoss/agorafoss.github.io/issues).
 
 A free community client in the spirit of a public square: servers, channels, chat, voice and broadcast. No company in the middle, no email, no phone number.
 

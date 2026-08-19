@@ -12,6 +12,7 @@ import { useLiveStore } from "../../features/live/live-store.ts";
 import { useMuteStore } from "../../features/mute/mute-store.ts";
 import { PraçaSettings } from "../../features/groups/PraçaSettings.tsx";
 import { SettingsDrawer } from "../../features/settings/SettingsDrawer.tsx";
+import { useAuthStore } from "../../features/auth/auth-store.ts";
 import { useTorStore } from "../../features/tor/tor-store.ts";
 import { takeStashedInvite } from "../../lib/nostr/invite.ts";
 import { groupKey } from "../../lib/nostr/nip29.ts";
@@ -53,6 +54,7 @@ export function AppShell() {
   const live = useLiveStore((state) => state.current);
   const loadMute = useMuteStore((state) => state.load);
   const loadTor = useTorStore((state) => state.load);
+  const lock = useAuthStore((state) => state.lock);
   const group = groups.find((item) => groupKey(item) === activeKey) ?? null;
   const channel = channels.find((item) => groupKey(item) === activeChannelKey) ?? null;
 
@@ -103,6 +105,7 @@ export function AppShell() {
           void select(next);
         }}
         onAdd={() => setCreateOpen(true)}
+        onLock={() => void lock()}
       />
       {view === "dms" ? (
         <DmPane />
