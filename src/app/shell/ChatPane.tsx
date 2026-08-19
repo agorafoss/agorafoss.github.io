@@ -8,6 +8,7 @@ import { useAuthStore } from "../../features/auth/auth-store.ts";
 import { useChatStore, type ChatMessage } from "../../features/chat/chat-store.ts";
 import { useGroupStore } from "../../features/groups/group-store.ts";
 import { useProfileStore } from "../../features/profile/profile-store.ts";
+import { useDesktopStore } from "../../features/desktop/desktop-store.ts";
 import { useLiveStore } from "../../features/live/live-store.ts";
 import { useRelayStore } from "../../features/relays/relay-store.ts";
 import { useTorStore } from "../../features/tor/tor-store.ts";
@@ -389,6 +390,7 @@ function ChatComposer({ channel }: { channel: Channel | null }) {
   const publishing = useLiveStore((state) => state.publishing);
   const startLive = useLiveStore((state) => state.start);
   const stopLive = useLiveStore((state) => state.stop);
+  const desktop = useDesktopStore((state) => state.desktop);
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -434,7 +436,7 @@ function ChatComposer({ channel }: { channel: Channel | null }) {
         <button type="button" className={styles.ghost} disabled={!channel} title={t("chat.attach")} onClick={() => fileRef.current?.click()}>
           <Paperclip size={16} />
         </button>
-        {channel ? (
+        {channel && desktop ? (
           <button
             type="button"
             className={styles.ghost}

@@ -43,11 +43,11 @@ pnpm test
 pnpm build
 ```
 
-Para transmitir: [`docs/GOLIVE.md`](./docs/GOLIVE.md) (`docker compose up`).
+Para transmitir: o [app de PC](https://github.com/agorafoss/agora-desktop). O site é chat. Guia: [`docs/DESKTOP.md`](./docs/DESKTOP.md). Cartaz NIP-53: [`docs/GOLIVE.md`](./docs/GOLIVE.md).
 
 ## App de PC
 
-O mesmo cliente, empacotado com Tauri 2 (`pnpm tauri:dev` / `pnpm tauri:build`). Precisa de Rust no PATH. Deep links `agora:` e `nostr:` ficam registrados. O cadeado ainda é o cofre da web.
+Repositório separado: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). A janela Tauri **monta esta UI**; não há um segundo `src/`. Clone os dois, `pnpm dev` na pasta do desktop. Rust no PATH. Deep links `agora:` e `nostr:` no instalador. O cadeado ainda é o cofre da web.
 
 ## Emoji
 
@@ -104,11 +104,11 @@ pnpm test
 pnpm build
 ```
 
-To broadcast: [`docs/GOLIVE.md`](./docs/GOLIVE.md) (`docker compose up`).
+To broadcast: the [PC app](https://github.com/agorafoss/agora-desktop). The site is chat. Guide: [`docs/DESKTOP.md`](./docs/DESKTOP.md). NIP-53 poster: [`docs/GOLIVE.md`](./docs/GOLIVE.md).
 
 ## Desktop app
 
-The same client, packaged with Tauri 2 (`pnpm tauri:dev` / `pnpm tauri:build`). Rust must be on your PATH. Deep links `agora:` and `nostr:` are registered. The lock is still the web vault.
+Separate repo: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). The Tauri window **builds this UI**; there is no second `src/`. Clone both, `pnpm dev` in the desktop folder. Rust on PATH. Deep links `agora:` and `nostr:` ship in the installer. The lock is still the web vault.
 
 ## Emoji
 

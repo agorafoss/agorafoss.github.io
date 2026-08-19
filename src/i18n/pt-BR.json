@@ -22,6 +22,12 @@
     "name": "Nome do canal",
     "relay": "relay"
   },
+  "desktop": {
+    "getApp": "App de PC",
+    "webStageTitle": "Palco no app de PC",
+    "webStageBody": "O site é chat. Voz, câmera e Ao vivo rodam no aplicativo de PC: um .exe hospeda, o outro entra. Sem Docker. Sem servidor da Ágora.",
+    "webStageLead": "Isto cria o canal. Microfone e live só abrem no app de PC (agora-desktop). No site o palco mostra o aviso."
+  },
   "chat": {
     "placeholder": "Falar em {{channel}}",
     "send": "Enviar",

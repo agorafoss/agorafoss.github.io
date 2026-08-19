@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { ChannelKind } from "../../lib/nostr/nip29.ts";
 import styles from "../auth/AuthScreen.module.css";
 import modal from "./PraçaModal.module.css";
+import { useDesktopStore } from "../desktop/desktop-store.ts";
 import { useGroupStore } from "./group-store.ts";
 
 type Props = {
@@ -20,6 +21,7 @@ export function ChannelModal({ onClose, defaultKind = "text" }: Props) {
   const addChannel = useGroupStore((state) => state.addChannel);
   const busy = useGroupStore((state) => state.busy);
   const error = useGroupStore((state) => state.error);
+  const desktop = useDesktopStore((state) => state.desktop);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -33,7 +35,9 @@ export function ChannelModal({ onClose, defaultKind = "text" }: Props) {
       <section className={styles.card} onClick={(event) => event.stopPropagation()}>
         <div className={styles.callsign}>{t("app.name")}</div>
         <h1 className={styles.title}>{t("channels.addChannel")}</h1>
-        <p className={styles.lead}>{kind === "voice" ? t("channels.addLeadVoice") : t("channels.addLead")}</p>
+        <p className={styles.lead}>
+          {kind === "voice" ? t(desktop ? "channels.addLeadVoice" : "desktop.webStageLead") : t("channels.addLead")}
+        </p>
         <form className={styles.form} onSubmit={(event) => void submit(event)}>
           <label>
             {t("channels.name")}

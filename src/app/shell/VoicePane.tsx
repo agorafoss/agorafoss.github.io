@@ -8,6 +8,7 @@ import { useRelayStore } from "../../features/relays/relay-store.ts";
 import { useTorStore } from "../../features/tor/tor-store.ts";
 import { useChatStore } from "../../features/chat/chat-store.ts";
 import { useGroupStore } from "../../features/groups/group-store.ts";
+import { useDesktopStore } from "../../features/desktop/desktop-store.ts";
 import { useVoiceStore } from "../../features/voice/voice-store.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import type { Channel } from "../../lib/nostr/nip29.ts";
@@ -45,13 +46,15 @@ export function VoicePane({
   const circuit = useTorStore((state) => state.enabled);
   const onStage = useGroupStore((state) => state.onStage);
   const names = useChatStore((state) => state.names);
+  const desktop = useDesktopStore((state) => state.desktop);
 
   useEffect(() => {
+    if (!desktop) return;
     void join(channel);
     return () => {
       void leave();
     };
-  }, [channel, join, leave]);
+  }, [channel, desktop, join, leave]);
 
   return (
     <section className={styles.pane}>
@@ -69,27 +72,41 @@ export function VoicePane({
         onOpenSquare={onOpenSquare}
       />
       <div className={voice.stage}>
-        <p className={voice.status}>{t(`voice.status.${status}`)}</p>
-        {error ? <p className={styles.error}>{t(`voice.errors.${error}`)}</p> : null}
-        <p className={voice.warn}>{t("voice.ipWarn")}</p>
-        {circuit ? <p className={voice.warn}>{t("voice.noTor")}</p> : null}
-        {onStage.length > 0 ? (
+        {desktop ? (
+          <>
+            <p className={voice.status}>{t(`voice.status.${status}`)}</p>
+            {error ? <p className={styles.error}>{t(`voice.errors.${error}`)}</p> : null}
+            <p className={voice.warn}>{t("voice.ipWarn")}</p>
+            {circuit ? <p className={voice.warn}>{t("voice.noTor")}</p> : null}
+          </>
+        ) : (
+          <>
+            <p className={voice.status}>{t("desktop.webStageTitle")}</p>
+            <p className={voice.notice}>{t("desktop.webStageBody")}</p>
+            <a className={voice.doc} href="https://github.com/agorafoss/agora-desktop" target="_blank" rel="noreferrer">
+              {t("desktop.getApp")}
+            </a>
+          </>
+        )}
+        {desktop && onStage.length > 0 ? (
           <ul className={voice.people}>
             {onStage.map((pubkey) => (
               <li key={pubkey}>{names[pubkey] || publicCallsign(pubkey)}</li>
             ))}
           </ul>
         ) : null}
-        <div className={voice.controls}>
-          <button type="button" onClick={toggleMute} data-off={muted}>
-            {muted ? <MicrophoneSlash size={18} /> : <Microphone size={18} />}
-            {t(muted ? "voice.unmute" : "voice.mute")}
-          </button>
-          <button type="button" onClick={() => void toggleCamera()} data-off={!camera}>
-            {camera ? <VideoCamera size={18} /> : <VideoCameraSlash size={18} />}
-            {t(camera ? "voice.camOff" : "voice.camOn")}
-          </button>
-        </div>
+        {desktop ? (
+          <div className={voice.controls}>
+            <button type="button" onClick={toggleMute} data-off={muted}>
+              {muted ? <MicrophoneSlash size={18} /> : <Microphone size={18} />}
+              {t(muted ? "voice.unmute" : "voice.mute")}
+            </button>
+            <button type="button" onClick={() => void toggleCamera()} data-off={!camera}>
+              {camera ? <VideoCamera size={18} /> : <VideoCameraSlash size={18} />}
+              {t(camera ? "voice.camOff" : "voice.camOn")}
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   );

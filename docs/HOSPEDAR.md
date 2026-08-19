@@ -4,6 +4,10 @@ Isto **não é conselho jurídico**. É o que o código assume quando alguém so
 
 Quem sobe um “servidor Ágora” sobe três processos FOSS: **relay NIP-29 + LiveKit + MediaMTX**. Arquivos de imagem costumam ir para um **Blossom** à parte. Cada um vê coisa diferente.
 
+O caminho do usuário da Ágora **não** é Docker. O [app de PC](./DESKTOP.md) é o recinto de mídia: o `.exe` passa a carregar esses processos (por partes: primeiro MediaMTX, depois LiveKit, depois o relay). Dois desktops falam entre si. O site só faz texto.
+
+Quem quiser as três peças **fora** do app (VPS, compose próprio) continua podendo. O `docker-compose.yml` deste repo é só MediaMTX de desenvolvimento.
+
 ## O que cada processo vê
 
 | Peça | Vê | Não vê |

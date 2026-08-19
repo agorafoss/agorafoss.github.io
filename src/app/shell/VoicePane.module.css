@@ -21,6 +21,20 @@
   font-size: var(--fs-sm);
 }
 
+.notice {
+  max-width: 46ch;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+}
+
+.doc {
+  color: var(--signal);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  border-bottom: 1px solid var(--signal-dim);
+}
+
 .controls {
   display: flex;
   gap: 10px;

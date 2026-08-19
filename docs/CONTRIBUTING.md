@@ -23,6 +23,8 @@ pnpm lint
 
 A interface visível sai de `src/i18n/pt-BR.json` (e do `en.json` em paralelo). Toda string nova entra nos dois.
 
+O **app de PC** é outro repositório: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). Não copie `src/` para lá. Janela e instalador: [`DESKTOP.md`](./DESKTOP.md).
+
 ## O que um PR precisa
 
 - Testes e lint a passar.
@@ -34,4 +36,4 @@ Chave só no cofre (PBKDF2 + AES-GCM) ou na extensão NIP-07. Detalhe: [`SECURIT
 
 ## O que não entra num PR “de passagem”
 
-Tor no WebSocket (Fase 7), keystore nativo, catálogo OpenMoji inteiro no repo, filtro automático de conteúdo. Cada um tem o próprio passo no roadmap.
+Tor no WebSocket (Fase 7), keystore nativo, sidecar MediaMTX/LiveKit (repo desktop), catálogo OpenMoji inteiro no repo, filtro automático de conteúdo. Cada um tem o próprio passo no roadmap.

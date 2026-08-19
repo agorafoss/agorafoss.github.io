@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { AuthScreen } from "../features/auth/AuthScreen.tsx";
 import { useAuthStore } from "../features/auth/auth-store.ts";
 import { RevealScreen } from "../features/auth/RevealScreen.tsx";
+import { useDesktopStore } from "../features/desktop/desktop-store.ts";
 import { readInviteFromLocation, stashInvite } from "../lib/nostr/invite.ts";
 import { Atmosphere } from "./atmosphere/Atmosphere.tsx";
 import { ErrorBoundary } from "./ErrorBoundary.tsx";
@@ -14,12 +15,14 @@ import { AppShell } from "./shell/AppShell.tsx";
 export function App() {
   const status = useAuthStore((state) => state.status);
   const hydrate = useAuthStore((state) => state.hydrate);
+  const loadDesktop = useDesktopStore((state) => state.load);
 
   useEffect(() => {
     const pending = readInviteFromLocation();
     if (pending) stashInvite(pending);
     void hydrate();
-  }, [hydrate]);
+    void loadDesktop();
+  }, [hydrate, loadDesktop]);
 
   const ready = status === "ready";
   const stage = status === "setup" || status === "locked" || status === "reveal";

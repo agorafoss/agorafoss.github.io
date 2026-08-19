@@ -265,11 +265,17 @@ A tela existe. O SOCKS **ainda não** entra no WebSocket do NDK. Não marcar ist
 
 ### Fase 8 — Desktop
 
-- [x] Tauri 2, instalador Windows (NSIS) — `pnpm tauri:dev` / `pnpm tauri:build`
+Repo próprio: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). A UI é a deste site (`AGORA_CLIENT`). Sem copiar `src/`.
+
+- [x] Tauri 2, instalador Windows (NSIS) — no repo desktop (`pnpm dev` / `pnpm build`)
+- [x] Site honesto: palco/Ao vivo não fingem JWT no 0xchat; aviso + [`DESKTOP.md`](./DESKTOP.md)
+- [ ] Sidecar MediaMTX no `.exe` (Ao vivo desk↔desk; sem Docker)
+- [ ] Sidecar LiveKit (palco desk↔desk)
+- [ ] Sidecar relay NIP-29 (a praça no PC)
 - [ ] Keystore nativo (ainda é o cofre da web)
 - [x] Deep link `agora:` / `nostr:` registrado
 
-**Pronto quando:** o `.exe` abre e entra nos mesmos grupos da versão web.
+**Pronto quando:** o `.exe` abre e entra nos mesmos grupos da versão web; o site não promete palco.
 
 ### Fase 9 — Depois do núcleo
 
@@ -282,7 +288,7 @@ Cada item vira passo próprio, não um saco.
 - [ ] Busca local
 - [ ] Notificações do SO
 - [ ] NIP-46 (bunker, chave fora do app)
-- [ ] Companion: `docker compose` com relay NIP-29 + LiveKit + MediaMTX (“subir meu servidor”)
+- [ ] Companion opcional para quem hospeda **VPS** (relay + LiveKit + MediaMTX). O usuário final sobe o recinto pelo [app de PC](./DESKTOP.md), sem Docker
 - [ ] Denúncia no cliente (id do evento + relay) e guia de moderação para quem hospeda Blossom/relay
 - [ ] Guia legal do self-hoster (rascunho em `HOSPEDAR.md` — não é conselho jurídico)
 - [ ] Mobile (bem depois)

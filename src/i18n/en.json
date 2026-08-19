@@ -22,6 +22,12 @@
     "name": "Channel name",
     "relay": "relay"
   },
+  "desktop": {
+    "getApp": "PC app",
+    "webStageTitle": "Stage on the PC app",
+    "webStageBody": "The site is chat. Voice, camera and Go Live run in the desktop app: one .exe hosts, the other joins. No Docker. No Ágora server.",
+    "webStageLead": "This creates the channel. Mic and live only open in the PC app (agora-desktop). On the site the stage shows the notice."
+  },
   "chat": {
     "placeholder": "Message {{channel}}",
     "send": "Send",
