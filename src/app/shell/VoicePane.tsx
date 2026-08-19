@@ -228,7 +228,7 @@ export function VoicePane({
           </div>
         ) : null}
         <div className={voice.controls}>
-          <button type="button" onClick={toggleMute} data-off={muted} disabled={status !== "live"}>
+          <button type="button" onClick={() => void toggleMute()} data-off={muted} disabled={status !== "live"}>
             {muted ? <MicrophoneSlash size={18} /> : <Microphone size={18} />}
             {t(muted ? "voice.unmute" : "voice.mute")}
           </button>

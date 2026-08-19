@@ -19,22 +19,31 @@ export function stagePassword(groupId: string, secret?: string | null): string {
   return `agora-stage:${groupId}`;
 }
 
+/** Signaling do palco: kinds 20xxx. Relays NIP-29 pedem tag `h`; purplepag.es recusa o kind; Damus rate-limita. */
+export const STAGE_SIGNAL_RELAYS = ["wss://nos.lol", "wss://relay.primal.net", "wss://offchain.pub"] as const;
+
+export function stageSignalRelays(_pool: string[] = []): string[] {
+  return [...STAGE_SIGNAL_RELAYS];
+}
+
 export function localMediaConstraints(video: boolean, browserDenoise = true): MediaStreamConstraints {
+  const camera = {
+    width: { ideal: VIDEO_WIDTH },
+    height: { ideal: VIDEO_HEIGHT },
+    frameRate: { ideal: VIDEO_FPS },
+  };
+  if (video) {
+    return { audio: false, video: camera };
+  }
   return {
     audio: { echoCancellation: true, noiseSuppression: browserDenoise, autoGainControl: true },
-    video: video
-      ? {
-          width: { ideal: VIDEO_WIDTH },
-          height: { ideal: VIDEO_HEIGHT },
-          frameRate: { ideal: VIDEO_FPS },
-        }
-      : false,
+    video: false,
   };
 }
 
 export function screenConstraints(): DisplayMediaStreamOptions {
   return {
-    audio: true,
+    audio: false,
     video: {
       width: { ideal: VIDEO_WIDTH },
       height: { ideal: VIDEO_HEIGHT },

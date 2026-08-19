@@ -19,6 +19,7 @@ import {
   stageIsFull,
   stagePassword,
   stageRoomId,
+  stageSignalRelays,
   TRYSTERO_APP_ID,
 } from "../../lib/nostr/trystero-room.ts";
 import { useRelayStore } from "../relays/relay-store.ts";
@@ -45,7 +46,7 @@ type VoiceState = {
   full: boolean;
   join: (channel: Channel, password?: string) => Promise<void>;
   leave: () => Promise<void>;
-  toggleMute: () => void;
+  toggleMute: () => Promise<void>;
   toggleCamera: () => Promise<void>;
   toggleScreen: () => Promise<void>;
   startBroadcast: (channel: Channel) => Promise<void>;
@@ -87,8 +88,41 @@ function stopStream(stream: MediaStream | null): void {
 }
 
 function relayUrls(): string[] {
-  const urls = useRelayStore.getState().urls.filter((url) => url.startsWith("wss://"));
-  return urls.length > 0 ? urls : ["wss://groups.0xchat.com"];
+  return stageSignalRelays(useRelayStore.getState().urls);
+}
+
+async function grabMic(): Promise<boolean> {
+  if (rawMic) return true;
+  if (!room) return false;
+  const prefs = useClarityStore.getState();
+  try {
+    rawMic = await navigator.mediaDevices.getUserMedia(localMediaConstraints(false, !prefs.enabled));
+    rawMic.getAudioTracks().forEach((track) => {
+      track.enabled = true;
+    });
+    micStream = rawMic;
+    if (prefs.enabled) {
+      useClarityStore.getState().setStatus("loading");
+      try {
+        clarity = await openClarity(rawMic, prefs.suppression);
+        micStream = clarity.stream;
+        useClarityStore.getState().setStatus("ready");
+      } catch {
+        useClarityStore.getState().setStatus("failed");
+        micStream = rawMic;
+      }
+    } else {
+      useClarityStore.getState().setStatus("idle");
+    }
+    listenTalking("self", micStream);
+    void Promise.all(room.addStream(micStream)).then(() => capPeers());
+    useVoiceStore.setState({ muted: false, error: null });
+    return true;
+  } catch {
+    useClarityStore.getState().setStatus("idle");
+    useVoiceStore.setState({ muted: true, error: "voice-mic-denied" });
+    return false;
+  }
 }
 
 async function capPeers(): Promise<void> {
@@ -203,32 +237,17 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
         pushPeer(peerId, stream);
         listenTalking(peerId, stream);
       };
-      const prefs = useClarityStore.getState();
-      rawMic = await navigator.mediaDevices.getUserMedia(localMediaConstraints(false, !prefs.enabled));
-      rawMic.getAudioTracks().forEach((track) => {
-        track.enabled = true;
-      });
-      micStream = rawMic;
-      if (prefs.enabled) {
-        useClarityStore.getState().setStatus("loading");
-        try {
-          clarity = await openClarity(rawMic, prefs.suppression);
-          micStream = clarity.stream;
-          useClarityStore.getState().setStatus("ready");
-        } catch {
-          useClarityStore.getState().setStatus("failed");
-          micStream = rawMic;
-        }
-      } else {
-        useClarityStore.getState().setStatus("idle");
-      }
-      listenTalking("self", micStream);
-      void Promise.all(next.addStream(micStream)).then(() => capPeers());
-      set({ status: "live", muted: false, full: stageIsFull(Object.keys(next.getPeers()).length + 1) });
+      set({ status: "live", muted: true, full: stageIsFull(Object.keys(next.getPeers()).length + 1) });
+      await grabMic();
     } catch {
-      room = null;
+      if (room) {
+        await room.leave().catch(() => undefined);
+        room = null;
+      }
       stopStream(micStream);
+      stopStream(rawMic);
       micStream = null;
+      rawMic = null;
       set({ status: "error", error: "voice-connect-failed" });
     }
   },
@@ -266,7 +285,11 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     });
   },
 
-  toggleMute: () => {
+  toggleMute: async () => {
+    if (!rawMic) {
+      await grabMic();
+      return;
+    }
     const muted = !get().muted;
     micStream?.getAudioTracks().forEach((track) => {
       track.enabled = !muted;

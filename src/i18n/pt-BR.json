@@ -376,6 +376,7 @@
     "errors": {
       "voice-no-stage": "Não há palco nesta praça.",
       "voice-connect-failed": "Não entrei no palco. NAT, relay ou handshake. Tente a mesma rede ou Tailscale.",
+      "voice-mic-denied": "Palco aberto sem microfone. Permita o mic para falar. Câmera e tela não precisam dele.",
       "voice-camera-failed": "A câmera não abriu.",
       "voice-screen-failed": "A tela não abriu.",
       "stage-full": "Palco cheio (10 pessoas). O 11º não entra.",

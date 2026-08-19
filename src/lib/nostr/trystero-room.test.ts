@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   AUDIO_MAX_BITRATE,
   MAX_STAGE_PEERS,
+  STAGE_SIGNAL_RELAYS,
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_TARGET_BITRATE,
@@ -13,6 +14,7 @@ import {
   stageIsFull,
   stagePassword,
   stageRoomId,
+  stageSignalRelays,
 } from "./trystero-room.ts";
 
 describe("trystero room rules", () => {
@@ -42,5 +44,21 @@ describe("trystero room rules", () => {
     expect(VIDEO_TARGET_BITRATE).toBe(2_500_000);
     expect(AUDIO_MAX_BITRATE).toBe(64_000);
     expect(JSON.stringify(localMediaConstraints(true))).not.toMatch(/360/);
+    expect(localMediaConstraints(true).audio).toBe(false);
+    expect(localMediaConstraints(false).video).toBe(false);
+  });
+
+  it("keeps palco signaling off group relays, purplepag.es and Damus", () => {
+    const urls = stageSignalRelays([
+      "wss://relay.damus.io",
+      "wss://purplepag.es",
+      "wss://groups.fiatjaf.com",
+      "wss://groups.0xchat.com/",
+      "wss://nos.lol",
+    ]);
+    expect(urls).toEqual([...STAGE_SIGNAL_RELAYS]);
+    expect(urls.some((url) => url.includes("damus") || url.includes("purplepag") || url.includes("groups."))).toBe(
+      false,
+    );
   });
 });

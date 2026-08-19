@@ -376,6 +376,7 @@
     "errors": {
       "voice-no-stage": "This square has no stage.",
       "voice-connect-failed": "Could not join the stage. NAT, relay or handshake. Try the same network or Tailscale.",
+      "voice-mic-denied": "Stage is open without a microphone. Allow the mic to speak. Camera and screen do not need it.",
       "voice-camera-failed": "The camera did not open.",
       "voice-screen-failed": "The screen did not open.",
       "stage-full": "Stage full (10 people). The 11th does not enter.",
