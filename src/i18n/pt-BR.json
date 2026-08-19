@@ -41,22 +41,22 @@
     "stack": {
       "identity": "Sem e-mail",
       "identityBody": "Doze palavras e um cadeado. A conta é a chave.",
-      "web": "O site é chat",
-      "webBody": "Palco e transmissão ficam no aplicativo de PC. Sem Docker.",
+      "web": "O site também é palco",
+      "webBody": "Chat no Nostr. Voz e câmera em malha P2P, 720p30, até 10 pessoas.",
       "wip": "Ainda em obra",
       "wipBody": "Erros vão aparecer. Abra uma issue. Não é produto pronto."
     },
     "flow": {
       "you": { "label": "Você", "body": "Browser ou o .exe. A chave assina. Nada fica num servidor da Ágora." },
-      "split": { "label": "Texto ou voz?", "body": "Dois cabos. Chat e cartaz no relay. Palco e live no app de PC." },
-      "site": { "label": "Site", "body": "agorafoss.github.io. Só texto: praça, DM, convite. Não pede JWT. Não transmite." },
-      "desktop": { "label": "App de PC", "body": "Mesma UI numa janela Tauri. Depois hospeda LiveKit e MediaMTX. Sem Docker." },
-      "relay": { "label": "Relay Nostr", "body": "Eventos assinados. Hoje groups.0xchat.com. Chat, cargos, cartaz de live. Não carrega áudio." },
+      "split": { "label": "Texto ou voz?", "body": "Dois cabos. Chat no relay. Palco em malha WebRTC entre os browsers." },
+      "site": { "label": "Site", "body": "agorafoss.github.io. Chat e palco P2P. Sem JWT. Sem servidor da Ágora." },
+      "desktop": { "label": "App de PC", "body": "A mesma UI numa janela Tauri. O palco já é o do site." },
+      "relay": { "label": "Relay Nostr", "body": "Eventos assinados. Hoje groups.0xchat.com. Chat, cargos, descoberta do palco. Não carrega áudio." },
       "blossom": { "label": "Blossom", "body": "Arquivos (foto, vídeo, áudio). O chat só leva a URL. O host do Blossom vê o IP de quem sobe." },
-      "livekit": { "label": "LiveKit", "body": "Palco: mic e câmera. Roda no .exe do host. O JWT não vem do 0xchat." },
-      "mediamtx": { "label": "MediaMTX", "body": "Ao vivo 1 para N. WHIP entra, WHEP sai. Também no .exe do host." },
-      "lan": { "label": "LAN / Tailscale", "body": "O amigo alcança o IP do host. Nunca localhost no cartaz: isso é o PC dele." },
-      "peer": { "label": "Outra pessoa", "body": "Lê o chat no relay. Palco e live só se tiver o app de PC e alcançar o host." },
+      "livekit": { "label": "Palco P2P", "body": "Trystero: mic, câmera, tela. Até 10 pessoas. Sem LiveKit. Sem sidecar." },
+      "mediamtx": { "label": "720p30", "body": "Cada um manda uma cópia para cada outro. Em casa, 5–10 câmeras podem deixar a live imassistível." },
+      "lan": { "label": "LAN / Tailscale", "body": "Sem TURN. Se o NAT bloquear, mesma rede ou Tailscale." },
+      "peer": { "label": "Outra pessoa", "body": "Lê o chat no relay. Entra no palco pelo site ou pelo .exe." },
       "tor": { "label": "Tor", "body": "Só eventos Nostr, e ainda não está no WebSocket. Nunca voz nem live." }
     }
   },
@@ -72,18 +72,30 @@
     "voice": "Palco",
     "addChannel": "Novo canal",
     "addText": "Novo chat de texto",
-    "addVoice": "Novo palco (voz, câmera, live)",
+    "addVoice": "Novo palco (voz + transmitir)",
     "addLead": "Chat de texto desta praça. Quem entra vê o histórico.",
-    "addLeadVoice": "Palco da praça: microfone, câmera e live da sala. A mídia não passa no Tor.",
+    "addLeadVoice": "Palco da praça: microfone, câmera e tela em malha P2P, 720p30, até 10 pessoas. A mídia não passa no Tor. Os outros vêem o seu IP.",
     "voiceEmpty": "Ainda não há palco. O + cria um.",
     "name": "Nome do canal",
+    "private": "Sala privada",
+    "password": "Chave da sala",
+    "privateLead": "Gera uma chave aleatória. Copia e manda no DM. Sem ela o palco tranca. Não vai em claro para o relay.",
+    "privateTextLead": "Gera uma chave aleatória. O texto sai cifrado. Sem a chave o relay só vê lixo. Copia e manda no DM.",
+    "keyTitle": "Copia esta chave",
+    "keyLead": "Manda no DM a quem entra. Sem isto a sala tranca.",
+    "keyWarn": "Não vai em claro para o relay. Com as 12 palavras dá para recuperar o envelope. Limpar o site neste PC não apaga a sala — só a chave local, se o envelope não chegar.",
+    "keyCopy": "Copiar chave",
+    "keyCopied": "Copiada",
+    "keyDone": "Guardei a chave",
+    "delete": "Apagar canal",
+    "deleteAsk": "Apagar este canal da praça? O histórico no relay pode continuar.",
     "relay": "relay"
   },
   "desktop": {
     "getApp": "App de PC",
     "webStageTitle": "Palco no app de PC",
-    "webStageBody": "O site é chat. Voz, câmera e Ao vivo rodam no aplicativo de PC: um .exe hospeda, o outro entra. Sem Docker. Sem servidor da Ágora.",
-    "webStageLead": "Isto cria o canal. Microfone e live só abrem no app de PC (agora-desktop). No site o palco mostra o aviso."
+    "webStageBody": "O palco agora abre no site. Voz, câmera e tela em malha P2P. Sem Docker. Sem servidor da Ágora.",
+    "webStageLead": "Isto cria o canal de palco. Microfone e câmera abrem aqui, no browser."
   },
   "chat": {
     "placeholder": "Falar em {{channel}}",
@@ -95,6 +107,8 @@
     "emoji": "Emoji",
     "emptyTitle": "Nenhuma mensagem ainda",
     "emptyBody": "Este canal está no ar. Escreva a primeira.",
+    "privateTitle": "Chat privado",
+    "privateBody": "Este canal tem senha. Sem ela o texto não abre.",
     "reply": "Responder",
     "replyTo": "resposta a",
     "replying": "Respondendo",
@@ -147,7 +161,7 @@
     "join": "Entrar",
     "createTitle": "Nova praça",
     "joinTitle": "Entrar numa praça",
-    "createLead": "Nasce num relay NIP-29 que aceita criar grupo. O groups.fiatjaf.com só cria no site dele.",
+    "createLead": "Nasce como sala de voz, com opção de transmitir câmera ou tela. Relay NIP-29 que aceita criar grupo (groups.fiatjaf.com só cria no site dele).",
     "fiatjafWeb": "Esse relay recusa kind 9007. Crie em https://groups.fiatjaf.com e entre com o id, ou use wss://groups.0xchat.com.",
     "joinLead": "Cole o naddr do convite, ou o id e o relay. Código só se ela for fechada.",
     "invitePaste": "naddr1… ou id @ relay",
@@ -197,7 +211,7 @@
       "attach": "Anexar imagem ou vídeo",
       "history": "Ler o que já foi dito",
       "invite": "Copiar convite naddr",
-      "voice": "Entrar no palco se o canal tiver LiveKit"
+      "voice": "Entrar no palco se o canal for de voz"
     },
     "mods": {
       "kick": "Tirar gente",
@@ -275,6 +289,7 @@
     "pair": "Emparelhar",
     "mute": "Silêncio",
     "tor": "Circuito",
+    "voice": "Voz",
     "close": "Fechar"
   },
   "profile": {
@@ -327,33 +342,62 @@
     }
   },
   "live": {
-    "go": "Ao vivo",
+    "go": "Transmitir",
+    "stop": "Parar transmissão",
     "on": "Transmissão no ar",
     "watch": "Assistir",
-    "ipWarn": "Ao vivo revela o seu IP ao servidor de mídia, mesmo que o chat esteja no Tor. A mídia nunca entra no circuito. Para esconder o IP do host, use uma VPN ou WireGuard de hop único no sistema antes de transmitir. Continuar?"
+    "meshHint": "No palco Ágora — sem URL WHEP",
+    "ipWarn": "Ao vivo revela o seu IP aos outros na sala, mesmo que o chat esteja no Tor. A mídia nunca entra no circuito. Continuar?"
   },
   "voice": {
-    "hint": "Palco LiveKit. Fora do Tor.",
+    "hint": "Sala de voz. Pode transmitir câmera ou tela (720p30, até 10). Fora do Tor.",
+    "you": "Você",
+    "full": "Tela cheia",
+    "exitFull": "Sair da tela cheia",
     "mute": "Mudo",
     "unmute": "Falar",
-    "camOn": "Câmera",
-    "camOff": "Sem câmera",
-    "ipWarn": "O palco revela o seu IP ao servidor de mídia. Tor não carrega voz. Para esconder o IP do host, use uma VPN ou WireGuard de hop único no sistema.",
+    "camOn": "Transmitir câmera",
+    "camOff": "Parar câmera",
+    "screenOn": "Transmitir tela",
+    "screenOff": "Parar tela",
+    "password": "Senha",
+    "passwordLead": "Este palco é privado. Cola a chave ou espera o envelope das 12 palavras.",
+    "unlock": "Entrar",
+    "ipWarn": "O palco revela o seu IP aos outros na sala. Tor não carrega voz.",
+    "qualityWarn": "A captura é 720p a 30 fps. Cada um manda uma cópia para cada outro. Com 5–10 pessoas em internet de casa a live pode travar, cortar o áudio ou ninguém ver. Sem TURN: se não conectar, mesma rede ou Tailscale.",
     "noTor": "O Tor do chat não se aplica a este palco.",
     "status": {
       "idle": "Fora do palco",
+      "locked": "Palco com senha",
       "connecting": "Entrando no palco",
       "live": "No ar",
       "error": "Palco fechado"
     },
     "errors": {
-      "voice-no-stage": "Este canal não tem LiveKit no metadata.",
-      "voice-connect-failed": "Este relay não tem servidor de voz (LiveKit). Sem /.well-known/nip29/livekit o palco fica fechado. Chat de texto segue normal.",
-      "voice-camera-failed": "A câmera não abriu."
+      "voice-no-stage": "Não há palco nesta praça.",
+      "voice-connect-failed": "Não entrei no palco. NAT, relay ou handshake. Tente a mesma rede ou Tailscale.",
+      "voice-camera-failed": "A câmera não abriu.",
+      "voice-screen-failed": "A tela não abriu.",
+      "stage-full": "Palco cheio (10 pessoas). O 11º não entra.",
+      "stage-password": "Digite a senha deste palco.",
+      "stage-bad-password": "Senha errada. Tente de novo.",
+      "live-no-stage": "Crie um palco nesta praça antes de ir ao vivo.",
+      "live-start-failed": "A transmissão não subiu."
+    }
+  },
+  "clarity": {
+    "hint": "DeepFilterNet 3 no teu microfone. O modelo fica neste PC (~24 MB). Não passa no relay. Cada um configura o seu. Se falhar, usa o denoise do browser.",
+    "enabled": "Limpar voz (DeepFilterNet 3)",
+    "suppression": "Força",
+    "status": {
+      "idle": "Desligado. Entra no palco para carregar, ou liga acima.",
+      "loading": "A carregar o modelo…",
+      "ready": "No ar neste palco.",
+      "failed": "Não carregou. O palco segue com o denoise do browser."
     }
   },
   "tor": {
-    "hint": "SOCKS5 só no caminho dos eventos Nostr, e ainda não está ligado ao WebSocket. Esta tela grava o endereço. Voz e live nunca entram no circuito — publicar um Ao vivo revela o IP ao MediaMTX.",
+    "hint": "SOCKS5 só no caminho dos eventos Nostr, e ainda não está ligado ao WebSocket. Esta tela grava o endereço. Voz e live nunca entram no circuito — o palco revela o IP aos pares.",
     "enable": "Usar circuito Tor quando o app de PC estiver no ar (Fase 7 aplica o SOCKS)",
     "clearnetHint": "Relays de texto continuam na lista normal, tipo",
     "health": {

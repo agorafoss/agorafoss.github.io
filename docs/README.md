@@ -5,7 +5,7 @@
 - [Segurança](./SECURITY.md)
 - [Hospedar um recinto](./HOSPEDAR.md)
 - [App de PC](./DESKTOP.md)
-- [Go Live](./GOLIVE.md)
+- [Palco e Ao vivo](./GOLIVE.md)
 - [Como contribuir](./CONTRIBUTING.md)
 - [Código de conduta](./CODE_OF_CONDUCT.md)
 

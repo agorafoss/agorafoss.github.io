@@ -93,6 +93,37 @@
   color: var(--dim);
 }
 
+.channelRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.channelRow .channel {
+  flex: 1;
+  min-width: 0;
+}
+
+.trash {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  color: var(--dim);
+  opacity: 0;
+}
+
+.channelRow:hover .trash,
+.channelRow:focus-within .trash {
+  opacity: 1;
+}
+
+.trash:hover {
+  color: var(--live);
+  background: var(--hover);
+}
+
 .channel {
   display: flex;
   align-items: center;
@@ -139,6 +170,49 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--live);
+}
+
+.voiceBlock {
+  display: grid;
+  gap: 2px;
+}
+
+.occupants {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 4px;
+  padding: 0 4px 0 26px;
+  list-style: none;
+}
+
+.occupant {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  color: var(--paper-soft);
+  font-size: var(--fs-sm);
+}
+
+.occupant[data-talk="true"] {
+  color: var(--paper);
+}
+
+.occupant[data-talk="true"] span {
+  color: var(--ok);
+}
+
+.occupant span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.occupant svg {
+  flex-shrink: 0;
+  color: var(--dim);
 }
 
 .user {

@@ -23,6 +23,9 @@ importers:
       '@tauri-apps/api':
         specifier: ^2.11.1
         version: 2.11.1
+      deepfilternet3-noise-filter:
+        specifier: ^1.3.0
+        version: 1.3.0(livekit-client@2.22.0(@types/dom-mediacapture-record@1.0.22))
       dexie:
         specifier: ^4.4.5
         version: 4.4.5
@@ -32,9 +35,6 @@ importers:
       i18next:
         specifier: ^25.3.2
         version: 25.10.10(typescript@5.9.3)
-      livekit-client:
-        specifier: ^2.22.0
-        version: 2.22.0(@types/dom-mediacapture-record@1.0.22)
       nostr-tools:
         specifier: ^2.24.2
         version: 2.24.2(typescript@5.9.3)
@@ -50,6 +50,9 @@ importers:
       three:
         specifier: ^0.185.1
         version: 0.185.1
+      trystero:
+        specifier: ^0.25.3
+        version: 0.25.3
       zustand:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.2.18)(react@19.2.8)
@@ -513,6 +516,9 @@ packages:
   '@noble/secp256k1@2.3.0':
     resolution: {integrity: sha512-0TQed2gcBbIrh7Ccyw+y/uZQvbJwm7Ao4scBUxqpBCcsOlZG0O4KGfjtNAy/li4W8n1xt3dxrwJ0beZ2h2G6Kw==}
 
+  '@noble/secp256k1@3.1.0':
+    resolution: {integrity: sha512-+F7iS7tUMaNGXcc9X3PjmjvuQnXEuSjCRNzVVA2xAcKXgCaP0dHYz4SFyt4FKNHef7sOP//xihowcySSS7PK9g==}
+
   '@nostr-dev-kit/ndk@3.0.3':
     resolution: {integrity: sha512-wGQOnvpKjhkq/j0pnRGTiHyrujww7N/iJQKOBrjsIxqTvcy6iyqh/3TijTKlaapdvexx2E2xCn9X+q0dxxISug==}
     engines: {node: '>=16'}
@@ -731,6 +737,12 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  '@trystero-p2p/core@0.25.3':
+    resolution: {integrity: sha512-lQKNq/ha+vF6kQZrpaXJGzlzxLF/Fhizoy5dwJUYQlkqRrbPup/Jov2EpPX/CPr2X+f79HxVzonkeni3MxmCuQ==}
+
+  '@trystero-p2p/nostr@0.25.3':
+    resolution: {integrity: sha512-nZV9Fl/GXuhIkJSQ+wIkdMoRLO1oSTUL/+vZorukaojeAdOpT/61e8b9Vzbt8L1ktMTaGPEJHw2BG/B5BCwBuw==}
 
   '@tweenjs/tween.js@23.1.3':
     resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
@@ -1045,6 +1057,12 @@ packages:
 
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+
+  deepfilternet3-noise-filter@1.3.0:
+    resolution: {integrity: sha512-yYFUlPuvPguqcd/R6/OSsr0noGqlqOE50JkCWYHogk+PjLj9qrNgwTt5zKraVkKnw0l4+eXJagkz2SUWtUl4sQ==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      livekit-client: ^2.0.0
 
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
@@ -1699,6 +1717,9 @@ packages:
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
 
+  trystero@0.25.3:
+    resolution: {integrity: sha512-mm6Mzmm10OXKfvOA0tUG6XXqlQDIPdHg0//mEqA4ayrtdqiie4ZQpSluEp6074L+dCtotCfCn/B/CWLWavZK6Q==}
+
   ts-api-utils@2.5.0:
     resolution: {integrity: sha512-OJ/ibxhPlqrMM0UiNHJ/0CKQkoKF243/AEmplt3qpRgkW8VG7IfOS41h7V8TjITqdByHzrjcS/2si+y4lIh8NA==}
     engines: {node: '>=18.12'}
@@ -2278,6 +2299,8 @@ snapshots:
 
   '@noble/secp256k1@2.3.0': {}
 
+  '@noble/secp256k1@3.1.0': {}
+
   '@nostr-dev-kit/ndk@3.0.3(nostr-tools@2.24.2(typescript@5.9.3))(supports-color@7.2.0)':
     dependencies:
       '@codesandbox/sandpack-client': 2.19.8
@@ -2459,6 +2482,13 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.18
       '@types/react-dom': 19.2.4(@types/react@19.2.18)
+
+  '@trystero-p2p/core@0.25.3': {}
+
+  '@trystero-p2p/nostr@0.25.3':
+    dependencies:
+      '@noble/secp256k1': 3.1.0
+      '@trystero-p2p/core': 0.25.3
 
   '@tweenjs/tween.js@23.1.3': {}
 
@@ -2809,6 +2839,10 @@ snapshots:
   deep-eql@5.0.2: {}
 
   deep-is@0.1.4: {}
+
+  deepfilternet3-noise-filter@1.3.0(livekit-client@2.22.0(@types/dom-mediacapture-record@1.0.22)):
+    dependencies:
+      livekit-client: 2.22.0(@types/dom-mediacapture-record@1.0.22)
 
   dequal@2.0.3: {}
 
@@ -3480,6 +3514,10 @@ snapshots:
       punycode: 2.3.1
 
   trim-lines@3.0.1: {}
+
+  trystero@0.25.3:
+    dependencies:
+      '@trystero-p2p/nostr': 0.25.3
 
   ts-api-utils@2.5.0(typescript@5.9.3):
     dependencies:

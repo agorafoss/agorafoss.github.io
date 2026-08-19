@@ -14,17 +14,14 @@ Três planos separados. Não misturar.
 ┌─────────────────────────────────────────────────────────────────┐
 │  CLIENTE ÁGORA (web → depois Tauri)                             │
 │                                                                 │
-│  1. PLANO DE DADOS          2. SALA INTERATIVA     3. GO LIVE   │
-│     chat, perfil, cargos       voz / webcam          1 → N      │
-│     DMs, convites,             sala de voz           transmissão│
-│     anúncio de live            e vídeo               estilo     │
-│                                                      “Go Live”  │
-│         │                        │                      │       │
-│         ▼                        ▼                      ▼       │
-│     Nostr (relays)           LiveKit / WebRTC      MediaMTX     │
-│     + Tor opcional           (NIP-29)              WHIP + WHEP  │
-│     + NIP-44 nos DMs         nunca pelo Tor        + NIP-53     │
-│                                                    nunca Tor    │
+│  1. PLANO DE DADOS          2. PALCO (5–10)                     │
+│     chat, perfil, cargos       voz / webcam / tela              │
+│     DMs, convites              720p30 mesh                      │
+│         │                        │                              │
+│         ▼                        ▼                              │
+│     Nostr (relays)           Trystero + WebRTC                  │
+│     + Tor opcional           signaling Nostr                    │
+│     + NIP-44 nos DMs         nunca pelo Tor                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -50,54 +47,28 @@ Tor entra só neste plano:
 
 Nunca microfone, nunca câmera, nunca tela compartilhada passam pelo circuito Tor.
 
-### 2. Sala interativa — voz e webcam (todo mundo fala)
+### 2. Palco — voz, câmera, tela (todo mundo fala)
 
-Problema de **grupo pequeno/médio**, ida e volta, < 300 ms.
+Problema de **grupo pequeno**, ida e volta, < 300 ms. Teto **10** no 0.1.
 
-Protocolo: **WebRTC**, orquestrado pelo **LiveKit** (Apache-2.0), que é o caminho oficial do [NIP-29](https://nips.nostr.com/29) (`tag livekit` + JWT em `/.well-known/nip29/livekit/<grupo>`).
+Protocolo: **WebRTC** em malha, signaling **Nostr** via [Trystero](https://trystero.dev). Sem LiveKit. Sem JWT. Sem SFU.
 
-Por que este e não outro:
+Por que este e não o LiveKit do NIP-29 neste ciclo:
 
-- Já é o padrão dos grupos Nostr — Ágora fala com os mesmos canais de voz do Nostrord / clientes NIP-29
-- FOSS, self-host, sem taxa para a empresa LiveKit Cloud (a gente roda o binário)
-- Mic + câmera + screenshare no mesmo room
+- O palco abre no **site** e no `.exe` com o mesmo código
+- Ninguém precisa de servidor de mídia, Docker ou sidecar
+- Captura **720p30**; a malha copia para cada par — documentado, sem downgrade escondido
+- Sala privada: senha Trystero + chave gerada no cliente + envelope NIP-44 (nada em claro no relay)
 
-### 3. Go Live — um transmite, N assistem
+Custo aceito: cada um vê o IP dos outros; sem TURN; 720p × (N−1) pode ficar imassistível. Detalhe: [`GOLIVE.md`](./GOLIVE.md).
 
-Problema **diferente** de sala de voz. LiveKit (todo mundo é “participante”) escala mal e fica caro em CPU quando 200 pessoas só querem *assistir*.
+LiveKit (tag `livekit` + JWT) fica **fora** do caminho do usuário. Quem quiser um SFU sobe o próprio. Não é o 0.1.
 
-Pilha livre escolhida:
+### 3. Ao vivo no 0.1 = o mesmo palco
 
-| Papel | Protocolo / peça | Licença | Por quê |
-|---|---|---|---|
-| Anúncio da live | **NIP-53** (`kind 30311`) no Nostr | aberto | O evento viaja pelos relays (e pode ir de Tor). Clientes Nostr já entendem. zap.stream usa isso. |
-| Ingestão (câmera/OBS → servidor) | **WHIP** ([RFC 9725](https://www.rfc-editor.org/rfc/rfc9725.html)) | IETF | Um `POST` HTTP + WebRTC. Browser e OBS já falam. Sem SDK dono. |
-| Playback (assistir) | **WHEP** (draft IETF, já estável na prática) e/ou **LL-HLS** | aberto | WHEP = baixa latência no browser. LL-HLS = cai em celular antigo / TV. |
-| Servidor de mídia | **[MediaMTX](https://github.com/bluenviron/mediamtx)** | MIT | Um binário. WHIP, WHEP, RTMP, SRT, LL-HLS. Sem vendor. Qualquer um sobe no Docker. |
-| Rede ruim (opcional) | **SRT** (Haivision, MPL) | aberto | OBS → SRT no MediaMTX quando a internet do streamer é instável. |
+Um transmite câmera/tela; os outros na sala assistem. **Não** é live pública 1→N. **Não** há WHIP/WHEP. **Não** há `kind 30311` com URL falsa. Outro cliente Nostr não assiste.
 
-O evento NIP-53 só carrega a URL do stream (`streaming`). A mídia em si **não passa no relay Nostr e não passa no Tor**.
-
-```
-Streamer                         MediaMTX (seu VPS / o do servidor)
-   câmera ──WHIP (WebRTC)──►  ingest
-                                    │
-Espectadores ◄──WHEP / LL-HLS───────┘
-
-Enquanto isso, no Nostr (opcionalmente via Tor):
-   kind 30311  “estou ao vivo, assista em whep://…”
-   chat da live continua sendo NIP-29 / kind 9
-```
-
-**Alternativas consideradas e por que não são o padrão:**
-
-- **LiveKit para Go Live** — ótimo para sala; ruim como CDN de 1→N. Fica como *sala*, não como broadcast.
-- **Broadcast Box** — WHIP/WHEP lindo e mínimo. Reserva se a gente quiser um SFU de live ainda mais burro. MediaMTX ganha porque também fala RTMP/SRT/HLS no mesmo processo.
-- **OvenMediaEngine** — poderoso, mas mais pesado e playback menos padrão.
-- **Owncast / PeerTube Live** — produtos prontos, não um protocolo para embutir no cliente.
-- **RTMP puro** — legado, o OBS está migrando para WHIP. Mantemos RTMP só como entrada secundária (MediaMTX já aceita).
-
-Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + MediaMTX**. Três processos, todos FOSS, todos self-host.
+Broadcast 1→N (MediaMTX + WHIP/WHEP + NIP-53) fica na **Fase 9**, para quem hospeda VPS. Não misturar com o botão Ao vivo de agora.
 
 ---
 
@@ -114,7 +85,7 @@ Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + Me
 **Não é**
 
 - Clone pixel a pixel de outro cliente
-- Mesh P2P que inventa protocolo novo
+- Mesh que inventa protocolo novo (Trystero já existe; Ágora não é uma spec P2P própria)
 - Plataforma para atividade ilegal; o cliente não esconde crime
 - Promessa de “vídeo anônimo pelo Tor”
 
@@ -130,8 +101,10 @@ Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + Me
 | DM | NIP-17 + NIP-44 + NIP-59 |
 | Grupos | NIP-29 (subgrupos = canais) |
 | Arquivos | Blossom |
-| Voz / webcam | LiveKit JS + WebRTC |
-| Go Live | NIP-53 + MediaMTX (WHIP / WHEP / LL-HLS) |
+| Palco | Trystero + WebRTC (720p30, até 10) |
+| Limpar voz | DeepFilterNet 3 (wasm/modelo nesta origem) |
+| Ao vivo 0.1 | O mesmo palco (sem WHIP) |
+| Go Live 1→N | Fora do 0.1 (Fase 9, MediaMTX) |
 | Anonimato de rede | Tor SOCKS5 + relays `.onion` |
 | UI | tokens próprios (carvão / âmbar / papel) |
 | i18n | `pt-BR` primeiro |
@@ -151,8 +124,9 @@ Quem sobe um “servidor Ágora” no futuro sobe: **relay NIP-29 + LiveKit + Me
 | Mensagem | evento com tag `h` |
 | Cargo | `39001` / `39003` + mods `9000+` |
 | DM | NIP-17 |
-| Voz / webcam | LiveKit (NIP-29) |
-| Go Live | NIP-53 + MediaMTX |
+| Palco | Trystero (`agora-stage`) |
+| Sala privada | chave local + envelope NIP-44 |
+| Ao vivo 0.1 | câmera no mesmo palco |
 | Arquivo | Blossom |
 | Bloquear | NIP-51 (local) |
 
@@ -209,30 +183,30 @@ Cada fase é entregável sozinha. Não misturar voz com Tor. Não misturar Go Li
 
 **Pronto quando:** DM cifrado funciona; mute esconde sem apagar no relay.
 
-### Fase 5 — Voz e webcam (LiveKit)
+### Fase 5 — Palco P2P (Trystero)
 
-- [x] Detectar tag `livekit` no grupo
-- [x] JWT via NIP-98
-- [x] Política ICE declarada (`src/lib/nostr/ice.ts`): host candidates aceitos; sem STUN Google; sem TURN-only
-- [x] Mic, câmera
-- [ ] Screenshare (LiveKit aceita; a UI ainda não tem o botão)
-- [x] Participantes `kind 39004` ao vivo na lista (metadata já é lida)
-- [x] Canal de voz = subgrupo AV-only
+- [x] Signaling Nostr (Trystero), sem LiveKit / JWT
+- [x] ICE: host candidates; STUN Cloudflare; sem STUN Google; sem TURN
+- [x] Mic, câmera, tela
+- [x] 720p30; teto 10; aviso honesto de IP e de uplink
+- [x] Canal de voz = `agora-stage` (não depende de servidor LiveKit)
+- [x] Palco sempre começa em voz; câmera/tela/Ao vivo são opção
+- [x] Indicador de quem está falando
+- [x] DeepFilterNet 3 no mic deste PC (assets em `/deepfilternet3/`)
+- [x] Sala privada: chave aleatória uma vez; envelope NIP-44; texto `agora1.`
+- [x] Apagar canal de texto ou palco (NIP-29 `9008`)
+- [x] F5 restaura a última praça e o último canal
 
-**Pronto quando:** dois usuários se ouvem e se veem. **Fora do Tor.**
+**Pronto quando:** duas janelas do site se ouvem na LAN. **Fora do Tor.**
 
-### Fase 6 — Go Live (MediaMTX + NIP-53)
+### Fase 6 — Ao vivo (mesmo palco)
 
-- [x] Composer “Ao vivo”: publicar `kind 30311` com URL `streaming`
-- [x] Publicar via WHIP no MediaMTX (browser e OBS)
-- [x] Aviso: Go Live revela o IP ao MediaMTX, mesmo com Tor no chat
-- [x] Assistir via WHEP **embutido** no cliente (`startWhep` no palco da live)
-- [x] Fallback LL-HLS (URL `.m3u8` no mesmo `<video>`; se o browser não tocar, o link continua)
-- [x] Badge AO VIVO no canal
+- [x] Botão Ao vivo no site: câmera no palco, sem WHIP
+- [x] Sem URL WHEP falsa no `kind 30311`
+- [x] Aviso: 720p30 × (N−1) cópias pode ficar imassistível
 - [x] Chat da live continua no Nostr (Fase 2)
-- [x] Doc: `docker compose` com MediaMTX para quem self-hosta
 
-**Pronto quando:** A transmite, B assiste no canal, C vê o evento NIP-53 noutro cliente Nostr. Mídia **não** passa no Tor.
+**Pronto quando:** A transmite, até 9 assistem no Ágora. Outro cliente Nostr **não** assiste. Mídia **não** passa no Tor.
 
 ### Fase 6½ — Recinto (antes da 7)
 
@@ -241,7 +215,7 @@ O núcleo de texto/voz/live já está. Esta fatia é o casco da praça (o “ser
 - [x] Renderer de mídia: imagem/vídeo/link de verdade (hoje o 2º replace come o `<img>` e vaza `png" alt="" />`)
 - [x] Casco mais rápido e responsivo (chat usa a largura; compositor e user dock fixos; sem scrollbar feia)
 - [x] Ajustes **da praça** (não os do usuário): visão, canais, pessoas, sair; editar meta só se mod (9002)
-- [x] Permissões honestas NIP-29, defaults de membro (falar, reagir, anexo, convite, voz se tiver LiveKit). Kick/apagar/pin/canal/editar praça = 39001. Sem 40 checkboxes que o relay ignora
+- [x] Permissões honestas NIP-29, defaults de membro (falar, reagir, anexo, convite, voz no palco). Kick/apagar/pin/canal/editar praça = 39001. Sem 40 checkboxes que o relay ignora
 - [x] Lista do recinto: todos os membros; separar por cargo; dono em evidência; espaço marcado para bots (bem depois). Online/offline **só com o que o protocolo já dá** — sem inventar presença que vaze IP ou “último visto”
 - [x] Cartão de perfil ao clicar (kind 0 + `AG-XXXX` + about). Cara Ágora (papel/âmbar), não o popout roxo
 - [x] OpenMoji no chat (composer + reações). Phosphor fica no chrome
@@ -256,26 +230,24 @@ A tela existe. O SOCKS **ainda não** entra no WebSocket do NDK. Não marcar ist
 - [x] Setting SOCKS5 gravado (Tor Browser / `tor.exe` local)
 - [x] Relays `.onion` na lista
 - [x] Health-check heurístico (“tem onion + está ligado”)
-- [x] Aviso na UI: Tor não carrega voz nem live; Go Live revela IP ao MediaMTX
+- [x] Aviso na UI: Tor não carrega voz nem live; o palco revela IP aos pares
 - [ ] Aplicar SOCKS no WebSocket do NDK (prova: `socksAppliedToNostr() === true`)
 - [ ] Prova humana #6: texto num `.onion`; voz e live **não** tentam o circuito
 - [ ] Depois (desktop): sidecar Arti
 
-**Pronto quando:** com Tor na 9050, o chat de texto fala com um relay onion. LiveKit e MediaMTX continuam em caminho direto — e o SOCKS **não** vaza para STUN/TURN.
+**Pronto quando:** com Tor na 9050, o chat de texto fala com um relay onion. O palco P2P continua em caminho direto — e o SOCKS **não** vaza para STUN.
 
 ### Fase 8 — Desktop
 
 Repo próprio: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). A UI é a deste site (`AGORA_CLIENT`). Sem copiar `src/`.
 
 - [x] Tauri 2, instalador Windows (NSIS) — no repo desktop (`pnpm dev` / `pnpm build`)
-- [x] Site honesto: palco/Ao vivo não fingem JWT no 0xchat; aviso + [`DESKTOP.md`](./DESKTOP.md)
-- [ ] Sidecar MediaMTX no `.exe` (Ao vivo desk↔desk; sem Docker)
-- [ ] Sidecar LiveKit (palco desk↔desk)
-- [ ] Sidecar relay NIP-29 (a praça no PC)
+- [x] Palco no site e no `.exe` (Trystero). Sem JWT no 0xchat
+- [ ] Sidecar relay NIP-29 (a praça no PC) — depois
 - [ ] Keystore nativo (ainda é o cofre da web)
 - [x] Deep link `agora:` / `nostr:` registrado
 
-**Pronto quando:** o `.exe` abre e entra nos mesmos grupos da versão web; o site não promete palco.
+**Pronto quando:** o `.exe` abre e entra nos mesmos grupos da versão web, inclusive o palco.
 
 ### Fase 9 — Depois do núcleo
 
@@ -288,7 +260,7 @@ Cada item vira passo próprio, não um saco.
 - [ ] Busca local
 - [ ] Notificações do SO
 - [ ] NIP-46 (bunker, chave fora do app)
-- [ ] Companion opcional para quem hospeda **VPS** (relay + LiveKit + MediaMTX). O usuário final sobe o recinto pelo [app de PC](./DESKTOP.md), sem Docker
+- [ ] Companion opcional para quem hospeda **VPS** (relay +, se quiser, SFU/ingest 1→N). O usuário final sobe o recinto pelo [app de PC](./DESKTOP.md), sem Docker. Não é o palco do 0.1
 - [ ] Denúncia no cliente (id do evento + relay) e guia de moderação para quem hospeda Blossom/relay
 - [ ] Guia legal do self-hoster (rascunho em `HOSPEDAR.md` — não é conselho jurídico)
 - [ ] Mobile (bem depois)
@@ -300,15 +272,16 @@ Cada item vira passo próprio, não um saco.
 | Risco | Mitigação |
 |---|---|
 | Relay NIP-29 cai e o “servidor” some | Fork / migração da spec; backup noutro relay; compose próprio na Fase 9 |
-| LiveKit / MediaMTX são servidores de mídia (alvo mais fácil que o chat) | Qualquer um self-hosta; o cliente só consome a URL anunciada |
-| Correlação de timing Tor (kind 30311) ↔ WHIP clearnet | Sem solução fácil. Documentado. UI avisa: Go Live revela IP ao MediaMTX |
-| Host ICE / IP visível ao SFU | Política aceita. Sem STUN Google. Sem TURN-only até termos TURN nosso |
-| MediaMTX de nó único satura com muitos espectadores | Risco operacional, não de MVP. Companion na Fase 9; escala fica com quem hospeda |
-| WHEP ainda é draft IETF | WHIP é RFC 9725. Não tratar o wire WHEP como congelado |
+| Malha 720p30 × (N−1) esgota uplink de casa | Documentado na UI e em [`GOLIVE.md`](./GOLIVE.md). Sem downgrade escondido. Teto 10 |
+| Correlação de timing Tor ↔ ICE clearnet do palco | Sem solução fácil. Documentado. UI avisa: palco revela IP aos pares |
+| Host ICE / IP visível aos pares | Política aceita. STUN Cloudflare. Sem TURN neste ciclo |
+| CDN de terceiros para DeepFilterNet (CORS) | Wasm/modelo vendored em `public/deepfilternet3/` |
+| Chave de sala privada perdida com o cache | Envelope NIP-44 nas 12 palavras. Sem as palavras, a sala some para você |
+| LiveKit / MediaMTX se alguém self-hostar 1→N | Fora do 0.1. Companion na Fase 9 |
 | Brasil bloqueia relays conhecidos | Usuário cola qualquer URL; `.onion`; convite `naddr` fora da banda |
 | `nsec` vaza = conta perdida | Cifra + aviso + NIP-07 / NIP-46 |
 | Quem hospeda Blossom/relay é o recinto (lei local) | Princípio 8 + `HOSPEDAR.md`. Denúncia e política do recinto na Fase 9 |
-| Escopo de “cliente completo” mata o projeto | MVP é texto. Voz, live e Tor são fases seguintes, isoladas |
+| Escopo de “cliente completo” mata o projeto | Núcleo é texto. Palco, Tor e 1→N são fases isoladas |
 
 ---
 
@@ -318,7 +291,7 @@ Cada item vira passo próprio, não um saco.
 2. Admin kicka; o kickado para de publicar.
 3. DM: terceiro no relay não lê.
 4. Canal de voz: se ouvem **sem** Tor.
-5. Go Live: WHIP sobe, WHEP assiste, evento NIP-53 aparece.
+5. Palco: duas janelas se ouvem na LAN; Ao vivo é câmera no mesmo mesh; outro cliente Nostr não assiste.
 6. SOCKS 9050: texto passa num `.onion`; voz e live **não** tentam o circuito. **Ainda não passa.** O setting existe; o NDK não usa SOCKS. Rodar este item é o primeiro trabalho da Fase 7, não um “já pronto”.
 
 ---
@@ -330,9 +303,6 @@ Arquitetura de transporte **travada**:
 - **Nostr** = eventos
 - **Tor** = anonimato do *caminho* desses eventos (SOCKS ainda não ligado)
 - **NIP-44** = segredo das DMs
-- **LiveKit** = sala de voz/webcam
-- **MediaMTX + WHIP/WHEP + NIP-53** = Go Live
+- **Trystero + WebRTC** = palco 720p30, até 10, mesh (sem LiveKit/MediaMTX no 0.1)
 
-Núcleo de texto (Fases 0–4) está no cliente. Voz e live existem como cliente e dependem de servidor do outro lado.
-
-Fase **6½ — Recinto** está no cliente. Próximo de transporte: **Fase 7** (SOCKS no NDK + prova humana #6). GitHub/Pages continua na prateleira.
+Núcleo de texto (Fases 0–4) está no cliente. Palco P2P no site (Fases 5–6), com salas privadas e DeepFilterNet 3. Próximo de transporte: **Fase 7** (SOCKS no NDK). App de PC: mesma UI, [agora-desktop](https://github.com/agorafoss/agora-desktop).

@@ -1,13 +1,16 @@
 // Copyright (C) 2026 Ágora
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { GearSix, Hash, Plus, SignOut, SpeakerHigh, Translate } from "@phosphor-icons/react";
+import { GearSix, Hash, Lock, Microphone, MicrophoneSlash, Plus, SignOut, SpeakerHigh, Translate, Trash } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../features/auth/auth-store.ts";
+import { useChatStore } from "../../features/chat/chat-store.ts";
 import { useGroupStore } from "../../features/groups/group-store.ts";
 import { useProfileStore } from "../../features/profile/profile-store.ts";
 import { useRelayStore } from "../../features/relays/relay-store.ts";
+import { useVoiceStore } from "../../features/voice/voice-store.ts";
 import { changeLocale, type Locale } from "../../i18n/index.ts";
+import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { hueFromPubkey, shortenNpub } from "../../lib/nostr/nip19.ts";
 import { groupKey, type Channel, type GroupRef } from "../../lib/nostr/nip29.ts";
 import { Avatar } from "./Avatar.tsx";
@@ -33,9 +36,15 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
   const liveRelays = useRelayStore((state) => state.live);
   const channels = useGroupStore((state) => state.channels);
   const selectChannel = useGroupStore((state) => state.selectChannel);
+  const removeChannel = useGroupStore((state) => state.removeChannel);
   const leave = useGroupStore((state) => state.leave);
-  const onStage = useGroupStore((state) => state.onStage);
   const moderate = useGroupStore((state) => state.canModerate());
+  const names = useChatStore((state) => state.names);
+  const stageKey = useVoiceStore((state) => state.channelKey);
+  const stageLive = useVoiceStore((state) => state.status === "live");
+  const stagePeers = useVoiceStore((state) => state.peers);
+  const stageMuted = useVoiceStore((state) => state.muted);
+  const talking = useVoiceStore((state) => state.talking);
   const owner = useGroupStore((state) => state.isOwner());
   const canAdd = owner || moderate;
   const displayName = profile.displayName || profile.name || callsign || (npub ? shortenNpub(npub) : t("app.name"));
@@ -67,17 +76,32 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
             <div className={styles.category}>
               <div className={styles.catLabel}>{t("channels.text")}</div>
               {(text.length ? text : channels.slice(0, 1)).map((item) => (
-                <button
-                  key={groupKey(item)}
-                  type="button"
-                  className={styles.channel}
-                  data-active={channel ? groupKey(item) === groupKey(channel) : false}
-                  onClick={() => void selectChannel(item)}
-                >
-                  <Hash className={styles.hash} size={15} />
-                  <span className={styles.label}>{item.parent ? item.name : "geral"}</span>
-                  {live && !item.parent ? <span className={styles.live}>{t("status.live")}</span> : null}
-                </button>
+                <div key={groupKey(item)} className={styles.channelRow}>
+                  <button
+                    type="button"
+                    className={styles.channel}
+                    data-active={channel ? groupKey(item) === groupKey(channel) : false}
+                    onClick={() => void selectChannel(item)}
+                  >
+                    <Hash className={styles.hash} size={15} />
+                    {item.locked ? <Lock className={styles.hash} size={12} /> : null}
+                    <span className={styles.label}>{item.parent ? item.name : "geral"}</span>
+                    {live && !item.parent ? <span className={styles.live}>{t("status.live")}</span> : null}
+                  </button>
+                  {canAdd && item.parent ? (
+                    <button
+                      type="button"
+                      className={styles.trash}
+                      title={t("channels.delete")}
+                      onClick={() => {
+                        if (!window.confirm(t("channels.deleteAsk"))) return;
+                        void removeChannel(item);
+                      }}
+                    >
+                      <Trash size={13} />
+                    </button>
+                  ) : null}
+                </div>
               ))}
               {canAdd ? (
                 <button type="button" className={styles.addRow} onClick={() => onAddChannel("text")}>
@@ -88,21 +112,71 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
             </div>
             <div className={styles.category}>
               <div className={styles.catLabel}>{t("channels.voice")}</div>
-              {voice.map((item) => (
-                <button
-                  key={groupKey(item)}
-                  type="button"
-                  className={styles.channel}
-                  data-active={channel ? groupKey(item) === groupKey(channel) : false}
-                  onClick={() => void selectChannel(item)}
-                >
-                  <SpeakerHigh className={styles.voice} size={15} />
-                  <span className={styles.label}>{item.name}</span>
-                  {channel && groupKey(item) === groupKey(channel) && onStage.length > 0 ? (
-                    <span className={styles.live}>{onStage.length}</span>
-                  ) : null}
-                </button>
-              ))}
+              {voice.map((item) => {
+                const key = groupKey(item);
+                const here = stageLive && stageKey === key;
+                const selfHere = here && pubkey
+                  ? [{ pubkey, peerId: "self", name: displayName, muted: stageMuted, picture: profile.picture }]
+                  : [];
+                const others = here
+                  ? stagePeers
+                      .filter((peer) => peer.pubkey && peer.pubkey !== pubkey)
+                      .map((peer) => ({
+                        pubkey: peer.pubkey,
+                        peerId: peer.peerId,
+                        name: names[peer.pubkey] || publicCallsign(peer.pubkey),
+                        muted: false,
+                        picture: undefined as string | undefined,
+                      }))
+                  : [];
+                const roster = [...selfHere, ...others];
+                return (
+                  <div key={key} className={styles.voiceBlock}>
+                    <div className={styles.channelRow}>
+                      <button
+                        type="button"
+                        className={styles.channel}
+                        data-active={channel ? key === groupKey(channel) : false}
+                        onClick={() => void selectChannel(item)}
+                      >
+                        <SpeakerHigh className={styles.voice} size={15} />
+                        {item.locked ? <Lock className={styles.voice} size={12} /> : null}
+                        <span className={styles.label}>{item.name}</span>
+                        {roster.length > 0 ? <span className={styles.live}>{roster.length}</span> : null}
+                      </button>
+                      {canAdd && item.parent ? (
+                        <button
+                          type="button"
+                          className={styles.trash}
+                          title={t("channels.delete")}
+                          onClick={() => {
+                            if (!window.confirm(t("channels.deleteAsk"))) return;
+                            void removeChannel(item);
+                          }}
+                        >
+                          <Trash size={13} />
+                        </button>
+                      ) : null}
+                    </div>
+                    {roster.length > 0 ? (
+                      <ul className={styles.occupants}>
+                        {roster.map((person) => (
+                          <li
+                            key={person.pubkey}
+                            className={styles.occupant}
+                            data-talk={(talking[person.peerId] ?? 0) > 0}
+                          >
+                            <Avatar name={person.name} hue={hueFromPubkey(person.pubkey)} size={20} picture={person.picture} />
+                            <span>{person.name}</span>
+                            <VuMeter level={talking[person.peerId] ?? 0} live={(talking[person.peerId] ?? 0) > 0} size={10} />
+                            {person.muted ? <MicrophoneSlash size={12} /> : <Microphone size={12} />}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                );
+              })}
               {canAdd ? (
                 <button type="button" className={styles.addRow} onClick={() => onAddChannel("voice")}>
                   <Plus size={14} />

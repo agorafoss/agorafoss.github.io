@@ -8,7 +8,6 @@ import { useAuthStore } from "../../features/auth/auth-store.ts";
 import { useChatStore, type ChatMessage } from "../../features/chat/chat-store.ts";
 import { useGroupStore } from "../../features/groups/group-store.ts";
 import { useProfileStore } from "../../features/profile/profile-store.ts";
-import { useDesktopStore } from "../../features/desktop/desktop-store.ts";
 import { useLiveStore } from "../../features/live/live-store.ts";
 import { useRelayStore } from "../../features/relays/relay-store.ts";
 import { useTorStore } from "../../features/tor/tor-store.ts";
@@ -17,7 +16,10 @@ import { playbackKind, startWhep } from "../../lib/nostr/whip.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { hueFromPubkey } from "../../lib/nostr/nip19.ts";
 import { renderMarkdown } from "../../lib/nostr/markdown.ts";
-import type { Channel } from "../../lib/nostr/nip29.ts";
+import { groupKey, type Channel } from "../../lib/nostr/nip29.ts";
+import { recoverRoomKey } from "../../lib/nostr/room-key.ts";
+import { readStageSecret, writeStageSecret } from "../../lib/nostr/stage-secret.ts";
+import { getLiveIdentity } from "../../features/auth/auth-store.ts";
 import { openMojiUrl } from "../../lib/nostr/openmoji.ts";
 import { Avatar } from "./Avatar.tsx";
 import { EmojiPicker } from "./EmojiPicker.tsx";
@@ -37,6 +39,45 @@ type Props = {
 
 export function ChatPane({ channel, onToggleMembers, onToggleChannels, channelsOpen, membersOpen, onDm, onOpenSquare }: Props) {
   const [profile, setProfile] = useState<string | null>(null);
+  const locked = Boolean(channel?.locked && channel.parent);
+  const [hasKey, setHasKey] = useState(() => (channel ? Boolean(readStageSecret(groupKey(channel))) : false));
+
+  useEffect(() => {
+    let alive = true;
+    async function loadKey() {
+      if (!channel) {
+        if (alive) setHasKey(false);
+        return;
+      }
+      const key = groupKey(channel);
+      if (readStageSecret(key)) {
+        if (alive) setHasKey(true);
+        return;
+      }
+      if (!channel.locked) {
+        if (alive) setHasKey(true);
+        return;
+      }
+      const identity = getLiveIdentity();
+      if (identity) {
+        const recovered = await recoverRoomKey(identity, channel);
+        if (recovered) {
+          writeStageSecret(key, recovered);
+          if (alive) {
+            setHasKey(true);
+            useChatStore.getState().close();
+            useChatStore.getState().open(channel);
+          }
+          return;
+        }
+      }
+      if (alive) setHasKey(false);
+    }
+    void loadKey();
+    return () => {
+      alive = false;
+    };
+  }, [channel]);
 
   return (
     <section className={styles.pane}>
@@ -48,8 +89,21 @@ export function ChatPane({ channel, onToggleMembers, onToggleChannels, channelsO
         membersOpen={membersOpen}
         onOpenSquare={onOpenSquare}
       />
-      <ChatFeed channel={channel} onProfile={setProfile} />
-      <ChatComposer channel={channel} />
+      {locked && !hasKey ? (
+        <ChatLock
+          channel={channel!}
+          onUnlock={() => {
+            setHasKey(true);
+            useChatStore.getState().close();
+            useChatStore.getState().open(channel!);
+          }}
+        />
+      ) : (
+        <>
+          <ChatFeed channel={channel} onProfile={setProfile} />
+          <ChatComposer channel={channel} />
+        </>
+      )}
       {profile ? (
         <ProfileCard
           pubkey={profile}
@@ -122,11 +176,15 @@ function ChatHeader({
           <div className={styles.liveBar}>
             <Broadcast size={14} />
             <span>{live.title || t("live.on")}</span>
-            <a href={live.streaming} target="_blank" rel="noreferrer">
-              {t("live.watch")}
-            </a>
+            {live.streaming ? (
+              <a href={live.streaming} target="_blank" rel="noreferrer">
+                {t("live.watch")}
+              </a>
+            ) : (
+              <span>{t("live.meshHint")}</span>
+            )}
           </div>
-          <LivePlayer url={live.streaming} />
+          {live.streaming ? <LivePlayer url={live.streaming} /> : null}
         </>
       ) : null}
     </>
@@ -178,6 +236,35 @@ function LivePlayer({ url }: { url: string }) {
     <div className={styles.liveStage}>
       <video ref={videoRef} autoPlay playsInline controls muted={false} aria-label={t("live.on")} />
     </div>
+  );
+}
+
+function ChatLock({ channel, onUnlock }: { channel: Channel; onUnlock: () => void }) {
+  const { t } = useTranslation();
+  const [door, setDoor] = useState("");
+  return (
+    <form
+      className={styles.empty}
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (door.trim().length < 4) return;
+        writeStageSecret(groupKey(channel), door);
+        onUnlock();
+      }}
+    >
+      <h2>{t("chat.privateTitle")}</h2>
+      <p>{t("chat.privateBody")}</p>
+      <input
+        type="password"
+        value={door}
+        onChange={(event) => setDoor(event.target.value)}
+        placeholder={t("channels.password")}
+        autoComplete="off"
+      />
+      <button type="submit" disabled={door.trim().length < 4}>
+        {t("voice.unlock")}
+      </button>
+    </form>
   );
 }
 
@@ -390,7 +477,6 @@ function ChatComposer({ channel }: { channel: Channel | null }) {
   const publishing = useLiveStore((state) => state.publishing);
   const startLive = useLiveStore((state) => state.start);
   const stopLive = useLiveStore((state) => state.stop);
-  const desktop = useDesktopStore((state) => state.desktop);
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -436,7 +522,7 @@ function ChatComposer({ channel }: { channel: Channel | null }) {
         <button type="button" className={styles.ghost} disabled={!channel} title={t("chat.attach")} onClick={() => fileRef.current?.click()}>
           <Paperclip size={16} />
         </button>
-        {channel && desktop ? (
+        {channel ? (
           <button
             type="button"
             className={styles.ghost}
@@ -446,7 +532,7 @@ function ChatComposer({ channel }: { channel: Channel | null }) {
                 void stopLive(channel);
                 return;
               }
-              if (!window.confirm(t("live.ipWarn"))) return;
+              if (!window.confirm(`${t("live.ipWarn")}\n\n${t("voice.qualityWarn")}`)) return;
               void startLive(channel, channel.name);
             }}
           >

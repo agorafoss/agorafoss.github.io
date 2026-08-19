@@ -41,22 +41,22 @@
     "stack": {
       "identity": "No email",
       "identityBody": "Twelve words and a lock. The account is the key.",
-      "web": "The site is chat",
-      "webBody": "Stage and broadcast live in the PC app. No Docker.",
+      "web": "The site is a stage too",
+      "webBody": "Chat on Nostr. Voice and camera on a P2P mesh, 720p30, up to 10 people.",
       "wip": "Still in progress",
       "wipBody": "Errors will show up. Open an issue. This is not a finished product."
     },
     "flow": {
       "you": { "label": "You", "body": "Browser or the .exe. The key signs. Nothing sits on an Ágora server." },
-      "split": { "label": "Text or voice?", "body": "Two wires. Chat and the poster on the relay. Stage and live on the PC app." },
-      "site": { "label": "Site", "body": "agorafoss.github.io. Text only: square, DMs, invite. No JWT. No broadcast." },
-      "desktop": { "label": "PC app", "body": "The same UI in a Tauri window. Later it hosts LiveKit and MediaMTX. No Docker." },
-      "relay": { "label": "Nostr relay", "body": "Signed events. Today groups.0xchat.com. Chat, roles, live poster. No audio." },
+      "split": { "label": "Text or voice?", "body": "Two wires. Chat on the relay. Stage on a WebRTC mesh between browsers." },
+      "site": { "label": "Site", "body": "agorafoss.github.io. Chat and P2P stage. No JWT. No Ágora server." },
+      "desktop": { "label": "PC app", "body": "The same UI in a Tauri window. The stage is already the site's." },
+      "relay": { "label": "Nostr relay", "body": "Signed events. Today groups.0xchat.com. Chat, roles, stage discovery. No audio." },
       "blossom": { "label": "Blossom", "body": "Files (photo, video, audio). Chat only carries the URL. The Blossom host sees the uploader IP." },
-      "livekit": { "label": "LiveKit", "body": "Stage: mic and camera. Runs in the host .exe. The JWT does not come from 0xchat." },
-      "mediamtx": { "label": "MediaMTX", "body": "Go Live, one to many. WHIP in, WHEP out. Also in the host .exe." },
-      "lan": { "label": "LAN / Tailscale", "body": "The friend reaches the host IP. Never localhost on the poster: that is their own PC." },
-      "peer": { "label": "Someone else", "body": "Reads chat on the relay. Stage and live only with the PC app and a path to the host." },
+      "livekit": { "label": "P2P stage", "body": "Trystero: mic, camera, screen. Up to 10 people. No LiveKit. No sidecar." },
+      "mediamtx": { "label": "720p30", "body": "Each peer sends a copy to every other. At home, 5–10 cameras can make the live unwatchable." },
+      "lan": { "label": "LAN / Tailscale", "body": "No TURN. If NAT blocks you, same network or Tailscale." },
+      "peer": { "label": "Someone else", "body": "Reads chat on the relay. Joins the stage on the site or the .exe." },
       "tor": { "label": "Tor", "body": "Nostr events only, and the WebSocket is not wired yet. Never voice or live." }
     }
   },
@@ -72,18 +72,30 @@
     "voice": "Stage",
     "addChannel": "New channel",
     "addText": "New text chat",
-    "addVoice": "New stage (voice, camera, live)",
+    "addVoice": "New stage (voice + stream)",
     "addLead": "A text chat in this square. People who join see the history.",
-    "addLeadVoice": "A stage: microphone, camera and room live. Media does not go over Tor.",
+    "addLeadVoice": "A stage: mic, camera and screen on a P2P mesh, 720p30, up to 10 people. Media does not go over Tor. The others see your IP.",
     "voiceEmpty": "No stage yet. The + creates one.",
     "name": "Channel name",
+    "private": "Private room",
+    "password": "Room key",
+    "privateLead": "Makes a random key. Copy it and send it in a DM. Without it the stage locks. It is never stored in the clear on the relay.",
+    "privateTextLead": "Makes a random key. Text goes out encrypted. Without the key the relay only sees junk. Copy it and send it in a DM.",
+    "keyTitle": "Copy this key",
+    "keyLead": "Send it in a DM to whoever joins. Without it the room locks.",
+    "keyWarn": "It is never stored in the clear on the relay. The 12-word phrase can recover the envelope. Clearing this site does not delete the room — only the local key, if the envelope is missing.",
+    "keyCopy": "Copy key",
+    "keyCopied": "Copied",
+    "keyDone": "I saved the key",
+    "delete": "Delete channel",
+    "deleteAsk": "Delete this channel from the square? History on the relay may remain.",
     "relay": "relay"
   },
   "desktop": {
     "getApp": "PC app",
     "webStageTitle": "Stage on the PC app",
-    "webStageBody": "The site is chat. Voice, camera and Go Live run in the desktop app: one .exe hosts, the other joins. No Docker. No Ágora server.",
-    "webStageLead": "This creates the channel. Mic and live only open in the PC app (agora-desktop). On the site the stage shows the notice."
+    "webStageBody": "The stage now opens on the site. Voice, camera and screen on a P2P mesh. No Docker. No Ágora server.",
+    "webStageLead": "This creates the stage channel. Mic and camera open here, in the browser."
   },
   "chat": {
     "placeholder": "Message {{channel}}",
@@ -95,6 +107,8 @@
     "emoji": "Emoji",
     "emptyTitle": "No messages yet",
     "emptyBody": "This channel is live. Write the first one.",
+    "privateTitle": "Private chat",
+    "privateBody": "This channel has a password. Without it the text will not open.",
     "reply": "Reply",
     "replyTo": "reply to",
     "replying": "Replying to",
@@ -147,7 +161,7 @@
     "join": "Join",
     "createTitle": "New square",
     "joinTitle": "Join a square",
-    "createLead": "It is born on a NIP-29 relay that accepts group create. groups.fiatjaf.com only creates on its website.",
+    "createLead": "It starts as a voice room, with the option to stream camera or screen. Needs a NIP-29 relay that accepts group create (groups.fiatjaf.com only creates on its website).",
     "fiatjafWeb": "That relay refuses kind 9007. Create it at https://groups.fiatjaf.com and join with the id, or use wss://groups.0xchat.com.",
     "joinLead": "Paste the invite naddr, or the id and relay. A code is only needed if it is closed.",
     "invitePaste": "naddr1… or id @ relay",
@@ -197,7 +211,7 @@
       "attach": "Attach image or video",
       "history": "Read what was already said",
       "invite": "Copy the naddr invite",
-      "voice": "Join the stage if the channel has LiveKit"
+      "voice": "Join the stage if the channel is voice"
     },
     "mods": {
       "kick": "Remove people",
@@ -275,6 +289,7 @@
     "pair": "Pair",
     "mute": "Mute",
     "tor": "Circuit",
+    "voice": "Voice",
     "close": "Close"
   },
   "profile": {
@@ -327,33 +342,62 @@
     }
   },
   "live": {
-    "go": "Go live",
+    "go": "Stream",
+    "stop": "Stop stream",
     "on": "Broadcast on air",
     "watch": "Watch",
-    "ipWarn": "Going live reveals your IP to the media server, even if chat is on Tor. Media never enters the circuit. To hide your IP from the host, use a one-hop VPN or WireGuard on the system before you stream. Continue?"
+    "meshHint": "On the Ágora stage — no WHEP URL",
+    "ipWarn": "Going live reveals your IP to the others in the room, even if chat is on Tor. Media never enters the circuit. Continue?"
   },
   "voice": {
-    "hint": "LiveKit stage. Off Tor.",
+    "hint": "Voice room. You can stream camera or screen (720p30, up to 10). Off Tor.",
+    "you": "You",
+    "full": "Fullscreen",
+    "exitFull": "Exit fullscreen",
     "mute": "Mute",
     "unmute": "Talk",
-    "camOn": "Camera",
-    "camOff": "No camera",
-    "ipWarn": "The stage reveals your IP to the media server. Tor does not carry voice. To hide your IP from the host, use a one-hop VPN or WireGuard on the system.",
+    "camOn": "Stream camera",
+    "camOff": "Stop camera",
+    "screenOn": "Stream screen",
+    "screenOff": "Stop screen",
+    "password": "Password",
+    "passwordLead": "This stage is private. Paste the key, or wait for the envelope from your 12-word phrase.",
+    "unlock": "Enter",
+    "ipWarn": "The stage reveals your IP to the others in the room. Tor does not carry voice.",
+    "qualityWarn": "Capture is 720p at 30 fps. Each peer sends a copy to every other. With 5–10 people on a home link the live can stall, drop audio, or nobody can watch. No TURN: if it does not connect, same network or Tailscale.",
     "noTor": "Chat Tor does not apply to this stage.",
     "status": {
       "idle": "Off stage",
+      "locked": "Password stage",
       "connecting": "Entering the stage",
       "live": "On air",
       "error": "Stage closed"
     },
     "errors": {
-      "voice-no-stage": "This channel has no LiveKit tag in metadata.",
-      "voice-connect-failed": "This relay has no voice server (LiveKit). Without /.well-known/nip29/livekit the stage stays closed. Text chat still works.",
-      "voice-camera-failed": "The camera did not open."
+      "voice-no-stage": "This square has no stage.",
+      "voice-connect-failed": "Could not join the stage. NAT, relay or handshake. Try the same network or Tailscale.",
+      "voice-camera-failed": "The camera did not open.",
+      "voice-screen-failed": "The screen did not open.",
+      "stage-full": "Stage full (10 people). The 11th does not enter.",
+      "stage-password": "Enter this stage password.",
+      "stage-bad-password": "Wrong password. Try again.",
+      "live-no-stage": "Create a stage in this square before going live.",
+      "live-start-failed": "The broadcast did not start."
+    }
+  },
+  "clarity": {
+    "hint": "DeepFilterNet 3 on your microphone. The model stays on this PC (~24 MB). It never goes to the relay. Each person sets their own. If it fails, the browser denoise stays.",
+    "enabled": "Clean voice (DeepFilterNet 3)",
+    "suppression": "Strength",
+    "status": {
+      "idle": "Off. Join the stage to load, or turn it on above.",
+      "loading": "Loading the model…",
+      "ready": "Running on this stage.",
+      "failed": "Did not load. The stage keeps the browser denoise."
     }
   },
   "tor": {
-    "hint": "SOCKS5 only on the path of Nostr events, and it is not wired to the WebSocket yet. This screen stores the address. Voice and live never enter the circuit — going live reveals your IP to MediaMTX.",
+    "hint": "SOCKS5 only on the path of Nostr events, and it is not wired to the WebSocket yet. This screen stores the address. Voice and live never enter the circuit — the stage reveals your IP to peers.",
     "enable": "Use the Tor circuit when the PC app is running (Phase 7 applies SOCKS)",
     "clearnetHint": "Text relays stay on the normal list, like",
     "health": {

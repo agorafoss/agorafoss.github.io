@@ -2,22 +2,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 /**
- * Política ICE — travada.
+ * Política ICE — palco mesh (Trystero).
  *
- * LiveKit e MediaMTX vêem o IP do cliente por desenho: mídia nunca entra no Tor.
- * Aceitamos host candidates (`iceTransportPolicy: "all"`). Não forçamos
- * `"relay"` porque o Ágora não opera um TURN próprio; o SFU já é o relay
- * de mídia. Participantes da sala não trocam mídia P2P — o caminho é o
- * servidor. O que vaza é o IP para o operador do LiveKit/MediaMTX, não
- * o IP de um membro para o outro via host candidate.
- *
- * Sem STUN público (stun.l.google.com). Seria um terceiro a mais sabendo
- * que este IP abriu WebRTC. O servidor de mídia anuncia o ICE dele.
+ * Os pares se vêem. Host candidates e um STUN que não é Google.
+ * Sem TURN neste ciclo: CGNAT/celular pode falhar; a UI fala nisso.
+ * Sem stun.l.google.com — um terceiro a menos sabendo que este IP
+ * abriu WebRTC.
  */
 export const ICE_TRANSPORT_POLICY: RTCIceTransportPolicy = "all";
 
+export const CLOUDFLARE_STUN = "stun:stun.cloudflare.com:3478";
+
 export function mediaIceServers(): RTCIceServer[] {
-  return [];
+  return [{ urls: [CLOUDFLARE_STUN] }];
 }
 
 export function mediaPeerConfig(): RTCConfiguration {

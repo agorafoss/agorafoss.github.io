@@ -20,11 +20,12 @@ describe("nip29 helpers", () => {
     );
   });
 
-  it("marks a channel as voice only when LiveKit has no text kinds", () => {
-    expect(channelKindFromMeta({ livekit: false, supportedKinds: null })).toBe("text");
-    expect(channelKindFromMeta({ livekit: true, supportedKinds: null })).toBe("text");
-    expect(channelKindFromMeta({ livekit: true, supportedKinds: [] })).toBe("voice");
-    expect(channelKindFromMeta({ livekit: true, supportedKinds: [9] })).toBe("text");
+  it("marks a channel as voice from agora-stage or empty supported kinds", () => {
+    expect(channelKindFromMeta({ livekit: false, stage: false, supportedKinds: null })).toBe("text");
+    expect(channelKindFromMeta({ livekit: true, stage: false, supportedKinds: null })).toBe("text");
+    expect(channelKindFromMeta({ livekit: false, stage: true, supportedKinds: null })).toBe("voice");
+    expect(channelKindFromMeta({ livekit: false, stage: false, supportedKinds: [] })).toBe("voice");
+    expect(channelKindFromMeta({ livekit: true, stage: false, supportedKinds: [9] })).toBe("text");
   });
 
   it("takes the first 64 hex chars of a LiveKit participant identity", () => {

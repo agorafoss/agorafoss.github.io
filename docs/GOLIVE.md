@@ -1,34 +1,54 @@
-# Go Live
+# Palco e Ao vivo
 
 A mídia **não** passa no Nostr e **não** passa no Tor.
 
-O botão Ao vivo existe no **app de PC**. O site (Pages) é chat: não publica WHIP. Guia dos dois repos: [`DESKTOP.md`](./DESKTOP.md).
+No 0.1 o palco e o Ao vivo são a **mesma malha P2P** ([Trystero](https://trystero.dev) + signaling Nostr). Sem LiveKit. Sem MediaMTX. Sem WHIP/WHEP. Sem sidecar. O site e o `.exe` usam o mesmo código.
 
-Publicar um Go Live **revela o IP do streamer ao servidor de mídia**, mesmo que o chat esteja no circuito. Um observador que vê o relay e o host de mídia correlaciona o `kind 30311` com a conexão WHIP pelo relógio. O cliente avisa isso antes de transmitir.
+## Qualidade
 
-## No app de PC (caminho do usuário)
+Captura **1280×720 a 30 fps**. Encoder alvo ~2,5 Mbps por cópia. Sem downgrade automático para 360p.
 
-O `.exe` vai hospedar o MediaMTX **dentro** da janela (sidecar). Sem Docker. Dois desktops: o host publica no `127.0.0.1:8889`; o cartaz Nostr leva o IP que o **amigo** alcança (Tailscale `100.x` ou LAN). Nunca `localhost` no evento.
+Cada participante **manda uma cópia para cada outro**. Isso é o preço da malha.
 
-Repositório do casco: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop).
+| Sala | Upload aproximado de quem transmite vídeo |
+|---|---|
+| 2 pessoas | ~2,5 Mbps |
+| 5 pessoas | ~10 Mbps |
+| 10 pessoas | ~18–22 Mbps |
 
-## Cartaz Nostr
+Várias câmeras ao mesmo tempo: cada um paga isso. Em internet de casa, **ninguém consegue ver** — travamento, áudio cortando, tile preto. Está escrito na UI. Não é bug escondido.
 
-O anúncio é um evento NIP-53 (`kind 30311`) com a URL `streaming` (WHEP). O chat da live continua no canal NIP-29.
+Teto: **10 pessoas**. O 11º não entra.
 
-Portas do MediaMTX (iguais no sidecar e no compose de desenvolvimento):
+O palco **sempre abre em voz**. Câmera, tela e o botão Ao vivo são opção no mesmo mesh. Quem está falando aparece na lista (VU).
 
-- ingestão: `http://<host>:8889/live/agora/whip`
-- playback: `http://<host>:8889/live/agora/whep`
+## Salas privadas
 
-OBS pode publicar no mesmo WHIP. O Ágora assiste via WHEP.
+Trystero cifra o SDP com uma senha. No Ágora essa senha **não** é um texto que você escolhe e o relay guarda.
 
-## Desenvolvimento (opcional)
+Na criação: chave aleatória, mostrada **uma vez** (“copia, manda no DM”). O relay só vê envelopes NIP-44 (`kind 30078`, `agora-rk:<sala>:<destinatário>`). Quem tem as 12 palavras recupera a chave neste PC. Canal de texto privado usa a mesma chave (`agora1.` AES-GCM). Apagar o canal (texto ou palco) é ação de cargo no NIP-29 (`9008`).
 
-`docker compose up` neste repo do **site** ainda sobe um MediaMTX solto para quem está debugando o cliente sem o `.exe`. Não é o que pedimos ao usuário final.
+## Limpar voz
 
-```bash
-docker compose up
-```
+DeepFilterNet 3 no microfone **deste** PC. Wasm + modelo (~24 MB) em `/deepfilternet3/` nesta origem. Não passa no relay. Cada um configura o seu (ajustes → voz). Se o modelo não carregar, o palco segue com `noiseSuppression` do browser.
 
-Só no mesmo PC: `http://localhost:8889/live/agora/whip`. O amigo na internet **não** alcança isso.
+Licenças do modelo: Apache-2.0 OR MIT ([NOTICE](../public/deepfilternet3/NOTICE.txt)).
+
+## O que o palco revela
+
+Os outros na sala vêem o **seu IP**. Sem TURN: CGNAT e celular muitas vezes não conectam. Caminho que costuma funcionar: mesma LAN ou Tailscale.
+
+Tor do chat **não** cobre isto.
+
+## O que isto não é
+
+- Não é live pública 1→N para dezenas de espectadores.
+- Não publica `kind 30311` com URL WHEP falsa.
+- Outro cliente Nostr (zap.stream, Nostrord) **não** assiste.
+- MediaMTX / LiveKit ficam fora do caminho do usuário neste ciclo.
+
+## App de PC
+
+O [agora-desktop](https://github.com/agorafoss/agora-desktop) é a mesma UI numa janela. Não precisa do `.exe` para o palco abrir.
+
+`docker compose` com MediaMTX neste repo é só legado de desenvolvimento. Não é o caminho do 0.1.

@@ -10,9 +10,10 @@ import { ProfileEditor } from "../profile/ProfileEditor.tsx";
 import { RelayPanel } from "../relays/RelayPanel.tsx";
 import { TorPanel } from "../tor/TorPanel.tsx";
 import { PairingPanel } from "./PairingPanel.tsx";
+import { VoiceClarityPanel } from "../voice/VoiceClarityPanel.tsx";
 import styles from "./SettingsDrawer.module.css";
 
-type Tab = "profile" | "relays" | "pair" | "mute" | "tor";
+type Tab = "profile" | "relays" | "pair" | "mute" | "tor" | "voice";
 
 type Props = {
   onClose: () => void;
@@ -53,6 +54,9 @@ export function SettingsDrawer({ onClose }: Props) {
           <button type="button" className={styles.tab} data-on={tab === "tor"} onClick={() => setTab("tor")}>
             {t("settings.tor")}
           </button>
+          <button type="button" className={styles.tab} data-on={tab === "voice"} onClick={() => setTab("voice")}>
+            {t("settings.voice")}
+          </button>
         </div>
         <div className={styles.body}>
           {tab === "profile" ? (
@@ -63,6 +67,8 @@ export function SettingsDrawer({ onClose }: Props) {
             <PairingPanel />
           ) : tab === "mute" ? (
             <MutePanel />
+          ) : tab === "voice" ? (
+            <VoiceClarityPanel />
           ) : (
             <TorPanel />
           )}

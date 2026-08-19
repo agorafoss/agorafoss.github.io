@@ -7,6 +7,7 @@ import { KIND_GROUP_ADMINS, KIND_GROUP_LIVEKIT, KIND_GROUP_MEMBERS } from "../..
 import { getNdk } from "../../lib/nostr/ndk.ts";
 import {
   createChannel,
+  deleteGroup,
   claimGroupOwner,
   createGroup,
   editGroupMeta,
@@ -37,7 +38,9 @@ import {
 import { canModerate, isOwner as pubkeyIsOwner, type GroupAdmin } from "../../lib/nostr/permissions.ts";
 import { looksLikeInvite, parseGroupInvite } from "../../lib/nostr/invite.ts";
 import { CREATE_RELAY, GROUP_RELAY, normalizeRelayUrl } from "../../lib/nostr/relays.ts";
-import { useAuthStore } from "../auth/auth-store.ts";
+import { generateRoomSecret, publishRoomKeyEnvelopes } from "../../lib/nostr/room-key.ts";
+import { writeStageSecret } from "../../lib/nostr/stage-secret.ts";
+import { getLiveIdentity, useAuthStore } from "../auth/auth-store.ts";
 
 type GroupState = {
   groups: GroupRef[];
@@ -53,11 +56,12 @@ type GroupState = {
   busy: boolean;
   error: string | null;
   load: () => Promise<void>;
-  create: (name: string, relay?: string) => Promise<void>;
+  create: (name: string, relay?: string, locked?: boolean) => Promise<string | null>;
   join: (id: string, relay?: string, code?: string) => Promise<void>;
   select: (group: GroupRef) => Promise<void>;
   selectChannel: (channel: Channel) => Promise<void>;
-  addChannel: (name: string, kind: ChannelKind) => Promise<void>;
+  addChannel: (name: string, kind: ChannelKind, locked?: boolean) => Promise<string | null>;
+  removeChannel: (channel: Channel) => Promise<void>;
   kick: (pubkey: string) => Promise<void>;
   editMeta: (name: string, about: string) => Promise<void>;
   setRole: (pubkey: string, role: string) => Promise<void>;
@@ -78,6 +82,83 @@ function asRootChannel(group: GroupRef, about = "", livekit = false): Channel {
 let stageSub: NDKSubscription | null = null;
 let rosterSub: NDKSubscription | null = null;
 const FOUNDED_KEY = "agora.founded";
+const LAST_SQUARE_KEY = "agora.last-square";
+const LAST_CHANNEL_KEY = "agora.last-channel";
+const CHANNEL_CACHE_KEY = "agora.channel-cache";
+
+function readLastSquare(): string | null {
+  try {
+    return localStorage.getItem(LAST_SQUARE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeLastSquare(key: string): void {
+  try {
+    localStorage.setItem(LAST_SQUARE_KEY, key);
+  } catch {
+    /* quota */
+  }
+}
+
+function readLastChannels(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(LAST_CHANNEL_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter((entry): entry is [string, string] => typeof entry[1] === "string"),
+    );
+  } catch {
+    return {};
+  }
+}
+
+function writeLastChannel(squareKey: string, channelKey: string): void {
+  try {
+    localStorage.setItem(LAST_CHANNEL_KEY, JSON.stringify({ ...readLastChannels(), [squareKey]: channelKey }));
+  } catch {
+    /* quota */
+  }
+}
+
+function readChannelCache(): Record<string, Channel[]> {
+  try {
+    const raw = localStorage.getItem(CHANNEL_CACHE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return {};
+    return parsed as Record<string, Channel[]>;
+  } catch {
+    return {};
+  }
+}
+
+function writeChannelCache(squareKey: string, channels: Channel[]): void {
+  try {
+    const kids = channels.filter((item) => item.parent);
+    localStorage.setItem(CHANNEL_CACHE_KEY, JSON.stringify({ ...readChannelCache(), [squareKey]: kids }));
+  } catch {
+    /* quota */
+  }
+}
+
+function kidsOf(groupId: string, saved: Channel[]): Channel[] {
+  const fromList = saved.filter((item) => item.parent === groupId);
+  const fromCache = Object.values(readChannelCache())
+    .flat()
+    .filter((item) => item.parent === groupId);
+  const seen = new Set(fromList.map((item) => item.id));
+  return [...fromList, ...fromCache.filter((item) => !seen.has(item.id))];
+}
+
+function pickChannel(square: GroupRef, channels: Channel[]): Channel {
+  const root = channels.find((item) => !item.parent) ?? channels[0];
+  const last = readLastChannels()[groupKey(square)];
+  return channels.find((item) => groupKey(item) === last) ?? channels.find((item) => item.kind === "voice") ?? root;
+}
 
 function readFounded(): Set<string> {
   try {
@@ -160,19 +241,21 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     set({ busy: true, error: null });
     try {
       const book = await loadGroupList(pubkey);
+      const last = readLastSquare();
+      const first = book.groups.find((item) => groupKey(item) === last) ?? book.groups[0];
       set({
         groups: book.groups,
         savedChannels: book.channels,
         busy: false,
-        activeKey: book.groups[0] ? groupKey(book.groups[0]) : null,
+        activeKey: first ? groupKey(first) : null,
       });
-      if (book.groups[0]) await get().select(book.groups[0]);
+      if (first) await get().select(first);
     } catch {
       set({ busy: false, error: "group-load-failed" });
     }
   },
 
-  create: async (name, relay = CREATE_RELAY) => {
+  create: async (name, relay = CREATE_RELAY, locked) => {
     set({ busy: true, error: null });
     try {
       const group = await createGroup(name, relay);
@@ -187,8 +270,13 @@ export const useGroupStore = create<GroupState>((set, get) => ({
       set({ groups, busy: false, admins: claimed.length ? claimed : get().admins });
       await get().select(group);
       if (claimed.length) set({ admins: claimed });
+      if (!get().channels.some((item) => item.kind === "voice")) {
+        return await get().addChannel("palco", "voice", locked);
+      }
+      return null;
     } catch (error) {
       set({ busy: false, error: publishRejectMessage(error) });
+      return null;
     }
   },
 
@@ -212,42 +300,53 @@ export const useGroupStore = create<GroupState>((set, get) => ({
   },
 
   select: async (group) => {
+    const squareKey = groupKey(group);
+    const rootNow = asRootChannel(group);
+    const cachedKids = kidsOf(group.id, get().savedChannels);
+    const instant = [rootNow, ...cachedKids];
+    const first = pickChannel(group, instant);
+    writeLastSquare(squareKey);
     set({
-      activeKey: groupKey(group),
-      activeChannelKey: groupKey(group),
-      channels: [asRootChannel(group)],
+      activeKey: squareKey,
+      activeChannelKey: groupKey(first),
+      channels: instant,
       members: [],
       admins: [],
       pins: [],
       onStage: [],
     });
-    watchStage(group, set);
+    watchStage(first, set);
     watchRoster(group, set);
+    if (first.parent) void joinGroup(first.id, first.relay).catch(() => undefined);
     try {
       const [meta, members, admins, pins, children, onStage, roleNames] = await Promise.all([
         fetchFullMeta(group.id, group.relay),
         fetchGroupMembers(group.id, group.relay),
         fetchGroupAdmins(group.id, group.relay),
-        fetchPins(group.id, group.relay),
+        fetchPins(first.id, first.relay),
         fetchChildChannels(group),
-        fetchLivekitParticipants(group.id, group.relay),
+        fetchLivekitParticipants(first.id, first.relay),
         fetchGroupRoles(group.id, group.relay),
       ]);
+      if (get().activeKey !== squareKey) return;
       const root = asRootChannel(group, meta?.about ?? "", meta?.livekit ?? false);
       if (meta?.name && meta.name !== group.name) {
         root.name = meta.name;
       }
-      const localKids = get().savedChannels.filter((item) => item.parent === group.id);
+      const localKids = kidsOf(group.id, get().savedChannels);
       const seen = new Set(children.map((item) => item.id));
       const channels = [root, ...children, ...localKids.filter((item) => !seen.has(item.id))];
+      writeChannelCache(squareKey, channels);
       const groups = get().groups.map((item) =>
-        groupKey(item) === groupKey(group) ? { ...item, name: root.name } : item,
+        groupKey(item) === squareKey ? { ...item, name: root.name } : item,
       );
       const me = useAuthStore.getState().pubkey?.toLowerCase();
       const nextAdmins =
-        me && !admins.some((admin) => admin.pubkey === me) && founded.has(groupKey(group))
+        me && !admins.some((admin) => admin.pubkey === me) && founded.has(squareKey)
           ? [{ pubkey: me, roles: ["owner"] }, ...admins]
           : admins;
+      const stillFirst = get().activeChannelKey === groupKey(first);
+      const nextActive = stillFirst ? pickChannel(group, channels) : channels.find((item) => groupKey(item) === get().activeChannelKey);
       set({
         groups,
         channels,
@@ -256,14 +355,16 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         roleNames,
         pins,
         onStage,
-        activeChannelKey: groupKey(root),
+        activeChannelKey: nextActive ? groupKey(nextActive) : groupKey(root),
       });
     } catch {
-      set({ members: [], admins: [], pins: [] });
+      if (get().activeKey === squareKey) set({ members: [], admins: [], pins: [] });
     }
   },
 
   selectChannel: async (channel) => {
+    const square = get().active();
+    if (square) writeLastChannel(groupKey(square), groupKey(channel));
     set({ activeChannelKey: groupKey(channel), onStage: [] });
     watchStage(channel, set);
     try {
@@ -280,12 +381,21 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     }
   },
 
-  addChannel: async (name, kind) => {
+  addChannel: async (name, kind, locked) => {
     const group = get().active();
-    if (!group) return;
+    if (!group) return null;
     set({ busy: true, error: null });
     try {
-      const channel = await createChannel({ parent: group, name, kind });
+      const secret = locked ? generateRoomSecret() : null;
+      const channel = await createChannel({ parent: group, name, kind, locked: Boolean(secret) });
+      if (secret) {
+        writeStageSecret(groupKey(channel), secret);
+        const identity = getLiveIdentity();
+        const recipients = [...get().members, useAuthStore.getState().pubkey].filter(Boolean) as string[];
+        if (identity) {
+          await publishRoomKeyEnvelopes(identity, channel, secret, recipients);
+        }
+      }
       const savedChannels = [
         ...get().savedChannels.filter((item) => groupKey(item) !== groupKey(channel)),
         channel,
@@ -297,7 +407,30 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         busy: false,
         error: null,
       });
+      writeChannelCache(groupKey(group), get().channels);
       await get().selectChannel(channel);
+      return secret;
+    } catch (error) {
+      set({ busy: false, error: publishRejectMessage(error) });
+      return null;
+    }
+  },
+
+  removeChannel: async (channel) => {
+    if (!channel.parent) return;
+    set({ busy: true, error: null });
+    try {
+      await deleteGroup(channel).catch(() => undefined);
+      const savedChannels = get().savedChannels.filter((item) => groupKey(item) !== groupKey(channel));
+      const channels = get().channels.filter((item) => groupKey(item) !== groupKey(channel));
+      await saveGroupList(get().groups, savedChannels);
+      const fallback = channels[0] ?? null;
+      const square = get().active();
+      if (square) writeChannelCache(groupKey(square), channels);
+      set({ savedChannels, channels, busy: false });
+      if (get().activeChannelKey === groupKey(channel) && fallback) {
+        await get().selectChannel(fallback);
+      }
     } catch (error) {
       set({ busy: false, error: publishRejectMessage(error) });
     }

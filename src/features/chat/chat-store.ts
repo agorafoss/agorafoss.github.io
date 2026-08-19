@@ -15,6 +15,8 @@ import {
   type GroupRef,
 } from "../../lib/nostr/nip29.ts";
 import { isMuted } from "../../lib/nostr/mute.ts";
+import { isRoomBox, openRoomText, sealRoomText } from "../../lib/nostr/room-box.ts";
+import { readStageSecret } from "../../lib/nostr/stage-secret.ts";
 import { useMuteStore } from "../mute/mute-store.ts";
 import {
   appendPending,
@@ -141,19 +143,29 @@ export const useChatStore = create<ChatState>((set, get) => ({
         return;
       }
       if (event.kind !== KIND_CHAT) return;
-      if (hidden(event.pubkey, event.content)) return;
-      const message: ChatMessage = {
-        id: event.id,
-        pubkey: event.pubkey,
-        content: event.content,
-        createdAt: event.created_at ?? 0,
-        replyTo: event.tagValue("e"),
-        previous: previousFromEvent(event),
-        seq: 0,
-      };
-      set((state) => ({
-        messages: mergeChatEvent(state.messages, message, streamLive ? "live" : "history"),
-      }));
+      void (async () => {
+        let content = event.content;
+        if (isRoomBox(content)) {
+          const secret = readStageSecret(key);
+          if (!secret) return;
+          const plain = await openRoomText(content, secret, group.id);
+          if (plain === null) content = "••••";
+          else content = plain;
+        }
+        if (hidden(event.pubkey, content)) return;
+        const message: ChatMessage = {
+          id: event.id,
+          pubkey: event.pubkey,
+          content,
+          createdAt: event.created_at ?? 0,
+          replyTo: event.tagValue("e"),
+          previous: previousFromEvent(event),
+          seq: 0,
+        };
+        set((state) => ({
+          messages: mergeChatEvent(state.messages, message, streamLive ? "live" : "history"),
+        }));
+      })();
       void ndk
         .getUser({ pubkey: event.pubkey })
         .fetchProfile()
@@ -206,7 +218,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }));
     }
     try {
-      const realId = await publishChat({ group, content: text, previous, replyTo });
+      const secret = readStageSecret(channelKey(group));
+      const body = secret ? await sealRoomText(text, secret, group.id) : text;
+      const realId = await publishChat({ group, content: body, previous, replyTo });
       set((state) => ({ messages: resolvePending(state.messages, pendingId, realId), error: null }));
     } catch {
       set((state) => ({

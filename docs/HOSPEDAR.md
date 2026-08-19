@@ -2,22 +2,21 @@
 
 Isto **não é conselho jurídico**. É o que o código assume quando alguém sobe as peças.
 
-Quem sobe um “servidor Ágora” sobe três processos FOSS: **relay NIP-29 + LiveKit + MediaMTX**. Arquivos de imagem costumam ir para um **Blossom** à parte. Cada um vê coisa diferente.
+No 0.1 o usuário **não** sobe LiveKit nem MediaMTX. Palco é malha P2P no browser. Chat continua num relay NIP-29 (hoje `groups.0xchat.com`). Arquivos de imagem costumam ir para um **Blossom** à parte.
 
-O caminho do usuário da Ágora **não** é Docker. O [app de PC](./DESKTOP.md) é o recinto de mídia: o `.exe` passa a carregar esses processos (por partes: primeiro MediaMTX, depois LiveKit, depois o relay). Dois desktops falam entre si. O site só faz texto.
+Quem quiser um recinto clássico (relay + SFU + ingest 1→N) ainda pode subir **relay NIP-29 + LiveKit + MediaMTX** por conta própria. Não é o caminho do app. O `docker-compose.yml` deste repo é legado de desenvolvimento.
 
-Quem quiser as três peças **fora** do app (VPS, compose próprio) continua podendo. O `docker-compose.yml` deste repo é só MediaMTX de desenvolvimento.
+No palco P2P, **cada membro vê o IP dos outros**. Não há um único operador de SFU no meio. A chave de sala privada **não** vai em claro para o relay (só envelope NIP-44). DeepFilterNet 3 corre no PC de cada um.
 
-## O que cada processo vê
+## O que cada processo vê (0.1)
 
 | Peça | Vê | Não vê |
 |---|---|---|
-| Relay Nostr | Eventos assinados, IP de quem publica (se não for `.onion`) | Texto de DM (NIP-17). Conteúdo de imagem (só a URL) |
+| Relay Nostr | Eventos assinados, IP de quem publica (se não for `.onion`). Envelope cifrado da chave de sala | Texto de DM (NIP-17). Texto privado `agora1.`. Bytes do wasm/modelo de voz |
 | Blossom | Bytes do arquivo, IP de quem sobe | Quem leu no chat, a menos que o host cruze logs |
-| LiveKit | IP de cada participante do palco, áudio/vídeo da sala | Eventos Nostr, a menos que o mesmo admin cruze logs |
-| MediaMTX | IP de quem transmite (WHIP) e de quem assiste (WHEP/HLS) | O texto do canal, a menos que o mesmo admin cruze logs |
+| Pares no palco | IP uns dos outros, áudio/vídeo da malha | Eventos Nostr, a menos que a mesma pessoa cruze as duas pontas |
 
-Cruzar o log do relay com o log do MediaMTX desanonimiza o streamer. Se você opera os dois, você *é* esse observador. Trate os logs como material sensível.
+Se no futuro alguém subir LiveKit ou MediaMTX por conta própria, esses processos vêem IP e mídia. Cruzar o log do relay com o log de mídia desanonimiza. No 0.1 isso **não** é o caminho do app.
 
 ## Exposição legal
 
@@ -25,8 +24,9 @@ Na jurisdição de quem hospeda, o operador do recinto costuma ser tratado como 
 
 - Chat público que passou no *seu* relay
 - Imagens que passaram no *seu* Blossom
-- Voz e webcam que passaram no *seu* LiveKit
-- Transmissão que passou no *seu* MediaMTX
+- Voz e webcam que passaram no *seu* LiveKit (se você subir um)
+- Transmissão que passou no *seu* MediaMTX (se você subir um)
+- No palco P2P do 0.1: cada membro já vê o IP dos outros; não há um SFU seu no meio
 
 O Ágora não tem API nossa, não tem banco na nuvem e não tira isso da sua mão. “Sem empresa no meio” quer dizer que **você** é o recinto.
 
@@ -41,14 +41,14 @@ Princípio 8: o Ágora não é esconderijo. O cliente **não** implementa filtro
 
 Sem isso, “não é plataforma para crime” é só um cartaz.
 
-## Escala do Go Live
+## Escala do palco (0.1)
 
-Um MediaMTX de nó único é gargalo. Serve para uma praça. Não é CDN. Muitos espectadores no mesmo WHIP/WHEP esgotam CPU e uplink do VPS. Não é bloqueador de MVP. É risco operacional: ou você escala o MediaMTX, ou a live cai.
+A malha 720p30 **não** é CDN. Dez pessoas com câmera esgotam uplink de casa. Isso é o desenho, não um bug. Teto 10. Quem quiser 1→N para dezenas de espectadores sobe MediaMTX por conta própria — Fase 9, não o botão Ao vivo de agora.
 
 ## Tor
 
-Mesmo com o cliente no circuito, **voz e live saem em clearnet para a sua máquina**. O IP do participante chega no LiveKit/MediaMTX. Se a promessa do seu recinto é “ninguém aqui vê IP”, não ofereça palco nem Go Live no mesmo host que o relay.
+Mesmo com o cliente no circuito, **voz e live saem em clearnet**. No palco P2P o IP chega nos *outros membros da sala*, não num SFU. Se a promessa do recinto é “ninguém aqui vê IP”, não ofereça palco.
 
 ## Relacionado
 
-[Armada](https://github.com/soapbox-pub/armada) (Soapbox/Ditto) é outro cliente NIP-29 + LiveKit. Vale olhar o fluxo NIP-98 → JWT antes de inventar o nosso do zero, e interoperar em vez de divergir.
+[Armada](https://github.com/soapbox-pub/armada) (Soapbox/Ditto) é outro cliente NIP-29 + LiveKit. O palco Ágora 0.1 **não** pede JWT a esse fluxo. Interoperar texto NIP-29; voz é malha nossa.

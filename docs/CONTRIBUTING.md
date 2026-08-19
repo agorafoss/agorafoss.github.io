@@ -8,7 +8,7 @@ Obrigado por querer ajudar. O Ágora é um cliente, não uma plataforma. Leia is
 2. [`ROADMAP.md`](./ROADMAP.md) — o que já existe e o que vem depois. Um passo do mapa por PR, sempre que der.
 3. Abra uma issue e descreva a mudança se ela cruzar mais de um ficheiro ou um plano de transporte.
 
-Não misture os planos: eventos Nostr (e Tor), sala LiveKit, Go Live MediaMTX. Tor nunca carrega voz nem vídeo.
+Não misture os planos: eventos Nostr (e Tor) e palco Trystero/WebRTC. Tor nunca carrega voz nem vídeo. Não recoloque LiveKit, JWT no 0xchat, WHIP ou MediaMTX no caminho do usuário sem um passo próprio no roadmap.
 
 ## Ambiente
 
@@ -36,4 +36,4 @@ Chave só no cofre (PBKDF2 + AES-GCM) ou na extensão NIP-07. Detalhe: [`SECURIT
 
 ## O que não entra num PR “de passagem”
 
-Tor no WebSocket (Fase 7), keystore nativo, sidecar MediaMTX/LiveKit (repo desktop), catálogo OpenMoji inteiro no repo, filtro automático de conteúdo. Cada um tem o próprio passo no roadmap.
+Tor no WebSocket (Fase 7), keystore nativo, sidecar de recinto (repo desktop), catálogo OpenMoji inteiro no repo, filtro automático de conteúdo. Wasm/modelo DeepFilterNet 3 já estão em `public/deepfilternet3/` — não volte a buscar `cdn.mezon.ai` (CORS). Cada um tem o próprio passo no roadmap.

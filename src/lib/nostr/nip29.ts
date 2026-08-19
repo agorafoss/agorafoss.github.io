@@ -7,6 +7,7 @@ import {
   KIND_CHAT,
   KIND_GROUP_ADMINS,
   KIND_GROUP_CREATE,
+  KIND_GROUP_DELETE,
   KIND_GROUP_DELETE_EVENT,
   KIND_GROUP_EDIT,
   KIND_GROUP_JOIN,
@@ -42,6 +43,8 @@ export type GroupMeta = {
   parent?: string;
   children: string[];
   livekit: boolean;
+  stage: boolean;
+  locked: boolean;
   closed: boolean;
   supportedKinds: number[] | null;
 };
@@ -50,6 +53,7 @@ export type Channel = GroupRef & {
   kind: ChannelKind;
   about: string;
   livekit: boolean;
+  locked?: boolean;
   parent?: string;
 };
 
@@ -131,6 +135,8 @@ export function parseGroupMeta(event: NDKEvent): GroupMeta {
     parent: event.tagValue("parent") || undefined,
     children: event.getMatchingTags("child").map((tag) => tag[1]).filter(Boolean),
     livekit: event.tags.some((tag) => tag[0] === "livekit"),
+    stage: event.tags.some((tag) => tag[0] === "agora-stage"),
+    locked: event.tags.some((tag) => tag[0] === "agora-locked"),
     closed: event.tags.some((tag) => tag[0] === "closed"),
     supportedKinds: supported
       ? supported.slice(1).map(Number).filter((value) => !Number.isNaN(value))
@@ -138,10 +144,13 @@ export function parseGroupMeta(event: NDKEvent): GroupMeta {
   };
 }
 
-export function channelKindFromMeta(meta: Pick<GroupMeta, "livekit" | "supportedKinds">): ChannelKind {
+export function channelKindFromMeta(
+  meta: Pick<GroupMeta, "livekit" | "stage" | "supportedKinds">,
+): ChannelKind {
+  if (meta.stage) return "voice";
+  if (meta.supportedKinds !== null && meta.supportedKinds.length === 0) return "voice";
   if (!meta.livekit) return "text";
   if (meta.supportedKinds === null) return "text";
-  if (meta.supportedKinds.length === 0) return "voice";
   return meta.supportedKinds.includes(KIND_CHAT) ? "text" : "voice";
 }
 
@@ -153,6 +162,7 @@ export function metaToChannel(meta: GroupMeta, relay: string): Channel {
     kind: channelKindFromMeta(meta),
     about: meta.about,
     livekit: meta.livekit,
+    locked: meta.locked,
     parent: meta.parent,
   };
 }
@@ -190,6 +200,7 @@ export async function createChannel(opts: {
   parent: GroupRef;
   name: string;
   kind: ChannelKind;
+  locked?: boolean;
 }): Promise<Channel> {
   const created = await createGroup(opts.name, opts.parent.relay);
   const relaySet = groupRelaySet(created.relay);
@@ -203,9 +214,10 @@ export async function createChannel(opts: {
   ];
   if (subgroups) edit.tags.push(["parent", opts.parent.id]);
   if (opts.kind === "voice") {
-    edit.tags.push(["livekit"]);
+    edit.tags.push(["agora-stage"]);
     edit.tags.push(["supported_kinds"]);
   }
+  if (opts.locked) edit.tags.push(["agora-locked"]);
   if (edit.tags.length > 2) {
     try {
       await edit.publish(relaySet);
@@ -227,6 +239,7 @@ export async function createChannel(opts: {
     kind: opts.kind,
     about: "",
     livekit: opts.kind === "voice",
+    locked: Boolean(opts.locked),
     parent: opts.parent.id,
   };
 }
@@ -263,6 +276,10 @@ export async function removeUser(group: GroupRef, pubkey: string): Promise<void>
 
 export async function deleteEvent(group: GroupRef, eventId: string): Promise<void> {
   await publishModeration(KIND_GROUP_DELETE_EVENT, group, [["e", eventId]]);
+}
+
+export async function deleteGroup(group: GroupRef): Promise<void> {
+  await publishModeration(KIND_GROUP_DELETE, group, []);
 }
 
 export async function leaveGroup(group: GroupRef): Promise<void> {
@@ -392,6 +409,7 @@ function parseStoredChannel(tag: string[]): Channel | null {
     kind,
     about: "",
     livekit: kind === "voice",
+    locked: tag[6] === "locked",
     parent: tag[1],
   };
 }
@@ -427,6 +445,7 @@ export async function saveGroupList(groups: GroupRef[], channels: Channel[] = []
         channel.relay,
         channel.name,
         channel.kind,
+        channel.locked ? "locked" : "",
       ]),
     ...relays.map((relay) => ["r", relay]),
   ];

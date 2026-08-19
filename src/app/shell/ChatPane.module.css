@@ -59,6 +59,25 @@
   max-width: 36ch;
 }
 
+.empty input {
+  width: min(260px, 100%);
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--inset);
+  color: var(--paper);
+}
+
+.empty button {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: var(--r-sm);
+  background: var(--signal);
+  color: var(--void);
+  font-weight: 600;
+}
+
 .message {
   display: grid;
   grid-template-columns: 40px 1fr;

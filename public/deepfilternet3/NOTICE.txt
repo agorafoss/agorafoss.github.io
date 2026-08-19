@@ -1,0 +1,8 @@
+DeepFilterNet3 WASM (v3/pkg/df_bg.wasm) and ONNX archive
+(v3/models/DeepFilterNet3_onnx.tar.gz)
+
+Upstream model: https://github.com/Rikorose/DeepFilterNet
+WASM packaging: https://github.com/mezonai/mezon-noise-suppression
+Licenses: Apache-2.0 OR MIT
+
+Served from this origin so the browser does not fetch cdn.mezon.ai (no CORS).
