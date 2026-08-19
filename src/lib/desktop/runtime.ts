@@ -8,6 +8,12 @@ export type DesktopInfo = {
 
 const WEB: DesktopInfo = { desktop: false, keystore: "web-vault" };
 
+export function isDesktopShell(): boolean {
+  if (typeof window === "undefined") return false;
+  const shell = window as Window & { __TAURI_INTERNALS__?: unknown; __TAURI__?: unknown };
+  return Boolean(shell.__TAURI_INTERNALS__ || shell.__TAURI__);
+}
+
 export async function probeDesktop(): Promise<DesktopInfo> {
   try {
     const { invoke } = await import("@tauri-apps/api/core");

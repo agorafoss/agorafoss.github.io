@@ -10,6 +10,7 @@ import { readInviteFromLocation, stashInvite } from "../lib/nostr/invite.ts";
 import { Atmosphere } from "./atmosphere/Atmosphere.tsx";
 import { ErrorBoundary } from "./ErrorBoundary.tsx";
 import styles from "./App.module.css";
+import { isDesktopShell } from "../lib/desktop/runtime.ts";
 import { enterAppGate, leaveAppGate, shouldSkipLanding } from "./landing/gate.ts";
 import { DocsPage } from "./docs/DocsPage.tsx";
 import { Landing } from "./landing/Landing.tsx";
@@ -71,10 +72,14 @@ export function App() {
         {status === "reveal" ? <RevealScreen /> : null}
         {needAuth ? (
           <AuthScreen
-            onBack={() => {
-              leaveAppGate();
-              setGate(false);
-            }}
+            onBack={
+              isDesktopShell()
+                ? undefined
+                : () => {
+                    leaveAppGate();
+                    setGate(false);
+                  }
+            }
           />
         ) : null}
         {!plaza && ready ? (

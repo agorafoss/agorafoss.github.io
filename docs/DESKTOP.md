@@ -24,6 +24,7 @@ O arquivo `docs/MIDIA.md` (se existir neste PC) é nota local e **não** vai par
 **App de PC**
 
 - A mesma UI, com `desktop: true`
+- Sem landing: o `.exe` abre na tela de login / cadeado
 - O palco é o do site — não precisa de sidecar neste ciclo
 - Sem Docker. Sem LiveKit. Sem MediaMTX no 0.1
 
