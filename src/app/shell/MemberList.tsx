@@ -35,10 +35,11 @@ export function MemberList({ members, onDm }: Props) {
   const { t } = useTranslation();
   const [profile, setProfile] = useState<string | null>(null);
   const names = useChatStore((state) => state.names) ?? {};
-  const pictures = useChatStore((state) => state.pictures) ?? {};
+  const chatPictures = useChatStore((state) => state.pictures) ?? {};
   const ownPicture = useProfileStore((state) => state.own.picture);
   const chatMessages = useChatStore((state) => state.messages);
   const me = useAuthStore((state) => state.pubkey);
+  const pictures = me && ownPicture ? { ...chatPictures, [me]: ownPicture } : chatPictures;
   const admins = useGroupStore((state) => state.admins) ?? [];
   const kick = useGroupStore((state) => state.kick);
   const moderate = useGroupStore((state) => state.canModerate());
@@ -143,7 +144,7 @@ function MemberRow({ pubkey, me, names, pictures, admins, muted, moderate, stage
           name={name}
           hue={hueFromPubkey(pubkey)}
           size={28}
-          picture={pictures[pubkey] || (pubkey === me ? ownPicture : undefined)}
+          picture={pictures[pubkey]}
         />
       </button>
       <div className={styles.meta}>
