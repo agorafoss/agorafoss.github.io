@@ -4,12 +4,15 @@
 import { ArrowBendUpLeft, Broadcast, Paperclip, PaperPlaneTilt, PushPin, Smiley, Trash } from "@phosphor-icons/react";
 import { memo, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuthStore } from "../../features/auth/auth-store.ts";
 import { useChatStore, type ChatMessage } from "../../features/chat/chat-store.ts";
 import { useGroupStore } from "../../features/groups/group-store.ts";
+import { useProfileStore } from "../../features/profile/profile-store.ts";
 import { useLiveStore } from "../../features/live/live-store.ts";
 import { useRelayStore } from "../../features/relays/relay-store.ts";
 import { useTorStore } from "../../features/tor/tor-store.ts";
 import { encodeGroupInvite } from "../../lib/nostr/invite.ts";
+import { playbackKind, startWhep } from "../../lib/nostr/whip.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { hueFromPubkey } from "../../lib/nostr/nip19.ts";
 import { renderMarkdown } from "../../lib/nostr/markdown.ts";
@@ -28,9 +31,10 @@ type Props = {
   channelsOpen?: boolean;
   membersOpen?: boolean;
   onDm?: (pubkey: string) => void;
+  onOpenSquare?: () => void;
 };
 
-export function ChatPane({ channel, onToggleMembers, onToggleChannels, channelsOpen, membersOpen, onDm }: Props) {
+export function ChatPane({ channel, onToggleMembers, onToggleChannels, channelsOpen, membersOpen, onDm, onOpenSquare }: Props) {
   const [profile, setProfile] = useState<string | null>(null);
 
   return (
@@ -41,6 +45,7 @@ export function ChatPane({ channel, onToggleMembers, onToggleChannels, channelsO
         onToggleChannels={onToggleChannels}
         channelsOpen={channelsOpen}
         membersOpen={membersOpen}
+        onOpenSquare={onOpenSquare}
       />
       <ChatFeed channel={channel} onProfile={setProfile} />
       <ChatComposer channel={channel} />
@@ -68,12 +73,14 @@ function ChatHeader({
   onToggleChannels,
   channelsOpen,
   membersOpen,
+  onOpenSquare,
 }: {
   channel: Channel | null;
   onToggleMembers: () => void;
   onToggleChannels?: () => void;
   channelsOpen?: boolean;
   membersOpen?: boolean;
+  onOpenSquare?: () => void;
 }) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
@@ -96,6 +103,7 @@ function ChatHeader({
         channelsOpen={channelsOpen}
         membersOpen={membersOpen}
         copied={copied}
+        onOpenSquare={onOpenSquare}
         onCopyInvite={
           praça
             ? () => {
@@ -109,15 +117,66 @@ function ChatHeader({
         }
       />
       {channel && live ? (
-        <div className={styles.liveBar}>
-          <Broadcast size={14} />
-          <span>{live.title || t("live.on")}</span>
-          <a href={live.streaming} target="_blank" rel="noreferrer">
-            {t("live.watch")}
-          </a>
-        </div>
+        <>
+          <div className={styles.liveBar}>
+            <Broadcast size={14} />
+            <span>{live.title || t("live.on")}</span>
+            <a href={live.streaming} target="_blank" rel="noreferrer">
+              {t("live.watch")}
+            </a>
+          </div>
+          <LivePlayer url={live.streaming} />
+        </>
       ) : null}
     </>
+  );
+}
+
+function LivePlayer({ url }: { url: string }) {
+  const { t } = useTranslation();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [failed, setFailed] = useState(false);
+  const kind = playbackKind(url);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    setFailed(false);
+    if (kind === "hls") {
+      video.src = url;
+      void video.play().catch(() => setFailed(true));
+      return () => {
+        video.removeAttribute("src");
+        video.load();
+      };
+    }
+    if (kind !== "whep") return;
+    let pc: RTCPeerConnection | null = null;
+    let cancelled = false;
+    void startWhep(url, video)
+      .then((peer) => {
+        if (cancelled) {
+          peer.close();
+          return;
+        }
+        pc = peer;
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+      pc?.close();
+      video.srcObject = null;
+    };
+  }, [url, kind]);
+
+  if (kind === "url" || failed) return null;
+
+  return (
+    <div className={styles.liveStage}>
+      <video ref={videoRef} autoPlay playsInline controls muted={false} aria-label={t("live.on")} />
+    </div>
   );
 }
 
@@ -129,6 +188,9 @@ function ChatFeed({ channel, onProfile }: { channel: Channel | null; onProfile: 
   const messages = useChatStore((state) => state.messages);
   const reactions = useChatStore((state) => state.reactions);
   const names = useChatStore((state) => state.names);
+  const pictures = useChatStore((state) => state.pictures);
+  const me = useAuthStore((state) => state.pubkey);
+  const ownPicture = useProfileStore((state) => state.own.picture);
   const pins = useGroupStore((state) => state.pins);
   const pin = useGroupStore((state) => state.pin);
   const unpin = useGroupStore((state) => state.unpin);
@@ -177,6 +239,7 @@ function ChatFeed({ channel, onProfile }: { channel: Channel | null; onProfile: 
                 key={message.id}
                 message={message}
                 author={names[message.pubkey] || publicCallsign(message.pubkey)}
+                picture={pictures[message.pubkey] || (message.pubkey === me ? ownPicture : undefined)}
                 parent={message.replyTo ? byId.get(message.replyTo) : undefined}
                 parentName={
                   message.replyTo
@@ -210,6 +273,7 @@ const MessageHtml = memo(function MessageHtml({ html }: { html: string }) {
 const MessageRow = memo(function MessageRow({
   message,
   author,
+  picture,
   parent,
   parentName,
   reacts,
@@ -225,6 +289,7 @@ const MessageRow = memo(function MessageRow({
 }: {
   message: ChatMessage;
   author: string;
+  picture?: string;
   parent?: ChatMessage;
   parentName: string;
   reacts: Record<string, string[]>;
@@ -246,7 +311,7 @@ const MessageRow = memo(function MessageRow({
   return (
     <article className={styles.message}>
       <button type="button" className={styles.avatarBtn} onClick={() => onProfile(message.pubkey)}>
-        <Avatar name={author} hue={hueFromPubkey(message.pubkey)} size={36} />
+        <Avatar name={author} hue={hueFromPubkey(message.pubkey)} size={36} picture={picture} />
       </button>
       <div className={styles.body}>
         <div className={styles.head}>

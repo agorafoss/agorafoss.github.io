@@ -6,6 +6,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../features/auth/auth-store.ts";
 import { useDmStore } from "../../features/dms/dm-store.ts";
+import { useProfileStore } from "../../features/profile/profile-store.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { decodeNpub, hueFromPubkey } from "../../lib/nostr/nip19.ts";
 import { renderMarkdown } from "../../lib/nostr/markdown.ts";
@@ -18,6 +19,8 @@ export function DmPane() {
   const me = useAuthStore((state) => state.pubkey);
   const messages = useDmStore((state) => state.messages);
   const names = useDmStore((state) => state.names);
+  const pictures = useDmStore((state) => state.pictures);
+  const ownPicture = useProfileStore((state) => state.own.picture);
   const activePeer = useDmStore((state) => state.activePeer);
   const select = useDmStore((state) => state.select);
   const send = useDmStore((state) => state.send);
@@ -82,7 +85,7 @@ export function DmPane() {
               data-active={peer === activePeer}
               onClick={() => select(peer)}
             >
-              <Avatar name={names[peer] || publicCallsign(peer)} hue={hueFromPubkey(peer)} size={20} />
+              <Avatar name={names[peer] || publicCallsign(peer)} hue={hueFromPubkey(peer)} size={20} picture={pictures[peer]} />
               <span className={list.label}>{names[peer] || publicCallsign(peer)}</span>
             </button>
           ))}
@@ -107,7 +110,12 @@ export function DmPane() {
                 : names[message.pubkey] || publicCallsign(message.pubkey);
               return (
                 <article key={message.wrapId} className={styles.message}>
-                  <Avatar name={author} hue={hueFromPubkey(message.outgoing ? (me ?? "") : message.pubkey)} size={36} />
+                  <Avatar
+                    name={author}
+                    hue={hueFromPubkey(message.outgoing ? (me ?? "") : message.pubkey)}
+                    size={36}
+                    picture={message.outgoing ? ownPicture : pictures[message.pubkey]}
+                  />
                   <div className={styles.body}>
                     <div className={styles.head}>
                       <span className={styles.author}>{author}</span>

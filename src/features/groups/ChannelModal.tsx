@@ -10,12 +10,13 @@ import { useGroupStore } from "./group-store.ts";
 
 type Props = {
   onClose: () => void;
+  defaultKind?: ChannelKind;
 };
 
-export function ChannelModal({ onClose }: Props) {
+export function ChannelModal({ onClose, defaultKind = "text" }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState("");
-  const [kind, setKind] = useState<ChannelKind>("text");
+  const [kind, setKind] = useState<ChannelKind>(defaultKind);
   const addChannel = useGroupStore((state) => state.addChannel);
   const busy = useGroupStore((state) => state.busy);
   const error = useGroupStore((state) => state.error);
@@ -32,7 +33,7 @@ export function ChannelModal({ onClose }: Props) {
       <section className={styles.card} onClick={(event) => event.stopPropagation()}>
         <div className={styles.callsign}>{t("app.name")}</div>
         <h1 className={styles.title}>{t("channels.addChannel")}</h1>
-        <p className={styles.lead}>{t("channels.addLead")}</p>
+        <p className={styles.lead}>{kind === "voice" ? t("channels.addLeadVoice") : t("channels.addLead")}</p>
         <form className={styles.form} onSubmit={(event) => void submit(event)}>
           <label>
             {t("channels.name")}
@@ -46,7 +47,7 @@ export function ChannelModal({ onClose }: Props) {
               {t("channels.voice")}
             </button>
           </div>
-          {error ? <p className={styles.error}>{t(`groups.errors.${error}`)}</p> : null}
+          {error ? <p className={styles.error}>{t(`groups.errors.${error}`, { defaultValue: error })}</p> : null}
           <button type="submit" className={styles.primary} disabled={busy || name.trim().length < 2}>
             {busy ? t("groups.working") : t("channels.addChannel")}
           </button>

@@ -17,3 +17,4 @@ src-tauri/gen
 !.vscode/extensions.json
 *.log
 /local/
+/docs/MIDIA.md

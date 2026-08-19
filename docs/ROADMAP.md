@@ -226,8 +226,8 @@ Cada fase é entregável sozinha. Não misturar voz com Tor. Não misturar Go Li
 - [x] Composer “Ao vivo”: publicar `kind 30311` com URL `streaming`
 - [x] Publicar via WHIP no MediaMTX (browser e OBS)
 - [x] Aviso: Go Live revela o IP ao MediaMTX, mesmo com Tor no chat
-- [ ] Assistir via WHEP **embutido** no cliente (`startWhep` existe; a UI ainda abre a URL)
-- [ ] Fallback LL-HLS
+- [x] Assistir via WHEP **embutido** no cliente (`startWhep` no palco da live)
+- [x] Fallback LL-HLS (URL `.m3u8` no mesmo `<video>`; se o browser não tocar, o link continua)
 - [x] Badge AO VIVO no canal
 - [x] Chat da live continua no Nostr (Fase 2)
 - [x] Doc: `docker compose` com MediaMTX para quem self-hosta

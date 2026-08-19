@@ -21,9 +21,17 @@ type Props = {
   onToggleChannels?: () => void;
   channelsOpen?: boolean;
   membersOpen?: boolean;
+  onOpenSquare?: () => void;
 };
 
-export function VoicePane({ channel, onToggleMembers, onToggleChannels, channelsOpen, membersOpen }: Props) {
+export function VoicePane({
+  channel,
+  onToggleMembers,
+  onToggleChannels,
+  channelsOpen,
+  membersOpen,
+  onOpenSquare,
+}: Props) {
   const { t } = useTranslation();
   const connected = useRelayStore((state) => state.live.filter((relay) => relay.status === "connected").length);
   const status = useVoiceStore((state) => state.status);
@@ -58,6 +66,7 @@ export function VoicePane({ channel, onToggleMembers, onToggleChannels, channels
         onToggleChannels={onToggleChannels}
         channelsOpen={channelsOpen}
         membersOpen={membersOpen}
+        onOpenSquare={onOpenSquare}
       />
       <div className={voice.stage}>
         <p className={voice.status}>{t(`voice.status.${status}`)}</p>

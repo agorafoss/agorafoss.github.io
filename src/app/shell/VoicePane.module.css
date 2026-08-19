@@ -17,7 +17,7 @@
 
 .warn {
   max-width: 42ch;
-  color: var(--live);
+  color: var(--signal);
   font-size: var(--fs-sm);
 }
 

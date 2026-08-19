@@ -8,9 +8,10 @@ import { useAuthStore } from "../../features/auth/auth-store.ts";
 import { useChatStore } from "../../features/chat/chat-store.ts";
 import { useGroupStore } from "../../features/groups/group-store.ts";
 import { useMuteStore } from "../../features/mute/mute-store.ts";
+import { useProfileStore } from "../../features/profile/profile-store.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { hueFromPubkey } from "../../lib/nostr/nip19.ts";
-import { roleLabel, type GroupAdmin } from "../../lib/nostr/permissions.ts";
+import { rankOf, type GroupAdmin } from "../../lib/nostr/permissions.ts";
 import { Avatar } from "./Avatar.tsx";
 import { ProfileCard } from "./ProfileCard.tsx";
 import styles from "./MemberList.module.css";
@@ -25,8 +26,7 @@ type Rank = "owner" | "mod" | "member";
 function buckets(people: string[], admins: GroupAdmin[]): Record<Rank, string[]> {
   const grouped: Record<Rank, string[]> = { owner: [], mod: [], member: [] };
   for (const pubkey of people) {
-    const rank = roleLabel(admins.find((admin) => admin.pubkey === pubkey)?.roles ?? []);
-    grouped[rank === "owner" || rank === "mod" ? rank : "member"].push(pubkey);
+    grouped[rankOf(admins, pubkey)].push(pubkey);
   }
   return grouped;
 }
@@ -35,6 +35,9 @@ export function MemberList({ members, onDm }: Props) {
   const { t } = useTranslation();
   const [profile, setProfile] = useState<string | null>(null);
   const names = useChatStore((state) => state.names) ?? {};
+  const pictures = useChatStore((state) => state.pictures) ?? {};
+  const ownPicture = useProfileStore((state) => state.own.picture);
+  const chatMessages = useChatStore((state) => state.messages);
   const me = useAuthStore((state) => state.pubkey);
   const admins = useGroupStore((state) => state.admins) ?? [];
   const kick = useGroupStore((state) => state.kick);
@@ -42,7 +45,15 @@ export function MemberList({ members, onDm }: Props) {
   const mutePubkey = useMuteStore((state) => state.mutePubkey);
   const muted = useMuteStore((state) => state.list?.pubkeys) ?? [];
   const onStage = useGroupStore((state) => state.onStage) ?? [];
-  const people = [...new Set([...(me ? [me] : []), ...(members ?? []), ...onStage])];
+  const people = [
+    ...new Set([
+      ...(me ? [me] : []),
+      ...(members ?? []),
+      ...admins.map((admin) => admin.pubkey),
+      ...onStage,
+      ...chatMessages.map((message) => message.pubkey),
+    ]),
+  ];
   const groups = buckets(people, admins);
   const onStageSet = new Set(onStage);
   const sections: { rank: Rank; people: string[] }[] = [
@@ -73,6 +84,7 @@ export function MemberList({ members, onDm }: Props) {
                   pubkey={pubkey}
                   me={me}
                   names={names}
+                  pictures={pictures}
                   admins={admins}
                   muted={muted}
                   moderate={moderate}
@@ -109,6 +121,7 @@ type RowProps = {
   pubkey: string;
   me: string | null;
   names: Record<string, string>;
+  pictures: Record<string, string>;
   admins: GroupAdmin[];
   muted: string[];
   moderate: boolean;
@@ -119,15 +132,19 @@ type RowProps = {
   onOpen: () => void;
 };
 
-function MemberRow({ pubkey, me, names, admins, muted, moderate, stage, onDm, onMute, onKick, onOpen }: RowProps) {
+function MemberRow({ pubkey, me, names, pictures, admins, muted, moderate, stage, onDm, onMute, onKick, onOpen }: RowProps) {
   const { t } = useTranslation();
   const name = names[pubkey] || publicCallsign(pubkey);
-  const roles = admins.find((admin) => admin.pubkey === pubkey)?.roles ?? [];
-  const rank = pubkey === me ? "you" : roleLabel(roles);
+  const rank = pubkey === me ? "you" : rankOf(admins, pubkey);
   return (
     <div className={styles.row} data-stage={stage ? "true" : "false"} data-rank={rank}>
       <button type="button" className={styles.face} onClick={onOpen}>
-        <Avatar name={name} hue={hueFromPubkey(pubkey)} size={28} />
+        <Avatar
+          name={name}
+          hue={hueFromPubkey(pubkey)}
+          size={28}
+          picture={pictures[pubkey] || (pubkey === me ? ownPicture : undefined)}
+        />
       </button>
       <div className={styles.meta}>
         <button type="button" className={styles.name} onClick={onOpen}>

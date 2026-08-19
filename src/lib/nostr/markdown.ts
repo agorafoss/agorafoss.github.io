@@ -39,7 +39,7 @@ function mediaTag(url: string): string {
     return `<img src="${href}" alt="" loading="lazy" />`;
   }
   if (kind === "video") {
-    return `<video src="${href}" controls playsinline preload="metadata"></video>`;
+    return `<video src="${href}" controls playsinline preload="none"></video>`;
   }
   if (kind === "audio") {
     return `<audio src="${href}" controls preload="metadata"></audio>`;

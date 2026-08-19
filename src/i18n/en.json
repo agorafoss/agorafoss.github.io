@@ -14,7 +14,11 @@
     "text": "Text",
     "voice": "Stage",
     "addChannel": "New channel",
-    "addLead": "A channel is a NIP-29 subgroup of this square. Stage needs LiveKit on the relay.",
+    "addText": "New text chat",
+    "addVoice": "New stage (voice, camera, live)",
+    "addLead": "A text chat in this square. People who join see the history.",
+    "addLeadVoice": "A stage: microphone, camera and room live. Media does not go over Tor.",
+    "voiceEmpty": "No stage yet. The + creates one.",
     "name": "Channel name",
     "relay": "relay"
   },
@@ -107,12 +111,16 @@
   },
   "square": {
     "title": "Square settings",
+    "open": "Settings",
     "save": "Publish name",
-    "memberOnly": "Only a 39001 role can edit the square.",
-    "promote": "Make mod",
+    "memberOnly": "Only the square owner can edit this.",
+    "promote": "Give role",
     "demote": "Remove role",
     "defaultsLead": "A member can already do this. The relay is the authority.",
-    "modLead": "39001 role only:",
+    "modLead": "The owner commands the relay with kind 9000/9001. A role the 39003 list does not know is ignored.",
+    "rules": "Rules / about",
+    "assignRole": "Role name (owner, admin, moderator, or another the relay accepts)",
+    "nobody": "Nobody listed yet. People who speak in chat show up here.",
     "tabs": {
       "overview": "Overview",
       "channels": "Channels",
@@ -277,7 +285,7 @@
     },
     "errors": {
       "voice-no-stage": "This channel has no LiveKit tag in metadata.",
-      "voice-connect-failed": "The stage JWT did not come. The relay must serve /.well-known/nip29/livekit.",
+      "voice-connect-failed": "This relay has no voice server (LiveKit). Without /.well-known/nip29/livekit the stage stays closed. Text chat still works.",
       "voice-camera-failed": "The camera did not open."
     }
   },

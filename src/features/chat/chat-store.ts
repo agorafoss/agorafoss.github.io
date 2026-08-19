@@ -16,14 +16,16 @@ import {
 } from "../../lib/nostr/nip29.ts";
 import { isMuted } from "../../lib/nostr/mute.ts";
 import { useMuteStore } from "../mute/mute-store.ts";
+import {
+  appendPending,
+  dropPending,
+  mergeChatEvent,
+  orderHistory,
+  resolvePending,
+  type ChatMessage,
+} from "./chat-order.ts";
 
-export type ChatMessage = {
-  id: string;
-  pubkey: string;
-  content: string;
-  createdAt: number;
-  replyTo?: string;
-};
+export type { ChatMessage };
 
 export type ReactionMap = Record<string, Record<string, string[]>>;
 
@@ -31,6 +33,7 @@ type ChatState = {
   messages: ChatMessage[];
   reactions: ReactionMap;
   names: Record<string, string>;
+  pictures: Record<string, string>;
   replyTo: ChatMessage | null;
   error: string | null;
   open: (group: GroupRef) => void;
@@ -44,11 +47,28 @@ type ChatState = {
 
 let subscription: NDKSubscription | null = null;
 let openKey: string | null = null;
+let liveTimer: number | null = null;
+/** After this, the feed only inserts. It never reshuffles what is already on screen. */
+let streamLive = false;
+
+function freezeStream(): void {
+  streamLive = true;
+  if (liveTimer !== null) window.clearTimeout(liveTimer);
+  liveTimer = null;
+}
+
+function previousFromEvent(event: NDKEvent): string[] {
+  return event.tags
+    .filter((tag) => tag[0] === "previous")
+    .flatMap((tag) => tag.slice(1))
+    .filter(Boolean);
+}
 
 type ChatCache = {
   messages: ChatMessage[];
   reactions: ReactionMap;
   names: Record<string, string>;
+  pictures: Record<string, string>;
 };
 
 const cache = new Map<string, ChatCache>();
@@ -58,12 +78,8 @@ function channelKey(group: GroupRef): string {
 }
 
 function snapshot(): ChatCache {
-  const { messages, reactions, names } = useChatStore.getState();
-  return { messages, reactions, names };
-}
-
-function sortMessages(list: ChatMessage[]): ChatMessage[] {
-  return [...list].sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id));
+  const { messages, reactions, names, pictures } = useChatStore.getState();
+  return { messages, reactions, names, pictures };
 }
 
 function hidden(pubkey: string, content: string): boolean {
@@ -74,6 +90,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   reactions: {},
   names: {},
+  pictures: {},
   replyTo: null,
   error: null,
 
@@ -85,14 +102,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
     subscription = null;
     openKey = key;
     const hit = cache.get(key);
-    if (hit) set({ ...hit, replyTo: null, error: null });
-    else if (get().messages.length) set({ messages: [], reactions: {}, replyTo: null, error: null });
+    if (hit) set({ ...hit, pictures: hit.pictures ?? {}, replyTo: null, error: null });
+    else if (get().messages.length) set({ messages: [], reactions: {}, replyTo: null, error: null, pictures: get().pictures });
     const ndk = getNdk();
     const sub = ndk.subscribe(
       { kinds: [KIND_CHAT, KIND_REACTION, KIND_GROUP_DELETE_EVENT], "#h": [group.id] },
       { closeOnEose: false, relaySet: groupRelaySet(group.relay) },
     );
     subscription = sub;
+    streamLive = Boolean(hit);
+    if (liveTimer !== null) window.clearTimeout(liveTimer);
+    liveTimer = window.setTimeout(() => {
+      freezeStream();
+    }, 600);
+    sub.on("eose", () => {
+      const stillLoading = !streamLive;
+      freezeStream();
+      if (stillLoading && !hit) set((state) => ({ messages: orderHistory(state.messages) }));
+    });
     sub.on("event", (event: NDKEvent) => {
       if (event.kind === KIND_GROUP_DELETE_EVENT) {
         const target = event.tagValue("e");
@@ -121,18 +148,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
         content: event.content,
         createdAt: event.created_at ?? 0,
         replyTo: event.tagValue("e"),
+        previous: previousFromEvent(event),
+        seq: 0,
       };
-      set((state) => {
-        if (state.messages.some((item) => item.id === message.id)) return state;
-        return { messages: sortMessages([...state.messages, message]) };
-      });
+      set((state) => ({
+        messages: mergeChatEvent(state.messages, message, streamLive ? "live" : "history"),
+      }));
       void ndk
         .getUser({ pubkey: event.pubkey })
         .fetchProfile()
         .then((profile) => {
           const name = profile?.displayName || profile?.name;
-          if (!name) return;
-          set((state) => ({ names: { ...state.names, [event.pubkey]: name } }));
+          const picture = profile?.picture?.trim();
+          if (!name && !picture) return;
+          set((state) => ({
+            names: name ? { ...state.names, [event.pubkey]: name } : state.names,
+            pictures: picture ? { ...state.pictures, [event.pubkey]: picture } : state.pictures,
+          }));
         })
         .catch(() => undefined);
     });
@@ -140,6 +172,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   close: () => {
     if (openKey) cache.set(openKey, snapshot());
+    freezeStream();
+    streamLive = false;
     subscription?.stop();
     subscription = null;
     openKey = null;
@@ -148,17 +182,37 @@ export const useChatStore = create<ChatState>((set, get) => ({
   send: async (group, content) => {
     const text = content.trim();
     if (!text) return;
+    const me = getNdk().activeUser?.pubkey;
+    const replyTo = get().replyTo?.id;
+    const pendingId = `pending:${crypto.randomUUID()}`;
+    const previous = previousRefs(
+      get()
+        .messages.filter((message) => !message.pending)
+        .map((message) => message.id),
+    );
+    freezeStream();
+    if (me) {
+      set((state) => ({
+        messages: appendPending(state.messages, {
+          id: pendingId,
+          pubkey: me,
+          content: text,
+          createdAt: Math.floor(Date.now() / 1000),
+          replyTo,
+          previous,
+        }),
+        replyTo: null,
+        error: null,
+      }));
+    }
     try {
-      const replyTo = get().replyTo?.id;
-      const previous = previousRefs(
-        get()
-          .messages.filter((message) => message.pubkey !== getNdk().activeUser?.pubkey)
-          .map((message) => message.id),
-      );
-      await publishChat({ group, content: text, previous, replyTo });
-      set({ replyTo: null, error: null });
+      const realId = await publishChat({ group, content: text, previous, replyTo });
+      set((state) => ({ messages: resolvePending(state.messages, pendingId, realId), error: null }));
     } catch {
-      set({ error: "chat-send-failed" });
+      set((state) => ({
+        messages: dropPending(state.messages, pendingId),
+        error: "chat-send-failed",
+      }));
     }
   },
 

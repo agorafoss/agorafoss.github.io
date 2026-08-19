@@ -32,7 +32,7 @@ export function AppShell() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [squareOpen, setSquareOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
-  const [channelOpen, setChannelOpen] = useState(false);
+  const [channelOpen, setChannelOpen] = useState<"text" | "voice" | false>(false);
   const [view, setView] = useState<View>("square");
   const groups = useGroupStore((state) => state.groups);
   const activeKey = useGroupStore((state) => state.activeKey);
@@ -75,14 +75,15 @@ export function AppShell() {
   }, []);
 
   useEffect(() => {
+    if (view !== "square" || !group) return;
+    openLive(group);
+  }, [view, group?.id, group?.relay, openLive]);
+
+  useEffect(() => {
     if (view !== "square") return;
-    if (channel?.kind === "text") {
-      openChat(channel);
-      if (group) openLive(group);
-    } else {
-      closeChat();
-    }
-  }, [view, activeChannelKey, channel?.kind, channel?.id, channel?.relay, group?.id, group?.relay, openChat, closeChat, openLive]);
+    if (channel?.kind === "text") openChat(channel);
+    else closeChat();
+  }, [view, activeChannelKey, channel?.kind, channel?.id, channel?.relay, openChat, closeChat]);
 
   return (
     <div
@@ -114,7 +115,7 @@ export function AppShell() {
               live={Boolean(live)}
               onOpenSettings={() => setSettingsOpen(true)}
               onOpenSquare={() => setSquareOpen(true)}
-              onAddChannel={() => setChannelOpen(true)}
+              onAddChannel={(kind) => setChannelOpen(kind ?? "text")}
             />
           </div>
           {channel?.kind === "voice" ? (
@@ -124,6 +125,7 @@ export function AppShell() {
               onToggleChannels={() => setChannelsOpen((open) => !open)}
               channelsOpen={channelsOpen}
               membersOpen={membersOpen}
+              onOpenSquare={() => setSquareOpen(true)}
             />
           ) : (
             <ChatPane
@@ -132,6 +134,7 @@ export function AppShell() {
               onToggleChannels={() => setChannelsOpen((open) => !open)}
               channelsOpen={channelsOpen}
               membersOpen={membersOpen}
+              onOpenSquare={() => setSquareOpen(true)}
               onDm={(pubkey) => {
                 selectPeer(pubkey);
                 setView("dms");
@@ -157,7 +160,9 @@ export function AppShell() {
       {settingsOpen ? <SettingsDrawer onClose={() => setSettingsOpen(false)} /> : null}
       {squareOpen ? <PraçaSettings onClose={() => setSquareOpen(false)} /> : null}
       {createOpen ? <PraçaModal onClose={() => setCreateOpen(false)} /> : null}
-      {channelOpen ? <ChannelModal onClose={() => setChannelOpen(false)} /> : null}
+      {channelOpen ? (
+        <ChannelModal defaultKind={channelOpen} onClose={() => setChannelOpen(false)} />
+      ) : null}
     </div>
   );
 }

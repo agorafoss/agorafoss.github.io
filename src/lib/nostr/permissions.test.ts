@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { describe, expect, it } from "vitest";
-import { canModerate, MEMBER_DEFAULTS, MOD_ONLY, roleLabel, rolesOf } from "./permissions.ts";
+import { canModerate, isOwner, MEMBER_DEFAULTS, MOD_ONLY, rankOf, roleLabel, rolesOf } from "./permissions.ts";
 
 const admins = [
   { pubkey: "aa", roles: ["admin"] },
@@ -22,6 +22,17 @@ describe("permissions", () => {
     expect(canModerate(admins, "aa")).toBe(true);
     expect(canModerate(admins, "cc")).toBe(false);
     expect(canModerate(admins, null)).toBe(false);
+  });
+
+  it("treats the first 39001 entry as owner even without a role string", () => {
+    const roster = [
+      { pubkey: "AA", roles: [] },
+      { pubkey: "bb", roles: ["moderator"] },
+    ];
+    expect(rankOf(roster, "aa")).toBe("owner");
+    expect(isOwner(roster, "aa")).toBe(true);
+    expect(rankOf(roster, "bb")).toBe("mod");
+    expect(rankOf(roster, "cc")).toBe("member");
   });
 
   it("lists honest member defaults without inventing extra bits", () => {

@@ -6,8 +6,9 @@ import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { encodeGroupInvite } from "../../lib/nostr/invite.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
-import { MEMBER_DEFAULTS, MOD_ONLY, roleLabel } from "../../lib/nostr/permissions.ts";
+import { MEMBER_DEFAULTS, MOD_ONLY, rankOf } from "../../lib/nostr/permissions.ts";
 import { useChatStore } from "../chat/chat-store.ts";
+import { useMuteStore } from "../mute/mute-store.ts";
 import { useGroupStore } from "./group-store.ts";
 import styles from "../settings/SettingsDrawer.module.css";
 
@@ -25,7 +26,8 @@ export function PraçaSettings({ onClose }: Props) {
   const root = channels.find((item) => !item.parent) ?? channels[0];
   const members = useGroupStore((state) => state.members) ?? [];
   const admins = useGroupStore((state) => state.admins) ?? [];
-  const moderate = useGroupStore((state) => state.canModerate());
+  const roleNames = useGroupStore((state) => state.roleNames) ?? [];
+  const owner = useGroupStore((state) => state.isOwner());
   const busy = useGroupStore((state) => state.busy);
   const error = useGroupStore((state) => state.error);
   const editMeta = useGroupStore((state) => state.editMeta);
@@ -33,9 +35,15 @@ export function PraçaSettings({ onClose }: Props) {
   const setRole = useGroupStore((state) => state.setRole);
   const leave = useGroupStore((state) => state.leave);
   const names = useChatStore((state) => state.names) ?? {};
+  const chatMessages = useChatStore((state) => state.messages);
+  const mutePubkey = useMuteStore((state) => state.mutePubkey);
   const [name, setName] = useState(group?.name ?? "");
   const [about, setAbout] = useState(root?.about ?? "");
   const [copied, setCopied] = useState(false);
+  const [customRole, setCustomRole] = useState("moderator");
+  const people = [
+    ...new Set([...members, ...admins.map((admin) => admin.pubkey), ...chatMessages.map((message) => message.pubkey)]),
+  ];
 
   if (!group) return null;
   const square = group;
@@ -75,13 +83,13 @@ export function PraçaSettings({ onClose }: Props) {
               </p>
               <label>
                 {t("groups.name")}
-                <input value={name} onChange={(event) => setName(event.target.value)} disabled={!moderate} />
+                <input value={name} onChange={(event) => setName(event.target.value)} disabled={!owner} />
               </label>
               <label>
-                {t("profile.about")}
-                <textarea value={about} onChange={(event) => setAbout(event.target.value)} disabled={!moderate} rows={3} />
+                {t("square.rules")}
+                <textarea value={about} onChange={(event) => setAbout(event.target.value)} disabled={!owner} rows={3} />
               </label>
-              {moderate ? (
+              {owner ? (
                 <button type="submit" className={styles.ghost} disabled={busy || name.trim().length < 2}>
                   {t("square.save")}
                 </button>
@@ -95,28 +103,37 @@ export function PraçaSettings({ onClose }: Props) {
           ) : null}
 
           {tab === "channels" ? (
-            <ul className={styles.list}>
-              {channels.map((channel) => (
-                <li key={`${channel.relay}#${channel.id}`}>
-                  <strong>#{channel.parent ? channel.name : "geral"}</strong>
-                  <span>{channel.kind === "voice" ? t("channels.voice") : t("channels.text")}</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              {owner ? <p className={styles.hint}>{t("channels.addLead")}</p> : null}
+              <ul className={styles.list}>
+                {channels.map((channel) => (
+                  <li key={`${channel.relay}#${channel.id}`}>
+                    <strong>#{channel.parent ? channel.name : "geral"}</strong>
+                    <span>{channel.kind === "voice" ? t("channels.voice") : t("channels.text")}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
           ) : null}
 
           {tab === "people" ? (
             <ul className={styles.list}>
-              {members.map((pubkey) => {
-                const rank = roleLabel(admins.find((admin) => admin.pubkey === pubkey)?.roles ?? []);
+              {people.length === 0 ? <li>{t("square.nobody")}</li> : null}
+              {people.map((pubkey) => {
+                const rank = rankOf(admins, pubkey);
                 return (
                   <li key={pubkey}>
                     <strong>{names[pubkey] || publicCallsign(pubkey)}</strong>
                     <span>{t(`members.${rank}`)}</span>
-                    {moderate && rank !== "owner" ? (
-                      <button type="button" className={styles.danger} onClick={() => void kick(pubkey)}>
-                        {t("members.kick")}
-                      </button>
+                    {owner && rank !== "owner" ? (
+                      <>
+                        <button type="button" className={styles.ghost} onClick={() => void mutePubkey(pubkey)}>
+                          {t("mute.pubkey")}
+                        </button>
+                        <button type="button" className={styles.danger} onClick={() => void kick(pubkey)}>
+                          {t("members.kick")}
+                        </button>
+                      </>
                     ) : null}
                   </li>
                 );
@@ -126,33 +143,46 @@ export function PraçaSettings({ onClose }: Props) {
 
           {tab === "roles" ? (
             <div>
-              <p className={styles.hint}>{t("square.defaultsLead")}</p>
+              <p className={styles.hint}>{t("square.modLead")}</p>
               <ul className={styles.list}>
                 {MEMBER_DEFAULTS.map((item) => (
                   <li key={item}>{t(`square.defaults.${item}`)}</li>
                 ))}
-              </ul>
-              <p className={styles.hint}>{t("square.modLead")}</p>
-              <ul className={styles.list}>
                 {MOD_ONLY.map((item) => (
-                  <li key={item}>{t(`square.mods.${item}`)}</li>
+                  <li key={`mod-${item}`}>{t(`square.mods.${item}`)}</li>
                 ))}
               </ul>
+              {owner ? (
+                <label>
+                  {t("square.assignRole")}
+                  <input value={customRole} onChange={(event) => setCustomRole(event.target.value)} list="agora-roles" />
+                  <datalist id="agora-roles">
+                    {roleNames.map((role) => (
+                      <option key={role} value={role} />
+                    ))}
+                  </datalist>
+                </label>
+              ) : null}
               <ul className={styles.list}>
-                {members.map((pubkey) => {
-                  const rank = roleLabel(admins.find((admin) => admin.pubkey === pubkey)?.roles ?? []);
+                {people.length === 0 ? <li>{t("square.nobody")}</li> : null}
+                {people.map((pubkey) => {
+                  const rank = rankOf(admins, pubkey);
                   return (
                     <li key={pubkey}>
                       <strong>{names[pubkey] || publicCallsign(pubkey)}</strong>
                       <span>{t(`members.${rank}`)}</span>
-                      {moderate && rank !== "owner" ? (
-                        <button
-                          type="button"
-                          className={styles.ghost}
-                          onClick={() => void setRole(pubkey, rank === "mod" ? "" : "moderator")}
-                        >
-                          {t(rank === "mod" ? "square.demote" : "square.promote")}
-                        </button>
+                      {owner && rank !== "owner" ? (
+                        <>
+                          <button type="button" className={styles.ghost} onClick={() => void setRole(pubkey, customRole || "moderator")}>
+                            {t("square.promote")}
+                          </button>
+                          <button type="button" className={styles.ghost} onClick={() => void setRole(pubkey, "")}>
+                            {t("square.demote")}
+                          </button>
+                          <button type="button" className={styles.danger} onClick={() => void kick(pubkey)}>
+                            {t("members.kick")}
+                          </button>
+                        </>
                       ) : null}
                     </li>
                   );

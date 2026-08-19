@@ -29,7 +29,15 @@
   color: var(--signal);
 }
 
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .name {
+  flex: 1;
+  min-width: 0;
   font-size: var(--fs-lg);
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -40,26 +48,6 @@
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   color: var(--dim);
-}
-
-.invite {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  margin-top: 10px;
-  min-height: 32px;
-  border-radius: var(--r-sm);
-  background: var(--raised);
-  border: 1px solid var(--line);
-  color: var(--signal);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-}
-
-.invite:hover {
-  background: var(--hover);
 }
 
 .list {
@@ -76,10 +64,27 @@
   margin-top: 0;
 }
 
+.addRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 2px;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  color: var(--signal);
+  text-align: left;
+  font-size: var(--fs-sm);
+}
+
+.addRow:hover {
+  background: var(--hover);
+  color: var(--paper);
+}
+
 .catLabel {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 8px 6px;
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
@@ -177,7 +182,24 @@
   color: var(--mute);
 }
 
-.iconBtn:hover {
+.squareRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: var(--raised);
+  color: var(--signal);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.iconBtn:hover,
+.squareRow:hover {
   background: var(--hover);
   color: var(--paper);
 }

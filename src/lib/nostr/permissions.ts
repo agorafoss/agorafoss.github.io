@@ -6,12 +6,35 @@ export type GroupAdmin = {
   roles: string[];
 };
 
+export function samePubkey(a?: string | null, b?: string | null): boolean {
+  return Boolean(a && b && a.toLowerCase() === b.toLowerCase());
+}
+
 export function rolesOf(admins: GroupAdmin[], pubkey: string): string[] {
-  return admins.find((admin) => admin.pubkey === pubkey)?.roles ?? [];
+  return admins.find((admin) => samePubkey(admin.pubkey, pubkey))?.roles ?? [];
 }
 
 export function isListedAdmin(admins: GroupAdmin[], pubkey: string): boolean {
-  return admins.some((admin) => admin.pubkey === pubkey);
+  return admins.some((admin) => samePubkey(admin.pubkey, pubkey));
+}
+
+function isOwnerRole(roles: string[]): boolean {
+  return roles.some((role) => {
+    const lower = role.toLowerCase();
+    return lower.includes("owner") || lower === "admin" || lower === "ceo";
+  });
+}
+
+export function rankOf(admins: GroupAdmin[], pubkey: string): "owner" | "mod" | "member" {
+  const index = admins.findIndex((admin) => samePubkey(admin.pubkey, pubkey));
+  if (index < 0) return "member";
+  if (index === 0 || isOwnerRole(admins[index].roles)) return "owner";
+  return "mod";
+}
+
+export function isOwner(admins: GroupAdmin[], pubkey: string | null): boolean {
+  if (!pubkey) return false;
+  return rankOf(admins, pubkey) === "owner";
 }
 
 export function canModerate(admins: GroupAdmin[], pubkey: string | null): boolean {
@@ -21,10 +44,7 @@ export function canModerate(admins: GroupAdmin[], pubkey: string | null): boolea
 }
 
 export function roleLabel(roles: string[]): "owner" | "mod" | "member" {
-  const lower = roles.map((role) => role.toLowerCase());
-  if (lower.some((role) => role.includes("owner") || role.includes("admin") || role === "ceo")) {
-    return "owner";
-  }
+  if (isOwnerRole(roles)) return "owner";
   if (roles.length > 0) return "mod";
   return "member";
 }

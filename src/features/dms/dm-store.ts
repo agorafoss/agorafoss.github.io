@@ -13,6 +13,7 @@ import { useMuteStore } from "../mute/mute-store.ts";
 type DmState = {
   messages: DirectMessage[];
   names: Record<string, string>;
+  pictures: Record<string, string>;
   activePeer: string | null;
   error: string | null;
   open: () => void;
@@ -26,6 +27,7 @@ let subscription: NDKSubscription | null = null;
 export const useDmStore = create<DmState>((set, get) => ({
   messages: [],
   names: {},
+  pictures: {},
   activePeer: null,
   error: null,
 
@@ -53,8 +55,12 @@ export const useDmStore = create<DmState>((set, get) => ({
         .fetchProfile()
         .then((profile) => {
           const name = profile?.displayName || profile?.name;
-          if (!name) return;
-          set((state) => ({ names: { ...state.names, [message.peer]: name } }));
+          const picture = profile?.picture?.trim();
+          if (!name && !picture) return;
+          set((state) => ({
+            names: name ? { ...state.names, [message.peer]: name } : state.names,
+            pictures: picture ? { ...state.pictures, [message.peer]: picture } : state.pictures,
+          }));
         })
         .catch(() => undefined);
     });

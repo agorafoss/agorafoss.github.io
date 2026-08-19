@@ -6,6 +6,12 @@ import { mediaPeerConfig } from "./ice.ts";
 export const DEFAULT_WHIP = "http://localhost:8889/live/agora/whip";
 export const DEFAULT_WHEP = "http://localhost:8889/live/agora/whep";
 
+export function playbackKind(url: string): "whep" | "hls" | "url" {
+  if (/\.m3u8(\?|$)/i.test(url)) return "hls";
+  if (/whep/i.test(url)) return "whep";
+  return "url";
+}
+
 export type WhipSession = {
   pc: RTCPeerConnection;
   location: string;

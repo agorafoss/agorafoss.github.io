@@ -14,7 +14,11 @@
     "text": "Texto",
     "voice": "Palco",
     "addChannel": "Novo canal",
-    "addLead": "Canal é um subgrupo NIP-29 desta praça. Palco pede LiveKit no relay.",
+    "addText": "Novo chat de texto",
+    "addVoice": "Novo palco (voz, câmera, live)",
+    "addLead": "Chat de texto desta praça. Quem entra vê o histórico.",
+    "addLeadVoice": "Palco da praça: microfone, câmera e live da sala. A mídia não passa no Tor.",
+    "voiceEmpty": "Ainda não há palco. O + cria um.",
     "name": "Nome do canal",
     "relay": "relay"
   },
@@ -107,12 +111,16 @@
   },
   "square": {
     "title": "Ajustes da praça",
+    "open": "Ajustes",
     "save": "Publicar nome",
-    "memberOnly": "Só quem tem cargo no 39001 edita a praça.",
-    "promote": "Tornar mod",
+    "memberOnly": "Só o dono da praça edita isto.",
+    "promote": "Dar cargo",
     "demote": "Tirar cargo",
     "defaultsLead": "Membro já pode isto. O relay é quem manda.",
-    "modLead": "Só cargo 39001:",
+    "modLead": "O dono manda no relay com kind 9000/9001. Cargo sem privilégio no 39003 o relay ignora.",
+    "rules": "Regras / sobre",
+    "assignRole": "Nome do cargo (owner, admin, moderator ou outro que o relay aceite)",
+    "nobody": "Ninguém listado ainda. Quem fala no chat aparece aqui.",
     "tabs": {
       "overview": "Visão",
       "channels": "Canais",
@@ -277,7 +285,7 @@
     },
     "errors": {
       "voice-no-stage": "Este canal não tem LiveKit no metadata.",
-      "voice-connect-failed": "O JWT do palco não veio. O relay precisa servir /.well-known/nip29/livekit.",
+      "voice-connect-failed": "Este relay não tem servidor de voz (LiveKit). Sem /.well-known/nip29/livekit o palco fica fechado. Chat de texto segue normal.",
       "voice-camera-failed": "A câmera não abriu."
     }
   },

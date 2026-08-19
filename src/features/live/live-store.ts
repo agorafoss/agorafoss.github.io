@@ -5,7 +5,7 @@ import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 import { liveFilter, parseLive, publishLive, type LiveAnnouncement } from "../../lib/nostr/live.ts";
 import { getNdk } from "../../lib/nostr/ndk.ts";
-import { groupRelaySet, type GroupRef } from "../../lib/nostr/nip29.ts";
+import { groupKey, groupRelaySet, type GroupRef } from "../../lib/nostr/nip29.ts";
 import { DEFAULT_WHIP, startWhip, stopWhip, type WhipSession } from "../../lib/nostr/whip.ts";
 
 type LiveState = {
@@ -23,6 +23,16 @@ type LiveState = {
 let subscription: NDKSubscription | null = null;
 let session: WhipSession | null = null;
 let localStream: MediaStream | null = null;
+let openKey: string | null = null;
+
+async function dropCapture(): Promise<void> {
+  if (session) {
+    await stopWhip(session);
+    session = null;
+  }
+  localStream?.getTracks().forEach((track) => track.stop());
+  localStream = null;
+}
 
 export const useLiveStore = create<LiveState>((set, get) => ({
   current: null,
@@ -31,7 +41,14 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   whipUrl: DEFAULT_WHIP,
 
   open: (group) => {
-    get().close();
+    const key = groupKey(group);
+    if (openKey === key && subscription) return;
+    subscription?.stop();
+    if (openKey && openKey !== key) {
+      void dropCapture();
+      set({ publishing: false, current: null, error: null });
+    }
+    openKey = key;
     const sub = getNdk().subscribe(liveFilter(group.id), {
       closeOnEose: false,
       relaySet: groupRelaySet(group.relay),
@@ -47,7 +64,9 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   close: () => {
     subscription?.stop();
     subscription = null;
-    set({ current: null, error: null });
+    openKey = null;
+    void dropCapture();
+    set({ current: null, error: null, publishing: false });
   },
 
   start: async (group, title) => {
@@ -58,19 +77,13 @@ export const useLiveStore = create<LiveState>((set, get) => ({
       await publishLive({ group, title: title.trim() || group.name, streaming, status: "live" });
       set({ publishing: true, error: null });
     } catch {
-      localStream?.getTracks().forEach((track) => track.stop());
-      localStream = null;
+      await dropCapture();
       set({ error: "live-start-failed", publishing: false });
     }
   },
 
   stop: async (group) => {
-    if (session) {
-      await stopWhip(session);
-      session = null;
-    }
-    localStream?.getTracks().forEach((track) => track.stop());
-    localStream = null;
+    await dropCapture();
     try {
       const streaming = get().whipUrl.replace(/\/whip\/?$/, "/whep");
       await publishLive({ group, title: group.name, streaming, status: "ended" });

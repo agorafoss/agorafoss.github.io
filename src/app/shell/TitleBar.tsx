@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Ágora
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Copy, Hash, List, SpeakerHigh, Users } from "@phosphor-icons/react";
+import { Copy, GearSix, Hash, List, SpeakerHigh, Users } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import styles from "./TitleBar.module.css";
 import { VuMeter } from "./VuMeter.tsx";
@@ -18,6 +18,7 @@ type Props = {
   channelsOpen?: boolean;
   membersOpen?: boolean;
   onCopyInvite?: () => void;
+  onOpenSquare?: () => void;
   copied?: boolean;
 };
 
@@ -42,6 +43,12 @@ export function TitleBar(props: Props) {
         <button type="button" className={styles.invite} onClick={props.onCopyInvite} title={t("groups.copyInvite")}>
           <Copy size={14} />
           <span>{props.copied ? t("groups.copied") : t("groups.copyInvite")}</span>
+        </button>
+      ) : null}
+      {props.onOpenSquare ? (
+        <button type="button" className={styles.square} onClick={props.onOpenSquare} title={t("square.title")}>
+          <GearSix size={16} />
+          <span>{t("square.open")}</span>
         </button>
       ) : null}
       <div className={styles.toggles}>
