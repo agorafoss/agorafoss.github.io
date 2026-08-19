@@ -3,6 +3,7 @@
 - [Princípios](./PRINCIPIOS.md)
 - [Roadmap](./ROADMAP.md)
 - [Segurança](./SECURITY.md)
+- [Relays](./RELAYS.md) — o que são, como se falam, os padrão do 0.1, como subir o seu
 - [Hospedar um recinto](./HOSPEDAR.md)
 - [App de PC](./DESKTOP.md)
 - [Palco e Ao vivo](./GOLIVE.md)

@@ -6,7 +6,8 @@ Obrigado por querer ajudar. O Ágora é um cliente, não uma plataforma. Leia is
 
 1. [`PRINCIPIOS.md`](./PRINCIPIOS.md) — o que o projeto é e o que recusa.
 2. [`ROADMAP.md`](./ROADMAP.md) — o que já existe e o que vem depois. Um passo do mapa por PR, sempre que der.
-3. Abra uma issue e descreva a mudança se ela cruzar mais de um ficheiro ou um plano de transporte.
+3. [`RELAYS.md`](./RELAYS.md) — relays não se copiam; praça = um `wss://` NIP-29.
+4. Abra uma issue e descreva a mudança se ela cruzar mais de um ficheiro ou um plano de transporte.
 
 Não misture os planos: eventos Nostr (e Tor) e palco Trystero/WebRTC. Tor nunca carrega voz nem vídeo. Não recoloque LiveKit, JWT no 0xchat, WHIP ou MediaMTX no caminho do usuário sem um passo próprio no roadmap.
 

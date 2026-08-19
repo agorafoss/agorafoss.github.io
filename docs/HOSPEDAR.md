@@ -2,7 +2,9 @@
 
 Isto **não é conselho jurídico**. É o que o código assume quando alguém sobe as peças.
 
-No 0.1 o usuário **não** sobe LiveKit nem MediaMTX. Palco é malha P2P no browser. Chat continua num relay NIP-29 (hoje `groups.0xchat.com`). Arquivos de imagem costumam ir para um **Blossom** à parte.
+No 0.1 o usuário **não** sobe LiveKit nem MediaMTX. Palco é malha P2P no browser. Chat continua num relay NIP-29 (hoje `groups.0xchat.com`, ou o `wss://` que você colar). Arquivos de imagem costumam ir para um **Blossom** à parte.
+
+Como os relays padrão nasceram, como eles **não** se copiam entre si, e como subir o **seu** NIP-29: [`RELAYS.md`](./RELAYS.md).
 
 Quem quiser um recinto clássico (relay + SFU + ingest 1→N) ainda pode subir **relay NIP-29 + LiveKit + MediaMTX** por conta própria. Não é o caminho do app. O `docker-compose.yml` deste repo é legado de desenvolvimento.
 
@@ -51,4 +53,5 @@ Mesmo com o cliente no circuito, **voz e live saem em clearnet**. No palco P2P o
 
 ## Relacionado
 
-[Armada](https://github.com/soapbox-pub/armada) (Soapbox/Ditto) é outro cliente NIP-29 + LiveKit. O palco Ágora 0.1 **não** pede JWT a esse fluxo. Interoperar texto NIP-29; voz é malha nossa.
+- Subir o soquete: [`RELAYS.md`](./RELAYS.md)
+- [Armada](https://github.com/soapbox-pub/armada) (Soapbox/Ditto) é outro cliente NIP-29 + LiveKit. O palco Ágora 0.1 **não** pede JWT a esse fluxo. Interoperar texto NIP-29; voz é malha nossa.

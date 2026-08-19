@@ -311,7 +311,7 @@
   "relays": {
     "add": "Somar",
     "remove": "Tirar",
-    "hint": "Tor entra depois, só no caminho destas conexões. Não no vídeo.",
+    "hint": "Relays não se copiam entre si. A praça mora num wss:// NIP-29. Como subir o seu: docs/RELAYS.md. Tor entra depois, só nestas conexões — não no vídeo.",
     "errors": {
       "invalid-relay-url": "Use um endereço ws:// ou wss://.",
       "relay-exists": "Esse relay já está na lista."

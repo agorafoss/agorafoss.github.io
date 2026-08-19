@@ -262,6 +262,7 @@ Cada item vira passo próprio, não um saco.
 - [ ] NIP-46 (bunker, chave fora do app)
 - [ ] Companion opcional para quem hospeda **VPS** (relay +, se quiser, SFU/ingest 1→N). O usuário final sobe o recinto pelo [app de PC](./DESKTOP.md), sem Docker. Não é o palco do 0.1
 - [ ] Denúncia no cliente (id do evento + relay) e guia de moderação para quem hospeda Blossom/relay
+- [x] Guia de relays próprios (`docs/RELAYS.md`) — o que o 0.1 usa, como eles não se copiam, como subir NIP-29
 - [ ] Guia legal do self-hoster (rascunho em `HOSPEDAR.md` — não é conselho jurídico)
 - [ ] Mobile (bem depois)
 

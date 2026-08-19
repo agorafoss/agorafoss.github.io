@@ -311,7 +311,7 @@
   "relays": {
     "add": "Add",
     "remove": "Remove",
-    "hint": "Tor comes later, only on the path of these connections. Not on video.",
+    "hint": "Relays do not copy each other. A square lives on one NIP-29 wss://. How to run yours: docs/RELAYS.md. Tor comes later, only on these connections — not on video.",
     "errors": {
       "invalid-relay-url": "Use a ws:// or wss:// address.",
       "relay-exists": "That relay is already in the list."

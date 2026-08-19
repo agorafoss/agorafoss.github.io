@@ -16,7 +16,7 @@ Site público: [agorafoss.github.io](https://agorafoss.github.io/).
 
 **Não é** um clone de outro app de comunidades, nem uma promessa de “vídeo anônimo pelo Tor”, nem esconderijo para atividade ilegal.
 
-Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança: [`docs/SECURITY.md`](./docs/SECURITY.md). Quem sobe relay ou mídia: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Fases: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Princípios: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Segurança: [`docs/SECURITY.md`](./docs/SECURITY.md). Relays (o que são, como se falam, como subir o seu): [`docs/RELAYS.md`](./docs/RELAYS.md). Quem hospeda: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Fases: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ## Três planos (não misturar)
 
@@ -92,7 +92,7 @@ Public site: [agorafoss.github.io](https://agorafoss.github.io/).
 
 **It is not** a pixel-perfect clone of another community app, a promise of “anonymous video over Tor”, or a hideout for illegal activity.
 
-Principles: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Security: [`docs/SECURITY.md`](./docs/SECURITY.md). If you run a relay or media stack: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Phases: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
+Principles: [`docs/PRINCIPIOS.md`](./docs/PRINCIPIOS.md). Security: [`docs/SECURITY.md`](./docs/SECURITY.md). Relays (what they are, how they talk, how to run yours): [`docs/RELAYS.md`](./docs/RELAYS.md). If you host: [`docs/HOSPEDAR.md`](./docs/HOSPEDAR.md). Phases: [`docs/ROADMAP.md`](./docs/ROADMAP.md).
 
 ## Three planes (do not mix them)
 
