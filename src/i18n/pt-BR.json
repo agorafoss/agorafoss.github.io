@@ -174,9 +174,11 @@
     "copied": "Convite copiado",
     "leave": "Sair da praça",
     "working": "Falando com o relay",
+    "relayDown": "O WebSocket deste relay está fora. Palco e canal novo não publicam até ele voltar. O aviso do F12 “wss://groups.0xchat.com/ failed” é isto — não é i18n.",
     "errors": {
       "group-load-failed": "Não deu para ler suas praças.",
       "group-create-failed": "O relay recusou criar a praça.",
+      "group-relay-down": "O relay da praça não está ligado. O palco não saiu do PC de quem criou.",
       "group-join-failed": "Não deu para entrar. Confira o id e o relay.",
       "bad-invite": "Esse convite não é um naddr de praça nem um id @ relay.",
       "channel-create-failed": "O relay recusou o canal. Ele precisa aceitar subgrupo NIP-29.",

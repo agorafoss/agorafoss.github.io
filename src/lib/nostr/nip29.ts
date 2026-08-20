@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { NDKEvent, NDKRelaySet } from "@nostr-dev-kit/ndk";
-import { getNdk } from "./ndk.ts";
+import { getNdk, isRelayConnected } from "./ndk.ts";
 import {
   KIND_CHAT,
   KIND_GROUP_ADMINS,
@@ -89,6 +89,9 @@ export function publishRejectMessage(error: unknown): string {
 }
 
 export async function createGroup(name: string, relay = CREATE_RELAY): Promise<GroupRef> {
+  if (!isRelayConnected(relay)) {
+    throw new Error("group-relay-down");
+  }
   const ndk = getNdk();
   const id = newGroupId();
   const relaySet = groupRelaySet(relay);
@@ -461,13 +464,23 @@ export async function fetchChannelsFromLists(group: GroupRef, authors: string[])
   return mergeChannels([[...events].flatMap((event) => channelsForSquare(event.tags, group.id))]);
 }
 
+export async function fetchChannelsByRelayHint(group: GroupRef): Promise<Channel[]> {
+  const url = normalizeRelayUrl(group.relay);
+  const variants = [...new Set([url, `${url}/`])];
+  const batches = await Promise.all(
+    variants.map((relay) => getNdk().fetchEvents({ kinds: [KIND_GROUP_LIST], "#r": [relay] })),
+  );
+  return mergeChannels(batches.map((set) => [...set].flatMap((event) => channelsForSquare(event.tags, group.id))));
+}
+
 export async function fetchSquareChannels(group: GroupRef, extraAuthors: string[] = []): Promise<Channel[]> {
-  const [kids, index, fromLists] = await Promise.all([
+  const [kids, index, fromLists, fromHint] = await Promise.all([
     fetchChildChannels(group),
     fetchChannelIndex(group),
     fetchChannelsFromLists(group, extraAuthors),
+    fetchChannelsByRelayHint(group),
   ]);
-  return mergeChannels([kids, index, fromLists]);
+  return mergeChannels([kids, index, fromLists, fromHint]);
 }
 
 export async function publishSquareChannels(group: GroupRef, channels: Channel[]): Promise<void> {
