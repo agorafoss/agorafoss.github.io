@@ -2,7 +2,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { describe, expect, it } from "vitest";
-import { channelKindFromMeta, groupKey, previousRefs, pubkeyFromParticipant, publishRejectMessage } from "./nip29.ts";
+import {
+  channelIndexD,
+  channelKindFromMeta,
+  channelsForSquare,
+  groupKey,
+  parseStoredChannel,
+  previousRefs,
+  pubkeyFromParticipant,
+  publishRejectMessage,
+} from "./nip29.ts";
 
 describe("nip29 helpers", () => {
   it("builds previous refs from the last events", () => {
@@ -18,6 +27,25 @@ describe("nip29 helpers", () => {
     expect(groupKey({ relay: "wss://groups.fiatjaf.com", id: "abc" })).toBe(
       "wss://groups.fiatjaf.com#abc",
     );
+  });
+
+  it("indexes Ágora channels when the relay has no NIP-29 subgroups", () => {
+    expect(channelIndexD("sala")).toBe("agora-channels:sala");
+    const palco = parseStoredChannel([
+      "ch",
+      "sala",
+      "palco1",
+      "wss://groups.0xchat.com",
+      "palco",
+      "voice",
+      "",
+    ]);
+    expect(palco?.kind).toBe("voice");
+    expect(palco?.parent).toBe("sala");
+    expect(channelsForSquare([palco ? ["ch", "sala", "palco1", palco.relay, "palco", "voice", ""] : []], "sala")).toHaveLength(
+      1,
+    );
+    expect(channelsForSquare([["ch", "outra", "x", palco?.relay ?? "", "x", "voice", ""]], "sala")).toHaveLength(0);
   });
 
   it("marks a channel as voice from agora-stage or empty supported kinds", () => {
