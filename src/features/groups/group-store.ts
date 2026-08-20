@@ -3,7 +3,7 @@
 
 import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
-import { KIND_GROUP_ADMINS, KIND_GROUP_LIVEKIT, KIND_GROUP_MEMBERS } from "../../lib/nostr/kinds.ts";
+import { KIND_APP_DATA, KIND_GROUP_ADMINS, KIND_GROUP_LIVEKIT, KIND_GROUP_MEMBERS } from "../../lib/nostr/kinds.ts";
 import { getNdk } from "../../lib/nostr/ndk.ts";
 import {
   createChannel,
@@ -11,7 +11,10 @@ import {
   claimGroupOwner,
   createGroup,
   editGroupMeta,
-  fetchChildChannels,
+  fetchSquareChannels,
+  channelIndexD,
+  parseStoredChannel,
+  publishSquareChannels,
   fetchFullMeta,
   fetchGroupAdmins,
   fetchGroupMembers,
@@ -81,6 +84,7 @@ function asRootChannel(group: GroupRef, about = "", livekit = false): Channel {
 
 let stageSub: NDKSubscription | null = null;
 let rosterSub: NDKSubscription | null = null;
+let channelSub: NDKSubscription | null = null;
 const FOUNDED_KEY = "agora.founded";
 const LAST_SQUARE_KEY = "agora.last-square";
 const LAST_CHANNEL_KEY = "agora.last-channel";
@@ -191,6 +195,36 @@ function stopStageWatch(): void {
 function stopRosterWatch(): void {
   rosterSub?.stop();
   rosterSub = null;
+}
+
+function stopChannelWatch(): void {
+  channelSub?.stop();
+  channelSub = null;
+}
+
+function ingestIndexedChannel(channel: Channel | null, square: GroupRef): void {
+  if (!channel || channel.parent !== square.id) return;
+  const state = useGroupStore.getState();
+  if (state.channels.some((item) => groupKey(item) === groupKey(channel))) return;
+  const channels = [...state.channels, channel];
+  const savedChannels = [...state.savedChannels.filter((item) => groupKey(item) !== groupKey(channel)), channel];
+  writeChannelCache(groupKey(square), channels);
+  useGroupStore.setState({ channels, savedChannels });
+}
+
+function watchChannels(group: GroupRef): void {
+  stopChannelWatch();
+  const ndk = getNdk();
+  const sub = ndk.subscribe(
+    { kinds: [KIND_APP_DATA], "#d": [channelIndexD(group.id)] },
+    { closeOnEose: false },
+  );
+  channelSub = sub;
+  sub.on("event", (event: NDKEvent) => {
+    for (const tag of event.tags) {
+      ingestIndexedChannel(parseStoredChannel(tag), group);
+    }
+  });
 }
 
 function watchRoster(
@@ -317,6 +351,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     });
     watchStage(first, set);
     watchRoster(group, set);
+    watchChannels(group);
     if (first.parent) void joinGroup(first.id, first.relay).catch(() => undefined);
     try {
       const [meta, members, admins, pins, children, onStage, roleNames] = await Promise.all([
@@ -324,18 +359,24 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         fetchGroupMembers(group.id, group.relay),
         fetchGroupAdmins(group.id, group.relay),
         fetchPins(first.id, first.relay),
-        fetchChildChannels(group),
+        fetchSquareChannels(group),
         fetchLivekitParticipants(first.id, first.relay),
         fetchGroupRoles(group.id, group.relay),
       ]);
       if (get().activeKey !== squareKey) return;
+      const discovered = await fetchSquareChannels(group, [
+        ...admins.map((admin) => admin.pubkey),
+        ...members,
+        useAuthStore.getState().pubkey ?? "",
+      ]).catch(() => children);
+      const kids = discovered.length ? discovered : children;
       const root = asRootChannel(group, meta?.about ?? "", meta?.livekit ?? false);
       if (meta?.name && meta.name !== group.name) {
         root.name = meta.name;
       }
       const localKids = kidsOf(group.id, get().savedChannels);
-      const seen = new Set(children.map((item) => item.id));
-      const channels = [root, ...children, ...localKids.filter((item) => !seen.has(item.id))];
+      const seen = new Set(kids.map((item) => item.id));
+      const channels = [root, ...kids, ...localKids.filter((item) => !seen.has(item.id))];
       writeChannelCache(squareKey, channels);
       const groups = get().groups.map((item) =>
         groupKey(item) === squareKey ? { ...item, name: root.name } : item,
@@ -347,9 +388,14 @@ export const useGroupStore = create<GroupState>((set, get) => ({
           : admins;
       const stillFirst = get().activeChannelKey === groupKey(first);
       const nextActive = stillFirst ? pickChannel(group, channels) : channels.find((item) => groupKey(item) === get().activeChannelKey);
+      const savedChannels = [
+        ...get().savedChannels.filter((item) => !seen.has(item.id) || item.parent !== group.id),
+        ...kids,
+      ];
       set({
         groups,
         channels,
+        savedChannels,
         members,
         admins: nextAdmins,
         roleNames,
@@ -357,6 +403,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         onStage,
         activeChannelKey: nextActive ? groupKey(nextActive) : groupKey(root),
       });
+      if (kids.length) void saveGroupList(groups, savedChannels).catch(() => undefined);
     } catch {
       if (get().activeKey === squareKey) set({ members: [], admins: [], pins: [] });
     }
@@ -401,13 +448,15 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         channel,
       ];
       await saveGroupList(get().groups, savedChannels);
+      const channels = [...get().channels.filter((item) => groupKey(item) !== groupKey(channel)), channel];
       set({
         savedChannels,
-        channels: [...get().channels.filter((item) => groupKey(item) !== groupKey(channel)), channel],
+        channels,
         busy: false,
         error: null,
       });
-      writeChannelCache(groupKey(group), get().channels);
+      writeChannelCache(groupKey(group), channels);
+      await publishSquareChannels(group, channels).catch(() => undefined);
       await get().selectChannel(channel);
       return secret;
     } catch (error) {
@@ -512,6 +561,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
       await saveGroupList(groups, savedChannels);
       stopStageWatch();
       stopRosterWatch();
+      stopChannelWatch();
       set({ groups, savedChannels, channels: [], members: [], admins: [], pins: [], onStage: [], activeKey: groups[0] ? groupKey(groups[0]) : null });
       if (groups[0]) await get().select(groups[0]);
     } catch {
@@ -522,6 +572,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
   unwatchStage: () => {
     stopStageWatch();
     stopRosterWatch();
+    stopChannelWatch();
     set({ onStage: [] });
   },
 

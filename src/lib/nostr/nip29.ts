@@ -12,6 +12,7 @@ import {
   KIND_GROUP_EDIT,
   KIND_GROUP_JOIN,
   KIND_GROUP_LEAVE,
+  KIND_APP_DATA,
   KIND_GROUP_LIST,
   KIND_GROUP_LIVEKIT,
   KIND_GROUP_MEMBERS,
@@ -24,7 +25,6 @@ import {
   KIND_REACTION,
 } from "./kinds.ts";
 import type { GroupAdmin } from "./permissions.ts";
-import { relaySupportsSubgroups } from "./nip11.ts";
 import { CREATE_RELAY, GROUP_RELAY, normalizeRelayUrl } from "./relays.ts";
 
 export type ChannelKind = "text" | "voice";
@@ -204,7 +204,6 @@ export async function createChannel(opts: {
 }): Promise<Channel> {
   const created = await createGroup(opts.name, opts.parent.relay);
   const relaySet = groupRelaySet(created.relay);
-  const subgroups = await relaySupportsSubgroups(created.relay);
 
   const edit = new NDKEvent(getNdk());
   edit.kind = KIND_GROUP_EDIT;
@@ -212,19 +211,22 @@ export async function createChannel(opts: {
     ["h", created.id],
     ["name", created.name],
   ];
-  if (subgroups) edit.tags.push(["parent", opts.parent.id]);
   if (opts.kind === "voice") {
     edit.tags.push(["agora-stage"]);
     edit.tags.push(["supported_kinds"]);
   }
   if (opts.locked) edit.tags.push(["agora-locked"]);
   if (edit.tags.length > 2) {
-    try {
-      await edit.publish(relaySet);
-    } catch {
-      /* 0xchat and others reject parent/livekit; the channel still exists as its own group */
-    }
+    await edit.publish(relaySet).catch(() => undefined);
   }
+
+  const parentEdit = new NDKEvent(getNdk());
+  parentEdit.kind = KIND_GROUP_EDIT;
+  parentEdit.tags = [
+    ["h", created.id],
+    ["parent", opts.parent.id],
+  ];
+  await parentEdit.publish(relaySet).catch(() => undefined);
 
   const join = new NDKEvent(getNdk());
   join.kind = KIND_GROUP_JOIN;
@@ -399,7 +401,11 @@ export type GroupBook = {
   channels: Channel[];
 };
 
-function parseStoredChannel(tag: string[]): Channel | null {
+export function channelIndexD(squareId: string): string {
+  return `agora-channels:${squareId}`;
+}
+
+export function parseStoredChannel(tag: string[]): Channel | null {
   if (tag[0] !== "ch" || !tag[1] || !tag[2]) return null;
   const kind: ChannelKind = tag[5] === "voice" ? "voice" : "text";
   return {
@@ -427,6 +433,64 @@ export async function loadGroupList(pubkey: string): Promise<GroupBook> {
     .filter((group) => Boolean(group.id));
   const channels = event.tags.map(parseStoredChannel).filter((item): item is Channel => Boolean(item));
   return { groups, channels };
+}
+
+export function channelsForSquare(tags: string[][], squareId: string): Channel[] {
+  return tags
+    .map(parseStoredChannel)
+    .filter((item): item is Channel => Boolean(item) && item.parent === squareId);
+}
+
+function mergeChannels(lists: Channel[][]): Channel[] {
+  const merged = new Map<string, Channel>();
+  for (const list of lists) {
+    for (const channel of list) merged.set(channel.id, channel);
+  }
+  return [...merged.values()];
+}
+
+export async function fetchChannelIndex(group: GroupRef): Promise<Channel[]> {
+  const events = await getNdk().fetchEvents({ kinds: [KIND_APP_DATA], "#d": [channelIndexD(group.id)] });
+  return mergeChannels([[...events].flatMap((event) => channelsForSquare(event.tags, group.id))]);
+}
+
+export async function fetchChannelsFromLists(group: GroupRef, authors: string[]): Promise<Channel[]> {
+  const pubkeys = [...new Set(authors.map((item) => item.toLowerCase()).filter(Boolean))];
+  if (pubkeys.length === 0) return [];
+  const events = await getNdk().fetchEvents({ kinds: [KIND_GROUP_LIST], authors: pubkeys });
+  return mergeChannels([[...events].flatMap((event) => channelsForSquare(event.tags, group.id))]);
+}
+
+export async function fetchSquareChannels(group: GroupRef, extraAuthors: string[] = []): Promise<Channel[]> {
+  const [kids, index, fromLists] = await Promise.all([
+    fetchChildChannels(group),
+    fetchChannelIndex(group),
+    fetchChannelsFromLists(group, extraAuthors),
+  ]);
+  return mergeChannels([kids, index, fromLists]);
+}
+
+export async function publishSquareChannels(group: GroupRef, channels: Channel[]): Promise<void> {
+  const ndk = getNdk();
+  const event = new NDKEvent(ndk);
+  event.kind = KIND_APP_DATA;
+  event.tags = [
+    ["d", channelIndexD(group.id)],
+    ["h", group.id],
+    ...channels
+      .filter((channel) => channel.parent === group.id)
+      .map((channel) => [
+        "ch",
+        channel.parent ?? group.id,
+        channel.id,
+        channel.relay,
+        channel.name,
+        channel.kind,
+        channel.locked ? "locked" : "",
+      ]),
+  ];
+  await event.publish();
+  await event.publish(groupRelaySet(group.relay)).catch(() => undefined);
 }
 
 export async function saveGroupList(groups: GroupRef[], channels: Channel[] = []): Promise<void> {
