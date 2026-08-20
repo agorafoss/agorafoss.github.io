@@ -64,6 +64,10 @@ Palco e Ao vivo abrem **neste site** (`pnpm dev`). Guia: [`docs/DESKTOP.md`](./d
 
 Repositório separado: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). A janela Tauri **monta esta UI**; não há um segundo `src/`. Clone os dois, `pnpm dev` na pasta do desktop. Rust no PATH. Deep links `agora:` e `nostr:` no instalador. O cadeado ainda é o cofre da web.
 
+## App de celular
+
+Repositório separado: [agorafoss/agora-android](https://github.com/agorafoss/agora-android). Kotlin + Compose. **Não** é o site numa WebView. Mesma conta (12 palavras, `AG-XXXX`). Palco: ver + microfone — sem câmera, sem tela. Sala **Perto** (Bluetooth + Wi‑Fi local) é outra sala: não é a praça, não vai ao relay. Ainda sem APK.
+
 ## Emoji
 
 A grade do chat mostra um conjunto pequeno de [OpenMoji](https://openmoji.org/), buscado no CDN. O teclado do sistema já envia qualquer emoji como texto. O catálogo inteiro não entra no repositório — são milhares de arquivos. Como fazer isso depois, sem inchar o projeto, está no [`docs/ROADMAP.md`](./docs/ROADMAP.md) (Fase 9).
@@ -139,6 +143,10 @@ Stage and Go Live open **on this site** (`pnpm dev`). Guide: [`docs/DESKTOP.md`]
 ## Desktop app
 
 Separate repo: [agorafoss/agora-desktop](https://github.com/agorafoss/agora-desktop). The Tauri window **builds this UI**; there is no second `src/`. Clone both, `pnpm dev` in the desktop folder. Rust on PATH. Deep links `agora:` and `nostr:` ship in the installer. The lock is still the web vault.
+
+## Phone app
+
+Separate repo: [agorafoss/agora-android](https://github.com/agorafoss/agora-android). Kotlin + Compose. **Not** the site in a WebView. Same account (12 words, `AG-XXXX`). Stage: watch + mic — no camera, no screen share. **Perto** (Bluetooth + local Wi‑Fi) is a different room: not the square, not the relay. No APK yet.
 
 ## Emoji
 
