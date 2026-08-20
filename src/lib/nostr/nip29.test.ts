@@ -6,6 +6,7 @@ import {
   channelIndexD,
   channelKindFromMeta,
   channelsForSquare,
+  defaultPalcoId,
   groupKey,
   parseStoredChannel,
   previousRefs,
@@ -30,6 +31,7 @@ describe("nip29 helpers", () => {
   });
 
   it("indexes Ágora channels when the relay has no NIP-29 subgroups", () => {
+    expect(defaultPalcoId("sala")).toBe("agora-palco-sala");
     expect(channelIndexD("sala")).toBe("agora-channels:sala");
     const palco = parseStoredChannel([
       "ch",

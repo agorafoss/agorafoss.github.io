@@ -66,6 +66,11 @@ export function newGroupId(): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+/** Palco padrão da praça. A outra conta procura este id no mesmo relay, sem depender de subgrupo NIP-29. */
+export function defaultPalcoId(parentId: string): string {
+  return `agora-palco-${parentId}`;
+}
+
 export function groupRelaySet(relay = GROUP_RELAY): NDKRelaySet {
   return NDKRelaySet.fromRelayUrls([normalizeRelayUrl(relay)], getNdk());
 }
@@ -88,12 +93,11 @@ export function publishRejectMessage(error: unknown): string {
   return "group-create-failed";
 }
 
-export async function createGroup(name: string, relay = CREATE_RELAY): Promise<GroupRef> {
+export async function createGroup(name: string, relay = CREATE_RELAY, id = newGroupId()): Promise<GroupRef> {
   if (!isRelayConnected(relay)) {
     throw new Error("group-relay-down");
   }
   const ndk = getNdk();
-  const id = newGroupId();
   const relaySet = groupRelaySet(relay);
   const create = new NDKEvent(ndk);
   create.kind = KIND_GROUP_CREATE;
@@ -205,7 +209,20 @@ export async function createChannel(opts: {
   kind: ChannelKind;
   locked?: boolean;
 }): Promise<Channel> {
-  const created = await createGroup(opts.name, opts.parent.relay);
+  const palco = opts.kind === "voice" && opts.name.trim().toLowerCase() === "palco";
+  const created = await createGroup(
+    opts.name,
+    opts.parent.relay,
+    palco ? defaultPalcoId(opts.parent.id) : newGroupId(),
+  ).catch(async (error: unknown) => {
+    if (palco) {
+      const existing = await fetchDefaultPalco(opts.parent);
+      if (existing) {
+        return { id: existing.id, relay: existing.relay, name: existing.name };
+      }
+    }
+    throw error;
+  });
   const relaySet = groupRelaySet(created.relay);
 
   const edit = new NDKEvent(getNdk());
@@ -441,7 +458,7 @@ export async function loadGroupList(pubkey: string): Promise<GroupBook> {
 export function channelsForSquare(tags: string[][], squareId: string): Channel[] {
   return tags
     .map(parseStoredChannel)
-    .filter((item): item is Channel => Boolean(item) && item.parent === squareId);
+    .filter((item): item is Channel => item !== null && item.parent === squareId);
 }
 
 function mergeChannels(lists: Channel[][]): Channel[] {
@@ -473,14 +490,31 @@ export async function fetchChannelsByRelayHint(group: GroupRef): Promise<Channel
   return mergeChannels(batches.map((set) => [...set].flatMap((event) => channelsForSquare(event.tags, group.id))));
 }
 
+export async function fetchDefaultPalco(group: GroupRef): Promise<Channel | null> {
+  const id = defaultPalcoId(group.id);
+  const meta = await fetchFullMeta(id, group.relay);
+  if (!meta) return null;
+  return {
+    id,
+    relay: normalizeRelayUrl(group.relay),
+    name: meta.name || "palco",
+    kind: "voice",
+    about: meta.about,
+    livekit: true,
+    locked: meta.locked,
+    parent: group.id,
+  };
+}
+
 export async function fetchSquareChannels(group: GroupRef, extraAuthors: string[] = []): Promise<Channel[]> {
-  const [kids, index, fromLists, fromHint] = await Promise.all([
+  const [kids, index, fromLists, fromHint, palco] = await Promise.all([
     fetchChildChannels(group),
     fetchChannelIndex(group),
     fetchChannelsFromLists(group, extraAuthors),
     fetchChannelsByRelayHint(group),
+    fetchDefaultPalco(group),
   ]);
-  return mergeChannels([kids, index, fromLists, fromHint]);
+  return mergeChannels([kids, index, fromLists, fromHint, palco ? [palco] : []]);
 }
 
 export async function publishSquareChannels(group: GroupRef, channels: Channel[]): Promise<void> {
