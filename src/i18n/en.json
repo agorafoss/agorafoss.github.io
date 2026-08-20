@@ -174,9 +174,11 @@
     "copied": "Invite copied",
     "leave": "Leave the square",
     "working": "Talking to the relay",
+    "relayDown": "This square’s WebSocket is down. New channels and the stage do not publish until it comes back. The F12 line “wss://groups.0xchat.com/ failed” is that — not i18n.",
     "errors": {
       "group-load-failed": "Could not read your squares.",
       "group-create-failed": "The relay refused to create the square.",
+      "group-relay-down": "The square’s relay is not connected. The stage never left the creator’s PC.",
       "group-join-failed": "Could not join. Check the id and the relay.",
       "bad-invite": "That invite is not a square naddr or an id @ relay.",
       "channel-create-failed": "The relay refused the channel. It needs to accept NIP-29 subgroups.",

@@ -22,6 +22,14 @@ export function relayCreatesGroupsOnWeb(relay: string): boolean {
   }
 }
 
+export function sameRelayUrl(a: string, b: string): boolean {
+  try {
+    return normalizeRelayUrl(a) === normalizeRelayUrl(b);
+  } catch {
+    return a.replace(/\/+$/, "") === b.replace(/\/+$/, "");
+  }
+}
+
 export function normalizeRelayUrl(input: string): string {
   const trimmed = input.trim();
   let url: URL;

@@ -13,6 +13,7 @@ import { changeLocale, type Locale } from "../../i18n/index.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { hueFromPubkey, shortenNpub } from "../../lib/nostr/nip19.ts";
 import { groupKey, type Channel, type GroupRef } from "../../lib/nostr/nip29.ts";
+import { sameRelayUrl } from "../../lib/nostr/relays.ts";
 import { Avatar } from "./Avatar.tsx";
 import styles from "./ChannelList.module.css";
 import { VuMeter } from "./VuMeter.tsx";
@@ -49,6 +50,9 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
   const canAdd = owner || moderate;
   const displayName = profile.displayName || profile.name || callsign || (npub ? shortenNpub(npub) : t("app.name"));
   const connected = liveRelays.filter((relay) => relay.status === "connected").length;
+  const groupRelayLive = group
+    ? liveRelays.some((relay) => sameRelayUrl(relay.url, group.relay) && relay.status === "connected")
+    : true;
   const text = channels.filter((item) => item.kind === "text");
   const voice = channels.filter((item) => item.kind === "voice");
 
@@ -62,6 +66,7 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
         <span className={styles.relay}>
           {t("channels.relay")} · {group?.relay ?? t("status.clearnet")}
         </span>
+        {group && !groupRelayLive ? <p className={styles.relayDown}>{t("groups.relayDown")}</p> : null}
         {group && onOpenSquare ? (
           <button type="button" className={styles.squareRow} onClick={onOpenSquare}>
             <GearSix size={16} />

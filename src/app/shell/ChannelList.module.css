@@ -50,6 +50,13 @@
   color: var(--dim);
 }
 
+.relayDown {
+  margin: 8px 0 0;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-body);
+  color: var(--live);
+}
+
 .list {
   min-height: 0;
   overflow: auto;

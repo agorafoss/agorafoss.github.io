@@ -9,7 +9,7 @@ import NDK, {
   type NDKSigner,
 } from "@nostr-dev-kit/ndk";
 import type { AuthMethod, RelayInfo, RelayStatus } from "./types.ts";
-import { CREATE_RELAY, GROUP_RELAY } from "./relays.ts";
+import { CREATE_RELAY, GROUP_RELAY, sameRelayUrl } from "./relays.ts";
 
 let ndk: NDK | null = null;
 
@@ -92,6 +92,10 @@ export function snapshotRelays(): RelayInfo[] {
     url: relay.url,
     status: mapStatus(relay.status),
   }));
+}
+
+export function isRelayConnected(url: string): boolean {
+  return snapshotRelays().some((item) => sameRelayUrl(item.url, url) && item.status === "connected");
 }
 
 export function addRelayToPool(url: string): void {

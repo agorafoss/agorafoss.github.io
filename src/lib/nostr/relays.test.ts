@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { describe, expect, it } from "vitest";
-import { CREATE_RELAY, GROUP_RELAY, normalizeRelayUrl, relayCreatesGroupsOnWeb } from "./relays.ts";
+import { CREATE_RELAY, GROUP_RELAY, normalizeRelayUrl, relayCreatesGroupsOnWeb, sameRelayUrl } from "./relays.ts";
 
 describe("relay urls", () => {
   it("accepts ws and wss and strips a trailing slash", () => {
@@ -13,6 +13,10 @@ describe("relay urls", () => {
   it("flags the fiatjaf relay as web-only create", () => {
     expect(relayCreatesGroupsOnWeb(GROUP_RELAY)).toBe(true);
     expect(relayCreatesGroupsOnWeb(CREATE_RELAY)).toBe(false);
+  });
+
+  it("treats a trailing slash as the same relay", () => {
+    expect(sameRelayUrl("wss://groups.0xchat.com/", "wss://groups.0xchat.com")).toBe(true);
   });
 
   it("rejects http", () => {

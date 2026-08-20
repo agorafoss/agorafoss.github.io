@@ -46,6 +46,15 @@ describe("nip29 helpers", () => {
       1,
     );
     expect(channelsForSquare([["ch", "outra", "x", palco?.relay ?? "", "x", "voice", ""]], "sala")).toHaveLength(0);
+    expect(
+      channelsForSquare(
+        [
+          ["r", "wss://groups.0xchat.com"],
+          ["ch", "sala", "palco1", "wss://groups.0xchat.com", "palco", "voice", ""],
+        ],
+        "sala",
+      )[0]?.id,
+    ).toBe("palco1");
   });
 
   it("marks a channel as voice from agora-stage or empty supported kinds", () => {
