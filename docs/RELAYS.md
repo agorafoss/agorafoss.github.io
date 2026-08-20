@@ -77,7 +77,7 @@ Os dois anunciam NIPs `1, 11, 40, 42, 70, 86, 29, 9`. Sem o `29` na lista, não 
 2. Você manda uma mensagem no `#geral`. O cliente manda **só** para o relay daquela praça, com tag `h` = id do grupo. Damus nunca vê isso.
 3. Você emparelha outro aparelho. O código curto viaja pelos relays da lista, não pelo palco.
 4. DM NIP-17: gift wrap em vários relays da lista. O texto só abre com as chaves. O operador vê envelope e o seu IP.
-5. Palco: SDP/ICE entre pares. O signaling Trystero usa kinds `20xxx` **sem** tag `h`. Por isso o cliente **não** manda isso para Damus, purplepag.es nem relays de grupo (fiatjaf/0xchat) — eles recusam e enchiam o F12. Signaling vai para `nos.lol`, `relay.primal.net` e `offchain.pub`. A mídia continua WebRTC direto.
+5. Palco: SDP/ICE entre pares. O signaling Trystero usa kinds `20xxx` **sem** tag `h`. Por isso o cliente **não** manda isso para Damus, purplepag.es nem relays de grupo (fiatjaf/0xchat) — eles recusam e enchiam o F12. Signaling vai para `nos.lol`, `relay.primal.net` e `relay.nostr.band`. `offchain.pub` ficou de fora: recusa pubkey fora da “web of trust”. A mídia continua WebRTC direto.
 
 Não há “o relay Damus avisa o 0xchat”. Se os dois têm o seu perfil, é porque o **cliente** publicou nos dois.
 
