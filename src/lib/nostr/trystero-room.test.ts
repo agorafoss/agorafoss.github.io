@@ -60,5 +60,6 @@ describe("trystero room rules", () => {
     expect(urls.some((url) => url.includes("damus") || url.includes("purplepag") || url.includes("groups."))).toBe(
       false,
     );
+    expect(urls.some((url) => url.includes("offchain.pub"))).toBe(false);
   });
 });
