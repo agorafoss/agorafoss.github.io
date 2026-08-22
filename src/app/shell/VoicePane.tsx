@@ -40,6 +40,10 @@ function hasLiveVideo(stream: MediaStream | null): boolean {
   return Boolean(stream?.getVideoTracks().some((track) => track.readyState === "live"));
 }
 
+function hasLiveAudio(stream: MediaStream | null): boolean {
+  return Boolean(stream?.getAudioTracks().some((track) => track.readyState === "live"));
+}
+
 function Tile({
   stream,
   label,
@@ -58,17 +62,30 @@ function Tile({
   const { t } = useTranslation();
   const boxRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [full, setFull] = useState(false);
   const video = hasLiveVideo(stream);
+  const audioOnly = !mute && !video && hasLiveAudio(stream);
 
   useEffect(() => {
     const node = videoRef.current;
     if (!node) return;
     node.srcObject = stream;
+    void node.play().catch(() => undefined);
     return () => {
       node.srcObject = null;
     };
   }, [stream]);
+
+  useEffect(() => {
+    const node = audioRef.current;
+    if (!node) return;
+    node.srcObject = audioOnly ? stream : null;
+    if (audioOnly) void node.play().catch(() => undefined);
+    return () => {
+      node.srcObject = null;
+    };
+  }, [stream, audioOnly]);
 
   useEffect(() => {
     const onChange = () => setFull(document.fullscreenElement === boxRef.current);
@@ -96,6 +113,7 @@ function Tile({
           <Avatar name={label} hue={hue} size={72} picture={picture} />
         </div>
       )}
+      {audioOnly ? <audio ref={audioRef} autoPlay playsInline /> : null}
       <figcaption>
         <span className={voice.who}>
           <VuMeter level={level} live={level > 0} size={14} />
