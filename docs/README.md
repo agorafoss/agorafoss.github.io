@@ -9,6 +9,7 @@ Leitura seguida, no site (branch `0.2`): `#docs`. No GitHub, comece pelo guia.
 - [Relays](./RELAYS.md) — o que são, como se falam, os padrão do 0.1, como subir o seu
 - [Hospedar um recinto](./HOSPEDAR.md)
 - [App de PC](./DESKTOP.md)
+- [App de celular](https://github.com/agorafoss/agora-android) — recinto próprio; ainda sem APK
 - [Palco e Ao vivo](./GOLIVE.md)
 - [Como contribuir](./CONTRIBUTING.md)
 - [Código de conduta](./CODE_OF_CONDUCT.md)

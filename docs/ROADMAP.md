@@ -12,7 +12,7 @@ Três planos separados. Não misturar.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  CLIENTE ÁGORA (web → depois Tauri)                             │
+│  CLIENTE ÁGORA (web → Tauri; Android é outro recinto)           │
 │                                                                 │
 │  1. PLANO DE DADOS          2. PALCO (5–10)                     │
 │     chat, perfil, cargos       voz / webcam / tela              │
@@ -23,6 +23,9 @@ Três planos separados. Não misturar.
 │     + Tor opcional           signaling Nostr                    │
 │     + NIP-44 nos DMs         nunca pelo Tor                     │
 └─────────────────────────────────────────────────────────────────┘
+
+  3. PERTO — só no celular (agora-android)
+     BLE + Wi-Fi ilha. Sala local. Não é a praça. Não vai ao relay.
 ```
 
 ### 1. Plano de dados — Nostr + Tor
@@ -85,7 +88,7 @@ Broadcast 1→N (MediaMTX + WHIP/WHEP + NIP-53) fica na **Fase 9**, para quem ho
 **Não é**
 
 - Clone pixel a pixel de outro cliente
-- Mesh que inventa protocolo novo (Trystero já existe; Ágora não é uma spec P2P própria)
+- Palco com protocolo P2P próprio (Trystero já existe). **Perto** no celular é outra sala, rádio local, não a praça
 - Plataforma para atividade ilegal; o cliente não esconde crime
 - Promessa de “vídeo anônimo pelo Tor”
 
@@ -264,7 +267,22 @@ Cada item vira passo próprio, não um saco.
 - [ ] Denúncia no cliente (id do evento + relay) e guia de moderação para quem hospeda Blossom/relay
 - [x] Guia de relays próprios (`docs/RELAYS.md`) — o que o 0.1 usa, como eles não se copiam, como subir NIP-29
 - [ ] Guia legal do self-hoster (rascunho em `HOSPEDAR.md` — não é conselho jurídico)
-- [ ] Mobile (bem depois)
+
+### Fase 10 — Android
+
+Repo próprio: [agorafoss/agora-android](https://github.com/agorafoss/agora-android). Kotlin + Compose. **Não** é o `.exe` copiado. Doutrina: [README do Android](https://github.com/agorafoss/agora-android).
+
+- [ ] Casco Gradle + tema carvão/âmbar/papel
+- [ ] Identidade: 12 palavras, `AG-XXXX`, cadeado, Keystore
+- [ ] Praça online: NIP-29, chat, DM, mute, perfil (mesmos relays)
+- [ ] Palco: ver + microfone. Sem câmera, sem tela
+- [ ] Perto: BLE dual-role, sala local, DM NIP-44 no rádio
+- [ ] Posto Wi‑Fi (`LocalOnlyHotspot`) + ponte BLE. Sem compartilhar 4G
+- [ ] APK debug. Sem Play Store neste ciclo
+
+**Pronto quando:** as 12 palavras abrem a mesma praça do site; o celular vê o palco do PC e fala no mic; dois celulares em modo avião conversam no Perto.
+
+Perto **não** publica no relay. Palco no rádio **não** existe.
 
 ---
 
@@ -306,4 +324,4 @@ Arquitetura de transporte **travada**:
 - **NIP-44** = segredo das DMs
 - **Trystero + WebRTC** = palco 720p30, até 10, mesh (sem LiveKit/MediaMTX no 0.1)
 
-Núcleo de texto (Fases 0–4) está no cliente. Palco P2P no site (Fases 5–6), com salas privadas e DeepFilterNet 3. Próximo de transporte: **Fase 7** (SOCKS no NDK). App de PC: mesma UI, [agora-desktop](https://github.com/agorafoss/agora-desktop).
+Núcleo de texto (Fases 0–4) está no cliente. Palco P2P no site (Fases 5–6), com salas privadas e DeepFilterNet 3. Próximo de transporte: **Fase 7** (SOCKS no NDK). App de PC: mesma UI, [agora-desktop](https://github.com/agorafoss/agora-desktop). Celular: recinto próprio, [agora-android](https://github.com/agorafoss/agora-android) — praça igual, palco truncado, Perto só lá.

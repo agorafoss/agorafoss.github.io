@@ -9,6 +9,8 @@ import {
   defaultPalcoId,
   isDeletableChannel,
   groupKey,
+  parseGroupListTag,
+  parseSquareOwnerTag,
   parseStoredChannel,
   previousRefs,
   pubkeyFromParticipant,
@@ -72,6 +74,16 @@ describe("nip29 helpers", () => {
         "sala",
       )[0]?.id,
     ).toBe("palco1");
+  });
+
+  it("keeps the founder on the 10009 group tag and 30078 owner tag", () => {
+    const pub = "aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899";
+    const parsed = parseGroupListTag(["group", "sala", "wss://groups.0xchat.com", "Praça", pub]);
+    expect(parsed?.owner).toBe(pub);
+    expect(parseGroupListTag(["group", "sala", "wss://groups.0xchat.com", "Praça"])?.owner).toBeUndefined();
+    expect(parseSquareOwnerTag([["d", "agora-channels:sala"], ["owner", pub]], pub)).toBe(pub);
+    expect(parseSquareOwnerTag([["owner", pub]], "ff".repeat(32))).toBeNull();
+    expect(parseSquareOwnerTag([["owner", "not-a-key"]], pub)).toBeNull();
   });
 
   it("marks a channel as voice from agora-stage or empty supported kinds", () => {

@@ -12,6 +12,7 @@ import {
   createGroup,
   editGroupMeta,
   fetchSquareChannels,
+  fetchSquareOwner,
   channelIndexD,
   isDeletableChannel,
   parseStoredChannel,
@@ -39,7 +40,7 @@ import {
   type ChannelKind,
   type GroupRef,
 } from "../../lib/nostr/nip29.ts";
-import { canModerate, isOwner as pubkeyIsOwner, type GroupAdmin } from "../../lib/nostr/permissions.ts";
+import { canModerate, isOwner as pubkeyIsOwner, pinOwner, type GroupAdmin } from "../../lib/nostr/permissions.ts";
 import { looksLikeInvite, parseGroupInvite } from "../../lib/nostr/invite.ts";
 import { CREATE_RELAY, GROUP_RELAY, normalizeRelayUrl } from "../../lib/nostr/relays.ts";
 import { generateRoomSecret, publishRoomKeyEnvelopes } from "../../lib/nostr/room-key.ts";
@@ -178,14 +179,50 @@ function readFounded(): Set<string> {
 
 const founded = readFounded();
 
-function rememberFounded(key: string): void {
-  if (founded.has(key)) return;
-  founded.add(key);
+function persistFounded(): void {
   try {
     localStorage.setItem(FOUNDED_KEY, JSON.stringify([...founded]));
   } catch {
     /* quota / private mode */
   }
+}
+
+function rememberFounded(group: Pick<GroupRef, "id" | "relay">): void {
+  const keys = [group.id, groupKey(group)];
+  try {
+    keys.push(groupKey({ id: group.id, relay: normalizeRelayUrl(group.relay) }));
+  } catch {
+    /* invalid relay stays as the raw key */
+  }
+  let changed = false;
+  for (const key of keys) {
+    if (founded.has(key)) continue;
+    founded.add(key);
+    changed = true;
+  }
+  if (changed) persistFounded();
+}
+
+function isFounded(group: Pick<GroupRef, "id" | "relay">): boolean {
+  if (founded.has(group.id) || founded.has(groupKey(group))) return true;
+  try {
+    if (founded.has(groupKey({ id: group.id, relay: normalizeRelayUrl(group.relay) }))) return true;
+  } catch {
+    /* ignore */
+  }
+  const suffix = `#${group.id}`;
+  for (const key of founded) {
+    if (key === group.id || key.endsWith(suffix)) return true;
+  }
+  return false;
+}
+
+function ownerOf(group: GroupRef | null | undefined): string | undefined {
+  if (!group) return undefined;
+  if (group.owner) return group.owner.toLowerCase();
+  const me = useAuthStore.getState().pubkey?.toLowerCase();
+  if (me && isFounded(group)) return me;
+  return undefined;
 }
 
 function stopStageWatch(): void {
@@ -239,7 +276,11 @@ function watchRoster(
   );
   rosterSub = sub;
   sub.on("event", (event: NDKEvent) => {
-    if (event.kind === KIND_GROUP_ADMINS) set({ admins: parseGroupAdmins(event) });
+    if (event.kind === KIND_GROUP_ADMINS) {
+      const live = useGroupStore.getState().active();
+      const owner = ownerOf(live && live.id === group.id ? live : { id: group.id, relay: group.relay, name: "" });
+      set({ admins: pinOwner(parseGroupAdmins(event), owner) });
+    }
     if (event.kind === KIND_GROUP_MEMBERS) set({ members: parseGroupMembers(event) });
   });
 }
@@ -293,18 +334,23 @@ export const useGroupStore = create<GroupState>((set, get) => ({
   create: async (name, relay = CREATE_RELAY, locked) => {
     set({ busy: true, error: null });
     try {
-      const group = await createGroup(name, relay);
-      rememberFounded(groupKey(group));
       const me = useAuthStore.getState().pubkey;
-      let claimed: GroupAdmin[] = [];
+      const created = await createGroup(name, relay);
+      const group: GroupRef = { ...created, owner: me?.toLowerCase() };
+      rememberFounded(group);
+      let claimed: GroupAdmin[] = me ? pinOwner([], me) : [];
       if (me) {
-        claimed = await claimGroupOwner(group, me).catch(() => [{ pubkey: me.toLowerCase(), roles: ["owner"] }]);
+        claimed = pinOwner(
+          await claimGroupOwner(group, me).catch(() => [{ pubkey: me.toLowerCase(), roles: ["owner"] }]),
+          me,
+        );
       }
       const groups = [...get().groups.filter((item) => groupKey(item) !== groupKey(group)), group];
       await saveGroupList(groups, get().savedChannels);
-      set({ groups, busy: false, admins: claimed.length ? claimed : get().admins });
+      await publishSquareChannels(group, []).catch(() => undefined);
+      set({ groups, busy: false, admins: claimed.length ? claimed : pinOwner(get().admins, me) });
       await get().select(group);
-      if (claimed.length) set({ admins: claimed });
+      if (claimed.length) set({ admins: pinOwner(claimed, ownerOf(group)) });
       if (!get().channels.some((item) => item.kind === "voice")) {
         return await get().addChannel("palco", "voice", locked);
       }
@@ -341,12 +387,13 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     const instant = [rootNow, ...cachedKids];
     const first = pickChannel(group, instant);
     writeLastSquare(squareKey);
+    const seededOwner = ownerOf(group);
     set({
       activeKey: squareKey,
       activeChannelKey: groupKey(first),
       channels: instant,
       members: [],
-      admins: [],
+      admins: pinOwner([], seededOwner),
       pins: [],
       onStage: [],
     });
@@ -355,7 +402,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     watchChannels(group);
     if (first.parent) void joinGroup(first.id, first.relay).catch(() => undefined);
     try {
-      const [meta, members, admins, pins, children, onStage, roleNames] = await Promise.all([
+      const [meta, members, admins, pins, children, onStage, roleNames, listedOwner] = await Promise.all([
         fetchFullMeta(group.id, group.relay),
         fetchGroupMembers(group.id, group.relay),
         fetchGroupAdmins(group.id, group.relay),
@@ -363,6 +410,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         fetchSquareChannels(group),
         fetchLivekitParticipants(first.id, first.relay),
         fetchGroupRoles(group.id, group.relay),
+        fetchSquareOwner(group).catch(() => null),
       ]);
       if (get().activeKey !== squareKey) return;
       const discovered = await fetchSquareChannels(group, [
@@ -379,14 +427,10 @@ export const useGroupStore = create<GroupState>((set, get) => ({
       const seen = new Set(kids.map((item) => item.id));
       const channels = [root, ...kids, ...localKids.filter((item) => !seen.has(item.id))];
       writeChannelCache(squareKey, channels);
-      const groups = get().groups.map((item) =>
-        groupKey(item) === squareKey ? { ...item, name: root.name } : item,
-      );
-      const me = useAuthStore.getState().pubkey?.toLowerCase();
-      const nextAdmins =
-        me && !admins.some((admin) => admin.pubkey === me) && founded.has(squareKey)
-          ? [{ pubkey: me, roles: ["owner"] }, ...admins]
-          : admins;
+      const owner = listedOwner ?? seededOwner;
+      const nextGroup = { ...group, name: root.name, ...(owner ? { owner } : {}) };
+      const groups = get().groups.map((item) => (groupKey(item) === squareKey ? { ...item, ...nextGroup } : item));
+      const nextAdmins = pinOwner(admins, owner);
       const stillFirst = get().activeChannelKey === groupKey(first);
       const nextActive = stillFirst ? pickChannel(group, channels) : channels.find((item) => groupKey(item) === get().activeChannelKey);
       const savedChannels = [
@@ -404,9 +448,18 @@ export const useGroupStore = create<GroupState>((set, get) => ({
         onStage,
         activeChannelKey: nextActive ? groupKey(nextActive) : groupKey(root),
       });
-      if (kids.length) void saveGroupList(groups, savedChannels).catch(() => undefined);
+      if (kids.length || owner) void saveGroupList(groups, savedChannels).catch(() => undefined);
+      const me = useAuthStore.getState().pubkey;
+      if (me && isFounded(group) && !admins.some((admin) => admin.pubkey === me.toLowerCase())) {
+        void claimGroupOwner(nextGroup, me)
+          .then((claimed) => {
+            if (get().activeKey !== squareKey) return;
+            set({ admins: pinOwner(claimed, ownerOf(get().active()) ?? me) });
+          })
+          .catch(() => undefined);
+      }
     } catch {
-      if (get().activeKey === squareKey) set({ members: [], admins: [], pins: [] });
+      if (get().activeKey === squareKey) set({ members: [], admins: pinOwner([], ownerOf(group)), pins: [] });
     }
   },
 
@@ -533,7 +586,7 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     try {
       await putUser(group, pubkey, role.trim() ? [role.trim()] : []);
       const admins = await fetchGroupAdmins(group.id, group.relay);
-      set({ admins });
+      set({ admins: pinOwner(admins, ownerOf(group)) });
     } catch {
       set({ error: "group-role-failed" });
     }
@@ -609,6 +662,8 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     const admins = get().admins;
     if (pubkeyIsOwner(admins, me)) return true;
     const group = get().active();
-    return Boolean(me && group && founded.has(groupKey(group)));
+    if (!me || !group) return false;
+    if (group.owner && group.owner.toLowerCase() === me.toLowerCase()) return true;
+    return isFounded(group);
   },
 }));
