@@ -20,7 +20,7 @@ export function stagePassword(groupId: string, secret?: string | null): string {
 }
 
 /** Signaling do palco: kinds 20xxx. Relays NIP-29 pedem tag `h`; purplepag.es recusa o kind; Damus rate-limita. */
-export const STAGE_SIGNAL_RELAYS = ["wss://nos.lol", "wss://relay.primal.net", "wss://relay.nostr.band"] as const;
+export const STAGE_SIGNAL_RELAYS = ["wss://nos.lol", "wss://relay.primal.net", "wss://nostr.oxtr.dev"] as const;
 
 export function stageSignalRelays(_pool: string[] = []): string[] {
   return [...STAGE_SIGNAL_RELAYS];
