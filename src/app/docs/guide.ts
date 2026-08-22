@@ -168,7 +168,7 @@ const pt: Guide = {
         },
         {
           type: "note",
-          text: "No 0.2 o signaling do palco (kinds 20xxx) não vai para Damus, purplepag.es nem relays de grupo — eles recusam e enchiam o F12. Vai para nos.lol, primal e nostr.band. offchain.pub ficou de fora (web of trust). Chat continua nos relays da lista.",
+          text: "No 0.2 o signaling do palco (kinds 20xxx) não vai para Damus, purplepag.es nem relays de grupo — eles recusam e enchiam o F12. Vai para nos.lol, primal e nostr.oxtr.dev. offchain.pub e nostr.band ficaram de fora (WoT / WebSocket morto). Chat continua nos relays da lista.",
         },
       ],
     },
@@ -376,7 +376,7 @@ const en: Guide = {
         },
         {
           type: "note",
-          text: "In 0.2, stage signaling (kinds 20xxx) does not go to Damus, purplepag.es or group relays — they reject it and flooded the console. It goes to nos.lol, primal and nostr.band. offchain.pub is out (web of trust). Chat still uses the list in settings.",
+          text: "In 0.2, stage signaling (kinds 20xxx) does not go to Damus, purplepag.es or group relays — they reject it and flooded the console. It goes to nos.lol, primal and nostr.oxtr.dev. offchain.pub and nostr.band are out (WoT / dead WebSocket). Chat still uses the list in settings.",
         },
       ],
     },

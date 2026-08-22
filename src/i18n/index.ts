@@ -35,6 +35,7 @@ export const i18nReady = i18n.use(initReactI18next).init({
   },
   lng: readStoredLocale(),
   fallbackLng: "pt-BR",
+  showSupportNotice: false,
   interpolation: { escapeValue: false },
 });
 
