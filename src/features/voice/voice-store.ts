@@ -22,6 +22,7 @@ import {
   stageSignalRelays,
   TRYSTERO_APP_ID,
 } from "../../lib/nostr/trystero-room.ts";
+import { mergeStreams } from "../../lib/nostr/merge-streams.ts";
 import { useRelayStore } from "../relays/relay-store.ts";
 
 type VoiceStatus = "idle" | "locked" | "connecting" | "live" | "error";
@@ -130,12 +131,16 @@ async function capPeers(): Promise<void> {
   await Promise.all(Object.values(room.getPeers()).map((pc) => applyBitrateCap(pc)));
 }
 
-function pushPeer(peerId: string, stream: MediaStream | null = null): void {
+function pushPeer(peerId: string, stream: MediaStream | null = null): MediaStream | null {
   const pubkey = pubs.get(peerId) ?? "";
+  let merged: MediaStream | null = stream;
   useVoiceStore.setState((state) => {
+    const existing = state.peers.find((peer) => peer.peerId === peerId);
+    merged = mergeStreams(existing?.stream ?? null, stream);
     const rest = state.peers.filter((peer) => peer.peerId !== peerId);
-    return { peers: [...rest, { peerId, pubkey, stream }] };
+    return { peers: [...rest, { peerId, pubkey: pubkey || existing?.pubkey || "", stream: merged }] };
   });
+  return merged;
 }
 
 export const useVoiceStore = create<VoiceState>((set, get) => ({
@@ -234,8 +239,8 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
         });
       };
       next.onPeerStream = (stream, peerId) => {
-        pushPeer(peerId, stream);
-        listenTalking(peerId, stream);
+        const merged = pushPeer(peerId, stream);
+        listenTalking(peerId, merged);
       };
       set({ status: "live", muted: true, full: stageIsFull(Object.keys(next.getPeers()).length + 1) });
       await grabMic();
