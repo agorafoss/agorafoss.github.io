@@ -42,6 +42,20 @@ export function canModerate(admins: GroupAdmin[], pubkey: string | null): boolea
   return isListedAdmin(admins, pubkey);
 }
 
+/** Keeps a known founder in the 39001 roster when the relay never publishes it. */
+export function pinOwner(admins: GroupAdmin[], ownerPubkey?: string | null): GroupAdmin[] {
+  if (!ownerPubkey) return admins;
+  const owner = ownerPubkey.toLowerCase();
+  const existing = admins.find((admin) => samePubkey(admin.pubkey, owner));
+  const others = admins.filter((admin) => !samePubkey(admin.pubkey, owner));
+  const roles = existing?.roles.length
+    ? isOwnerRole(existing.roles)
+      ? existing.roles
+      : ["owner", ...existing.roles]
+    : ["owner"];
+  return [{ pubkey: owner, roles }, ...others];
+}
+
 export function roleLabel(roles: string[]): "owner" | "mod" | "member" {
   if (isOwnerRole(roles)) return "owner";
   if (roles.length > 0) return "mod";

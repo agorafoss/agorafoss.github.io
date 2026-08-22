@@ -33,6 +33,8 @@ export type GroupRef = {
   id: string;
   relay: string;
   name: string;
+  /** Founder pubkey. 0xchat often never emits kind 39001, so Ágora stores this itself. */
+  owner?: string;
 };
 
 export type GroupMeta = {
@@ -335,6 +337,30 @@ export async function fetchGroupAdmins(id: string, relay = GROUP_RELAY): Promise
   return event ? parseGroupAdmins(event) : [];
 }
 
+function hexPubkey(value: string | undefined): string | null {
+  const pub = (value ?? "").trim().toLowerCase();
+  return /^[0-9a-f]{64}$/.test(pub) ? pub : null;
+}
+
+export function parseGroupListTag(tag: string[]): GroupRef | null {
+  if (tag[0] !== "group" || !tag[1]) return null;
+  const owner = hexPubkey(tag[4]);
+  return {
+    id: tag[1],
+    relay: tag[2] || GROUP_RELAY,
+    name: tag[3] || tag[1],
+    ...(owner ? { owner } : {}),
+  };
+}
+
+/** Kind 30078 self-declaration: owner tag must match the author. */
+export function parseSquareOwnerTag(tags: string[][], author?: string): string | null {
+  const owner = hexPubkey(tags.find((tag) => tag[0] === "owner")?.[1]);
+  if (!owner) return null;
+  if (author && author.toLowerCase() !== owner) return null;
+  return owner;
+}
+
 export function parseGroupMembers(event: NDKEvent): string[] {
   return event
     .getMatchingTags("p")
@@ -445,12 +471,8 @@ export async function loadGroupList(pubkey: string): Promise<GroupBook> {
   if (!event) return { groups: [], channels: [] };
   const groups = event
     .getMatchingTags("group")
-    .map((tag) => ({
-      id: tag[1],
-      relay: tag[2] || GROUP_RELAY,
-      name: tag[3] || tag[1],
-    }))
-    .filter((group) => Boolean(group.id));
+    .map(parseGroupListTag)
+    .filter((group): group is GroupRef => Boolean(group));
   const channels = event.tags.map(parseStoredChannel).filter((item): item is Channel => Boolean(item));
   return { groups, channels };
 }
@@ -479,6 +501,19 @@ export async function fetchChannelIndex(group: GroupRef): Promise<Channel[] | nu
   const events = await getNdk().fetchEvents({ kinds: [KIND_APP_DATA], "#d": [channelIndexD(group.id)] });
   if (events.size === 0) return null;
   return mergeChannels([[...events].flatMap((event) => channelsForSquare(event.tags, group.id))]);
+}
+
+export async function fetchSquareOwner(group: GroupRef): Promise<string | null> {
+  if (group.owner) return hexPubkey(group.owner);
+  const events = await getNdk().fetchEvents({ kinds: [KIND_APP_DATA], "#d": [channelIndexD(group.id)] });
+  const declared = [...events]
+    .map((event) => ({
+      at: event.created_at ?? 0,
+      owner: parseSquareOwnerTag(event.tags, event.pubkey),
+    }))
+    .filter((item): item is { at: number; owner: string } => Boolean(item.owner))
+    .sort((a, b) => a.at - b.at);
+  return declared[0]?.owner ?? null;
 }
 
 export async function fetchChannelsFromLists(group: GroupRef, authors: string[]): Promise<Channel[]> {
@@ -533,6 +568,7 @@ export async function publishSquareChannels(group: GroupRef, channels: Channel[]
   event.tags = [
     ["d", channelIndexD(group.id)],
     ["h", group.id],
+    ...(group.owner ? [["owner", group.owner.toLowerCase()]] : []),
     ...channels
       .filter((channel) => channel.parent === group.id)
       .map((channel) => [
@@ -555,7 +591,7 @@ export async function saveGroupList(groups: GroupRef[], channels: Channel[] = []
   event.kind = KIND_GROUP_LIST;
   const relays = [...new Set([...groups.map((group) => group.relay), ...channels.map((channel) => channel.relay)])];
   event.tags = [
-    ...groups.map((group) => ["group", group.id, group.relay, group.name]),
+    ...groups.map((group) => ["group", group.id, group.relay, group.name, group.owner ?? ""]),
     ...channels
       .filter((channel) => channel.parent)
       .map((channel) => [

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { describe, expect, it } from "vitest";
-import { canModerate, isOwner, MEMBER_DEFAULTS, MOD_ONLY, rankOf, roleLabel, rolesOf } from "./permissions.ts";
+import { canModerate, isOwner, MEMBER_DEFAULTS, MOD_ONLY, pinOwner, rankOf, roleLabel, rolesOf } from "./permissions.ts";
 
 const admins = [
   { pubkey: "aa", roles: ["admin"] },
@@ -33,6 +33,20 @@ describe("permissions", () => {
     expect(isOwner(roster, "aa")).toBe(true);
     expect(rankOf(roster, "bb")).toBe("mod");
     expect(rankOf(roster, "cc")).toBe("member");
+  });
+
+  it("pins a known founder when the relay roster is empty or incomplete", () => {
+    const founder = "aa".repeat(32);
+    expect(pinOwner([], founder)).toEqual([{ pubkey: founder, roles: ["owner"] }]);
+    expect(pinOwner([{ pubkey: "bb", roles: ["moderator"] }], founder)).toEqual([
+      { pubkey: founder, roles: ["owner"] },
+      { pubkey: "bb", roles: ["moderator"] },
+    ]);
+    expect(pinOwner([{ pubkey: founder.toUpperCase(), roles: ["moderator"] }], founder)).toEqual([
+      { pubkey: founder, roles: ["owner", "moderator"] },
+    ]);
+    expect(rankOf(pinOwner([], founder), founder)).toBe("owner");
+    expect(pinOwner(admins, null)).toEqual(admins);
   });
 
   it("lists honest member defaults without inventing extra bits", () => {
