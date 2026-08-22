@@ -17,8 +17,8 @@ describe("permissions", () => {
     expect(roleLabel([])).toBe("member");
   });
 
-  it("lets anyone try when the relay hid the admin list", () => {
-    expect(canModerate([], "cc")).toBe(true);
+  it("only listed admins moderate — empty 39001 is not a free-for-all", () => {
+    expect(canModerate([], "cc")).toBe(false);
     expect(canModerate(admins, "aa")).toBe(true);
     expect(canModerate(admins, "cc")).toBe(false);
     expect(canModerate(admins, null)).toBe(false);

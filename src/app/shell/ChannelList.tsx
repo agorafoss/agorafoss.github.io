@@ -12,7 +12,7 @@ import { useVoiceStore } from "../../features/voice/voice-store.ts";
 import { changeLocale, type Locale } from "../../i18n/index.ts";
 import { publicCallsign } from "../../lib/nostr/callsign.ts";
 import { hueFromPubkey, shortenNpub } from "../../lib/nostr/nip19.ts";
-import { groupKey, type Channel, type GroupRef } from "../../lib/nostr/nip29.ts";
+import { groupKey, isDeletableChannel, type Channel, type GroupRef } from "../../lib/nostr/nip29.ts";
 import { sameRelayUrl } from "../../lib/nostr/relays.ts";
 import { Avatar } from "./Avatar.tsx";
 import styles from "./ChannelList.module.css";
@@ -93,7 +93,7 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
                     <span className={styles.label}>{item.parent ? item.name : "geral"}</span>
                     {live && !item.parent ? <span className={styles.live}>{t("status.live")}</span> : null}
                   </button>
-                  {canAdd && item.parent ? (
+                  {canAdd && isDeletableChannel(item) ? (
                     <button
                       type="button"
                       className={styles.trash}
@@ -149,7 +149,7 @@ export function ChannelList({ group, channel, live, onOpenSettings, onOpenSquare
                         <span className={styles.label}>{item.name}</span>
                         {roster.length > 0 ? <span className={styles.live}>{roster.length}</span> : null}
                       </button>
-                      {canAdd && item.parent ? (
+                      {canAdd && isDeletableChannel(item) ? (
                         <button
                           type="button"
                           className={styles.trash}

@@ -182,6 +182,7 @@
       "group-join-failed": "Não deu para entrar. Confira o id e o relay.",
       "bad-invite": "Esse convite não é um naddr de praça nem um id @ relay.",
       "channel-create-failed": "O relay recusou o canal. Ele precisa aceitar subgrupo NIP-29.",
+      "channel-mod-only": "Só admin cria ou apaga canal.",
       "group-kick-failed": "Não deu para tirar essa pessoa.",
       "group-pin-failed": "Não deu para mudar as fixadas.",
       "group-leave-failed": "Não deu para sair da praça.",
