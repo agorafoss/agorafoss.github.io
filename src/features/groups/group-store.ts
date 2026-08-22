@@ -13,6 +13,7 @@ import {
   editGroupMeta,
   fetchSquareChannels,
   channelIndexD,
+  isDeletableChannel,
   parseStoredChannel,
   publishSquareChannels,
   fetchFullMeta,
@@ -431,6 +432,10 @@ export const useGroupStore = create<GroupState>((set, get) => ({
   addChannel: async (name, kind, locked) => {
     const group = get().active();
     if (!group) return null;
+    if (!get().canModerate()) {
+      set({ error: "channel-mod-only" });
+      return null;
+    }
     set({ busy: true, error: null });
     try {
       const secret = locked ? generateRoomSecret() : null;
@@ -466,7 +471,11 @@ export const useGroupStore = create<GroupState>((set, get) => ({
   },
 
   removeChannel: async (channel) => {
-    if (!channel.parent) return;
+    if (!isDeletableChannel(channel)) return;
+    if (!get().canModerate()) {
+      set({ error: "channel-mod-only" });
+      return;
+    }
     set({ busy: true, error: null });
     try {
       await deleteGroup(channel).catch(() => undefined);
@@ -475,7 +484,10 @@ export const useGroupStore = create<GroupState>((set, get) => ({
       await saveGroupList(get().groups, savedChannels);
       const fallback = channels[0] ?? null;
       const square = get().active();
-      if (square) writeChannelCache(groupKey(square), channels);
+      if (square) {
+        writeChannelCache(groupKey(square), channels);
+        await publishSquareChannels(square, channels).catch(() => undefined);
+      }
       set({ savedChannels, channels, busy: false });
       if (get().activeChannelKey === groupKey(channel) && fallback) {
         await get().selectChannel(fallback);
@@ -588,7 +600,8 @@ export const useGroupStore = create<GroupState>((set, get) => ({
 
   canModerate: () => {
     const me = useAuthStore.getState().pubkey;
-    return canModerate(get().admins, me);
+    if (canModerate(get().admins, me)) return true;
+    return get().isOwner();
   },
 
   isOwner: () => {
@@ -596,7 +609,6 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     const admins = get().admins;
     if (pubkeyIsOwner(admins, me)) return true;
     const group = get().active();
-    if (me && group && founded.has(groupKey(group))) return true;
-    return Boolean(me && admins.length === 0);
+    return Boolean(me && group && founded.has(groupKey(group)));
   },
 }));

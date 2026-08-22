@@ -39,7 +39,6 @@ export function isOwner(admins: GroupAdmin[], pubkey: string | null): boolean {
 
 export function canModerate(admins: GroupAdmin[], pubkey: string | null): boolean {
   if (!pubkey) return false;
-  if (admins.length === 0) return true;
   return isListedAdmin(admins, pubkey);
 }
 

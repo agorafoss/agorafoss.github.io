@@ -7,6 +7,7 @@ import {
   channelKindFromMeta,
   channelsForSquare,
   defaultPalcoId,
+  isDeletableChannel,
   groupKey,
   parseStoredChannel,
   previousRefs,
@@ -32,6 +33,20 @@ describe("nip29 helpers", () => {
 
   it("indexes Ágora channels when the relay has no NIP-29 subgroups", () => {
     expect(defaultPalcoId("sala")).toBe("agora-palco-sala");
+    expect(isDeletableChannel({ id: "x", relay: "wss://a", name: "geral", kind: "text", about: "", livekit: false })).toBe(
+      false,
+    );
+    expect(
+      isDeletableChannel({
+        id: "agora-palco-sala",
+        relay: "wss://a",
+        name: "palco",
+        kind: "voice",
+        about: "",
+        livekit: true,
+        parent: "sala",
+      }),
+    ).toBe(true);
     expect(channelIndexD("sala")).toBe("agora-channels:sala");
     const palco = parseStoredChannel([
       "ch",

@@ -455,6 +455,12 @@ export async function loadGroupList(pubkey: string): Promise<GroupBook> {
   return { groups, channels };
 }
 
+export function isDeletableChannel(channel: Channel): boolean {
+  if (channel.id.startsWith("agora-palco-")) return true;
+  if (channel.kind === "voice") return true;
+  return Boolean(channel.parent);
+}
+
 export function channelsForSquare(tags: string[][], squareId: string): Channel[] {
   return tags
     .map(parseStoredChannel)
@@ -469,8 +475,9 @@ function mergeChannels(lists: Channel[][]): Channel[] {
   return [...merged.values()];
 }
 
-export async function fetchChannelIndex(group: GroupRef): Promise<Channel[]> {
+export async function fetchChannelIndex(group: GroupRef): Promise<Channel[] | null> {
   const events = await getNdk().fetchEvents({ kinds: [KIND_APP_DATA], "#d": [channelIndexD(group.id)] });
+  if (events.size === 0) return null;
   return mergeChannels([[...events].flatMap((event) => channelsForSquare(event.tags, group.id))]);
 }
 
@@ -514,7 +521,9 @@ export async function fetchSquareChannels(group: GroupRef, extraAuthors: string[
     fetchChannelsByRelayHint(group),
     fetchDefaultPalco(group),
   ]);
-  return mergeChannels([kids, index, fromLists, fromHint, palco ? [palco] : []]);
+  const listed = mergeChannels([kids, index ?? [], fromLists, fromHint]);
+  if (index !== null) return listed;
+  return mergeChannels([listed, palco ? [palco] : []]);
 }
 
 export async function publishSquareChannels(group: GroupRef, channels: Channel[]): Promise<void> {

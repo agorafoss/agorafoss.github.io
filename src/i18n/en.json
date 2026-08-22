@@ -182,6 +182,7 @@
       "group-join-failed": "Could not join. Check the id and the relay.",
       "bad-invite": "That invite is not a square naddr or an id @ relay.",
       "channel-create-failed": "The relay refused the channel. It needs to accept NIP-29 subgroups.",
+      "channel-mod-only": "Only an admin can add or delete a channel.",
       "group-kick-failed": "Could not remove that person.",
       "group-pin-failed": "Could not change the pins.",
       "group-leave-failed": "Could not leave the square.",
